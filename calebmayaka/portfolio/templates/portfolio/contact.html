@@ -1,0 +1,57 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<section class="contact-hero section-shell">
+    <div class="contact-copy reveal">
+        <p class="eyebrow">Contact</p>
+        <h1>Let’s talk about the next useful thing to build.</h1>
+        <p>{{ profile.summary }}</p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="mailto:{{ profile.email }}?subject=Project%20Inquiry%20for%20Caleb%20Mayaka">Email Caleb</a>
+            <a class="btn btn-secondary" href="{% url 'projects' %}">Review Projects</a>
+        </div>
+    </div>
+    <aside class="contact-panel reveal">
+        <h2>Project starter brief</h2>
+        <div class="brief-step active">
+            <span>01</span>
+            <p>Share what you want to build and who it is for.</p>
+        </div>
+        <div class="brief-step">
+            <span>02</span>
+            <p>Send links, notes, examples, or rough requirements.</p>
+        </div>
+        <div class="brief-step">
+            <span>03</span>
+            <p>We shape the first version into a clear, practical scope.</p>
+        </div>
+        <a class="contact-email" href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+    </aside>
+</section>
+
+<section class="section-shell">
+    <div class="contact-methods">
+        {% for link in social_links %}
+            <a class="method-card reveal" href="{{ link.url }}">
+                <span>{{ link.label }}</span>
+                <strong>{{ link.url }}</strong>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-shell">
+    <div class="section-heading reveal">
+        <p class="eyebrow">Good fit</p>
+        <h2>Types of work this portfolio is ready to support</h2>
+    </div>
+    <div class="card-grid">
+        {% for skill in skills %}
+            <article class="feature-card reveal">
+                <h3>{{ skill.title }}</h3>
+                <p>{{ skill.description }}</p>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

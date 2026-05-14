@@ -1,0 +1,57 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<section class="page-hero section-shell reveal">
+    <p class="eyebrow">Projects</p>
+    <h1>A small selection of recent projects.</h1>
+    <p>These Caleb-branded placeholders preserve the style while leaving room for real portfolio work.</p>
+</section>
+
+<section class="section-shell">
+    <div class="project-grid">
+        {% for project in projects %}
+            <article class="project-card reveal">
+                <div class="project-visual visual-{{ forloop.counter }}">
+                    <span>{{ project.category }}</span>
+                    <strong>{{ project.status }}</strong>
+                </div>
+                <div class="project-body">
+                    <p class="eyebrow">{{ project.category }}</p>
+                    <h2>{{ project.title }}</h2>
+                    <p>{{ project.description }}</p>
+                    <div class="tag-list">
+                        {% for tag in project.tags %}
+                            <span>{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <button class="text-link modal-open" type="button" data-modal-target="project-{{ project.id }}">
+                        View Details
+                    </button>
+                </div>
+            </article>
+
+            <div class="modal" id="project-{{ project.id }}" aria-hidden="true" role="dialog" aria-labelledby="project-title-{{ project.id }}">
+                <div class="modal-panel">
+                    <button class="modal-close" type="button" aria-label="Close modal">&times;</button>
+                    <p class="eyebrow">{{ project.category }}</p>
+                    <h2 id="project-title-{{ project.id }}">{{ project.title }}</h2>
+                    <p>{{ project.description }}</p>
+                    <div class="modal-section">
+                        <h3>Impact</h3>
+                        <p>{{ project.impact }}</p>
+                    </div>
+                    <div class="tag-list">
+                        {% for tag in project.tags %}
+                            <span>{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-actions">
+                        <a class="btn btn-primary" href="{{ project.link }}">Live Link</a>
+                        <a class="btn btn-secondary" href="{{ project.repo }}">Repository</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

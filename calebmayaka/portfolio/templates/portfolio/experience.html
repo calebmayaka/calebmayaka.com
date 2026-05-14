@@ -1,0 +1,45 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<section class="page-hero section-shell reveal">
+    <p class="eyebrow">Experience</p>
+    <h1>My journey through practical web development.</h1>
+    <p>A timeline of learning, building, and turning project ideas into usable software.</p>
+</section>
+
+<section class="section-shell">
+    <div class="timeline">
+        {% for item in experience %}
+            <article class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <div class="timeline-top">
+                        <span>{{ item.period }}</span>
+                        <span>{{ item.company }}</span>
+                    </div>
+                    <h2>{{ item.role }}</h2>
+                    <p>{{ item.description }}</p>
+                    <h3>Key achievements</h3>
+                    <ul>
+                        {% for achievement in item.achievements %}
+                            <li>{{ achievement }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-shell">
+    <div class="section-heading reveal">
+        <p class="eyebrow">Tools</p>
+        <h2>Stack used across the work</h2>
+    </div>
+    <div class="tech-grid">
+        {% for tech in tech_stack %}
+            <span class="tech-pill reveal">{{ tech }}</span>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

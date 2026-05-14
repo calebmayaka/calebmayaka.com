@@ -1,0 +1,65 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<section class="page-hero section-shell reveal">
+    <p class="eyebrow">About Caleb</p>
+    <h1>Building with care, clarity, and room to grow.</h1>
+    <p>{{ profile.summary }}</p>
+</section>
+
+<section class="section-shell about-grid">
+    <article class="glass-panel reveal">
+        <h2>Profile</h2>
+        <p>
+            Caleb Mayaka is shaping a portfolio around full-stack web development, Django systems,
+            practical interfaces, and AI-ready workflows. This first version intentionally uses
+            polished placeholder content so the design and structure can be reviewed before real
+            project details are added.
+        </p>
+        <p>
+            The goal is a portfolio that feels confident and modern while staying easy to edit:
+            no heavy frontend build step, no tangled downloaded runtime, and no copied personal claims
+            from the reference site.
+        </p>
+    </article>
+    <aside class="profile-panel reveal">
+        <span class="avatar">{{ profile.initials }}</span>
+        <h2>{{ profile.name }}</h2>
+        <p>{{ profile.role }}</p>
+        <div class="profile-facts">
+            <span>{{ profile.location }}</span>
+            <span>{{ profile.availability }}</span>
+        </div>
+    </aside>
+</section>
+
+<section class="section-shell">
+    <div class="section-heading reveal">
+        <p class="eyebrow">What I Work With</p>
+        <h2>Technology stack</h2>
+    </div>
+    <div class="tech-grid">
+        {% for tech in tech_stack %}
+            <span class="tech-pill reveal">{{ tech }}</span>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-shell">
+    <div class="card-grid">
+        {% for skill in skills %}
+            <article class="feature-card reveal">
+                <span class="card-number">0{{ forloop.counter }}</span>
+                <h3>{{ skill.title }}</h3>
+                <p>{{ skill.description }}</p>
+                <div class="tag-list">
+                    {% for tag in skill.tags %}
+                        <span>{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

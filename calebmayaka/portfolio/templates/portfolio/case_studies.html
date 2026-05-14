@@ -1,0 +1,64 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<section class="page-hero section-shell reveal">
+    <p class="eyebrow">Case Studies</p>
+    <h1>Real-world style breakdowns for portfolio-ready work.</h1>
+    <p>Use these as placeholders for deeper stories once real client or personal project details are ready.</p>
+</section>
+
+<section class="section-shell">
+    <div class="case-grid">
+        {% for study in case_studies %}
+            <article class="case-card reveal">
+                <div class="case-top">
+                    <span>{{ study.category }}</span>
+                    <span>{{ study.duration }}</span>
+                </div>
+                <h2>{{ study.title }}</h2>
+                <p>{{ study.description }}</p>
+                <div class="metric-row">
+                    {% for result in study.results %}
+                        <span>{{ result }}</span>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-primary modal-open" type="button" data-modal-target="case-{{ study.id }}">
+                    Read Full Case Study
+                </button>
+            </article>
+
+            <div class="modal" id="case-{{ study.id }}" aria-hidden="true" role="dialog" aria-labelledby="case-title-{{ study.id }}">
+                <div class="modal-panel wide">
+                    <button class="modal-close" type="button" aria-label="Close modal">&times;</button>
+                    <p class="eyebrow">{{ study.category }}</p>
+                    <h2 id="case-title-{{ study.id }}">{{ study.title }}</h2>
+                    <p>{{ study.description }}</p>
+                    <div class="study-detail-grid">
+                        <section>
+                            <h3>Problem</h3>
+                            <p>{{ study.problem }}</p>
+                        </section>
+                        <section>
+                            <h3>Solution</h3>
+                            <p>{{ study.solution }}</p>
+                        </section>
+                    </div>
+                    <section class="modal-section">
+                        <h3>Results</h3>
+                        <ul class="result-list">
+                            {% for result in study.results %}
+                                <li>{{ result }}</li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                    <div class="tag-list">
+                        {% for tag in study.tags %}
+                            <span>{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
