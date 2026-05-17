@@ -1,0 +1,58 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>User Management</p>
+        <h1>Dashboard Users</h1>
+        <span>Manage Admin and Manager access for the custom dashboard.</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dashboard_user_create' %}">Add User</a>
+</section>
+
+<section class="dashboard-panel reveal">
+    {% if users %}
+        <div class="dashboard-table user-table">
+            <div class="dashboard-table-head">
+                <span>Email</span>
+                <span>Role</span>
+                <span>Status</span>
+                <span>Last login</span>
+                <span>Actions</span>
+            </div>
+            {% for user in users %}
+                <article class="user-table-row">
+                    <span>
+                        <strong>{{ user.username }}</strong>
+                        <small>Created {{ user.date_joined|date:"M j, Y" }}</small>
+                    </span>
+                    <span>{{ user.dashboard_profile.get_role_display }}</span>
+                    <span class="status-pill {% if user.is_active %}is-read{% else %}is-unread{% endif %}">
+                        {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                    <span>{% if user.last_login %}{{ user.last_login|date:"M j, Y g:i A" }}{% else %}Never{% endif %}</span>
+                    <span class="user-table-actions">
+                        <a href="{% url 'dashboard_user_edit' user.id %}">Edit</a>
+                        {% if user.is_active %}
+                            <form action="{% url 'dashboard_user_deactivate' user.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Deactivate</button>
+                            </form>
+                        {% else %}
+                            <form action="{% url 'dashboard_user_reactivate' user.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Reactivate</button>
+                            </form>
+                        {% endif %}
+                    </span>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">
+            <strong>No users found</strong>
+            <span>Add your first dashboard user.</span>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

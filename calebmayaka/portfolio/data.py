@@ -19,6 +19,7 @@ profile = {
 nav_items = [
     {'label': 'Home', 'url_name': 'home'},
     {'label': 'Projects', 'url_name': 'projects'},
+    {'label': 'Blog', 'url': '/blog/'},
 ]
 
 social_links = [
@@ -100,7 +101,7 @@ projects = [
         'category': 'Personal Brand',
         'description': 'This multi-page Django portfolio, modeled after a modern Next.js reference while staying lightweight and editable.',
         'tags': ['Django', 'Templates', 'CSS', 'JavaScript'],
-        'impact': 'Creates a strong online presence that can grow into a blog, CMS, or project archive.',
+        'impact': 'Creates a strong online presence that can grow into a full project and case-study archive.',
         'status': 'Live starter',
         'link': '/',
         'repo': '#',

@@ -5,11 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ page_title|default:profile.name }}</title>
-    <meta name="description" content="{{ profile.meta_description }}">
+    <meta name="description" content="{{ meta_description|default:profile.meta_description }}">
     <meta name="author" content="{{ profile.name }}">
     <meta property="og:title" content="{{ page_title|default:profile.name }}">
-    <meta property="og:description" content="{{ profile.meta_description }}">
+    <meta property="og:description" content="{{ meta_description|default:profile.meta_description }}">
     <meta property="og:type" content="website">
+    {% if canonical_url %}<link rel="canonical" href="{{ canonical_url }}">{% endif %}
+    {% if og_image_url %}<meta property="og:image" content="{{ og_image_url }}">{% endif %}
     <script>
         (function () {
             try {
@@ -23,7 +25,7 @@
     <link rel="icon" href="{% static 'portfolio/img/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'portfolio/css/portfolio.css' %}">
 </head>
-<body>
+<body class="page-{{ active|default:'site' }}">
     <a class="skip-link" href="#main">Skip to content</a>
     <nav class="site-nav" aria-label="Primary navigation">
         <div class="nav-inner">
@@ -32,7 +34,7 @@
             </a>
             <div class="nav-links" id="primary-menu">
                 {% for item in nav_items %}
-                    <a class="{% if item.url_name == active %}active{% endif %}" href="{% url item.url_name %}">
+                    <a class="{% if item.url_name == active %}active{% endif %}" href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">
                         {% if item.url_name == active %}<span class="active-dot"></span>{% endif %}
                         {{ item.label }}
                     </a>
@@ -65,31 +67,17 @@
     <div class="progress-line" aria-hidden="true"></div>
 
     <main id="main">
+        {% if messages %}
+            <div class="message-stack" role="status" aria-live="polite">
+                {% for message in messages %}
+                    <div class="site-message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 
     <footer class="site-footer">
-        <div class="footer-grid">
-            <div>
-                <a class="brand footer-brand" href="{% url 'home' %}">
-                    <span class="brand-mark">{{ profile.initials }}</span>
-                    <span>{{ profile.name }}</span>
-                </a>
-                <p>{{ profile.summary }}</p>
-            </div>
-            <div>
-                <h2>Explore</h2>
-                {% for item in nav_items %}
-                    <a href="{% url item.url_name %}">{{ item.label }}</a>
-                {% endfor %}
-            </div>
-            <div>
-                <h2>Connect</h2>
-                {% for link in social_links %}
-                    <a href="{{ link.url }}">{{ link.label }}</a>
-                {% endfor %}
-            </div>
-        </div>
         <div class="footer-bottom">
             <span>&copy; {{ profile.name }} 2026</span>
             <span>{{ profile.location }}</span>

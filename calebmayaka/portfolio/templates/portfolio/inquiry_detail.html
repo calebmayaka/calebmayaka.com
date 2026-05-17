@@ -1,0 +1,30 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Inquiry Detail</p>
+        <h1>{{ inquiry.email }}</h1>
+        <span>{{ inquiry.get_inquiry_type_display }} submitted on {{ inquiry.created_at|date:"M j, Y g:i A" }}</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dev' %}">Back to Inquiries</a>
+</section>
+
+<section class="dashboard-panel inquiry-detail-panel reveal">
+    <div class="inquiry-detail-meta">
+        <span class="status-pill {% if inquiry.is_read %}is-read{% else %}is-unread{% endif %}">
+            {% if inquiry.is_read %}Read{% else %}Unread{% endif %}
+        </span>
+        <form action="{% url 'toggle_inquiry_read' inquiry.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit">{% if inquiry.is_read %}Mark unread{% else %}Mark read{% endif %}</button>
+        </form>
+        <a href="mailto:{{ inquiry.email }}?subject=Re:%20{{ inquiry.get_inquiry_type_display|urlencode }}">Reply by Email</a>
+    </div>
+
+    <article class="inquiry-detail-message">
+        {{ inquiry.message|linebreaksbr }}
+    </article>
+</section>
+{% endblock %}

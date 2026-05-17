@@ -1,0 +1,192 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-kpi-grid">
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"></path></svg>
+        </span>
+        <div>
+            <strong>{{ total_inquiries }}</strong>
+            <span>Total Inquiries</span>
+        </div>
+        <small>+{{ consultation_count }} consultations</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4Zm4 5h8M8 13h5"></path></svg>
+        </span>
+        <div>
+            <strong>{{ unread_count }}</strong>
+            <span>Unread Messages</span>
+        </div>
+        <small>Needs review</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"></path></svg>
+        </span>
+        <div>
+            <strong>{{ response_rate }}%</strong>
+            <span>Reviewed Rate</span>
+        </div>
+        <small>{{ read_count }} marked read</small>
+    </article>
+</section>
+
+<section class="dashboard-layout">
+    <article class="dashboard-panel dashboard-chart-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h1>Inquiry Statistics</h1>
+                <p>Monthly inquiry volume from your portfolio contact form.</p>
+            </div>
+            <a href="{% url 'dashboard_inquiries' %}">Open inbox</a>
+        </div>
+        <div class="dashboard-chart" aria-label="Monthly inquiry chart">
+            {% for month in monthly_activity %}
+                <div class="dashboard-chart-bar">
+                    <span style="height: {{ month.height }}%"></span>
+                    <strong>{{ month.label }}</strong>
+                    <small>{{ month.count }}</small>
+                </div>
+            {% endfor %}
+        </div>
+    </article>
+
+    <aside class="dashboard-panel dashboard-tracker reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Inquiry Pipeline</h2>
+                <p>Live snapshot of admin work.</p>
+            </div>
+            <span class="dashboard-dot-menu">...</span>
+        </div>
+        <div class="dashboard-progress-ring" style="--progress: {{ response_rate }}%">
+            <strong>{{ response_rate }}%</strong>
+            <span>Reviewed</span>
+        </div>
+        <div class="dashboard-pipeline-list">
+            <div>
+                <span>Unread queue</span>
+                <strong>{{ unread_count }}</strong>
+            </div>
+            <div>
+                <span>Website leads</span>
+                <strong>{{ website_count }}</strong>
+            </div>
+            <div>
+                <span>Consultations</span>
+                <strong>{{ consultation_count }}</strong>
+            </div>
+        </div>
+    </aside>
+</section>
+
+<section class="dashboard-bottom-grid">
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Latest Inquiries</h2>
+                <p>Newest client messages submitted from the site.</p>
+            </div>
+            <a href="{% url 'dashboard_inquiries' %}">View all</a>
+        </div>
+        {% if latest_inquiries %}
+            <div class="dashboard-table">
+                <div class="dashboard-table-head">
+                    <span>Client</span>
+                    <span>Type</span>
+                    <span>Status</span>
+                    <span>Date</span>
+                </div>
+                {% for inquiry in latest_inquiries %}
+                    <a class="dashboard-table-row" href="{% url 'dashboard_inquiries' %}?q={{ inquiry.email|urlencode }}">
+                        <span>
+                            <strong>{{ inquiry.email }}</strong>
+                            <small>{{ inquiry.message|truncatechars:58 }}</small>
+                        </span>
+                        <span>{{ inquiry.get_inquiry_type_display }}</span>
+                        <span class="status-pill {% if inquiry.is_read %}is-read{% else %}is-unread{% endif %}">
+                            {% if inquiry.is_read %}Read{% else %}Unread{% endif %}
+                        </span>
+                        <time datetime="{{ inquiry.created_at|date:'c' }}">{{ inquiry.created_at|date:"M j" }}</time>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>No inquiries yet</strong>
+                <span>Client messages will appear here after the contact form is submitted.</span>
+            </div>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Lead Types</h2>
+                <p>Breakdown by requested service.</p>
+            </div>
+        </div>
+        <div class="dashboard-type-list">
+            {% for item in type_breakdown %}
+                <div>
+                    <span>{{ item.label }}</span>
+                    <strong>{{ item.count }}</strong>
+                    <i><b style="width: {{ item.percent }}%"></b></i>
+                </div>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<section class="dashboard-panel dashboard-modules reveal">
+    <div class="dashboard-panel-heading">
+        <div>
+            <h2>Feature Roadmap</h2>
+            <p>Admin modules that can be switched on as the portfolio grows.</p>
+        </div>
+    </div>
+    <div class="dashboard-module-grid">
+        <a class="dashboard-module-card active" href="{% url 'dashboard_inquiries' %}">
+            <span>01</span>
+            <strong>Inquiry CRM</strong>
+            <small>Live inbox, filters, and read tracking.</small>
+        </a>
+        <div class="dashboard-module-card">
+            <span>02</span>
+            <strong>Content Manager</strong>
+            <small>Manage site copy, sections, and portfolio content from one place.</small>
+        </div>
+        {% if is_dashboard_admin %}
+            <a class="dashboard-module-card active" href="{% url 'dashboard_users' %}">
+                <span>03</span>
+                <strong>User Manager</strong>
+                <small>Create, edit, deactivate, and reset dashboard users.</small>
+            </a>
+        {% else %}
+            <div class="dashboard-module-card">
+                <span>03</span>
+                <strong>User Manager</strong>
+                <small>Admin-only module for access and role management.</small>
+            </div>
+        {% endif %}
+        <div class="dashboard-module-card">
+            <span>04</span>
+            <strong>Project Manager</strong>
+            <small>Publish, archive, and feature portfolio projects.</small>
+        </div>
+        <div class="dashboard-module-card">
+            <span>05</span>
+            <strong>Content Studio</strong>
+            <small>Edit case studies, testimonials, and site copy.</small>
+        </div>
+        <div class="dashboard-module-card">
+            <span>06</span>
+            <strong>Analytics</strong>
+            <small>Track traffic, conversions, and client interest.</small>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Blog{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Essays, notes, and technical writing from calebmayaka.com.{% endblock %}">
+    {% block seo_meta %}
+        <link rel="canonical" href="{{ request.build_absolute_uri }}">
+        <meta property="og:title" content="{% block og_title %}Blog{% endblock %}">
+        <meta property="og:description" content="{% block og_description %}Essays, notes, and technical writing from calebmayaka.com.{% endblock %}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta name="twitter:card" content="summary_large_image">
+    {% endblock %}
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('portfolio-theme') || 'dark';
+                document.documentElement.classList.toggle('light', theme === 'light');
+                document.documentElement.classList.toggle('dark', theme !== 'light');
+                document.documentElement.style.colorScheme = theme === 'light' ? 'light' : 'dark';
+            } catch (error) {}
+        })();
+    </script>
+    <link rel="icon" href="{% static 'portfolio/img/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'portfolio/css/portfolio.css' %}">
+    <link rel="stylesheet" href="{% static 'blogcms/css/blog.css' %}?v=20260517a">
+</head>
+<body class="page-blog blog-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="site-nav" aria-label="Primary navigation">
+        <div class="nav-inner">
+            <a class="brand" href="/" aria-label="calebmayaka.com home">
+                <span>calebmayaka.com</span>
+            </a>
+            <div class="nav-links" id="primary-menu">
+                <a href="/">Home</a>
+                <a href="/projects/">Projects</a>
+                <a class="active" href="/blog/"><span class="active-dot"></span>Blog</a>
+                <a href="/contact/">Contact</a>
+            </div>
+            <div class="nav-controls">
+                <button class="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false">
+                    <svg class="theme-icon theme-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="m17.66 17.66 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.34 17.66-1.41 1.41"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                    </svg>
+                    <svg class="theme-icon theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                        <path d="M20.9 13.4A8.5 8.5 0 1 1 10.6 3.1 6.7 6.7 0 0 0 20.9 13.4Z"></path>
+                    </svg>
+                </button>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="progress-line" aria-hidden="true"></div>
+
+    <main id="main">
+        {% block blog_content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-bottom">
+            <span>&copy; Caleb Mayaka 2026</span>
+            <span>Nairobi, Kenya</span>
+        </div>
+    </footer>
+
+    <script src="{% static 'portfolio/js/portfolio.js' %}"></script>
+</body>
+</html>

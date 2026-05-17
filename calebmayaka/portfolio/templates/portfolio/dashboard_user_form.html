@@ -1,0 +1,42 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>User Management</p>
+        <h1>{% if user_mode == 'create' %}Create User{% else %}Edit User{% endif %}</h1>
+        <span>{% if user_mode == 'create' %}Create a dashboard account with role-based access.{% else %}Update role, access state, and temporary password.{% endif %}</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dashboard_users' %}">Back to Users</a>
+</section>
+
+<section class="dashboard-panel user-form-panel reveal">
+    <form method="post" class="dashboard-user-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <ul class="errorlist">{{ form.non_field_errors }}</ul>
+        {% endif %}
+
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <button type="submit">{% if user_mode == 'create' %}Create User{% else %}Save Changes{% endif %}</button>
+    </form>
+
+    {% if user_mode == 'edit' %}
+        <form class="dashboard-user-form password-reset-form" action="{% url 'dashboard_user_reset_password' target_user.id %}" method="post">
+            {% csrf_token %}
+            <h2>Reset Temporary Password</h2>
+            <label>
+                <span>Temporary password</span>
+                <input type="password" name="temp_password" minlength="8" required>
+            </label>
+            <button type="submit">Update Password</button>
+        </form>
+    {% endif %}
+</section>
+{% endblock %}

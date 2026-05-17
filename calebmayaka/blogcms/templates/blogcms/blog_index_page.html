@@ -1,0 +1,100 @@
+{% extends "blogcms/blog_base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_description %}{{ page.search_description|default:"Essays, notes, and technical writing from calebmayaka.com." }}{% endblock %}
+{% block seo_meta %}
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.search_description|default:'Essays, notes, and technical writing from calebmayaka.com.' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta name="twitter:card" content="summary_large_image">
+{% endblock %}
+
+{% block blog_content %}
+<main class="blog-layout">
+    <section class="blog-listing-head reveal">
+        <h1>{{ page.title }}</h1>
+        {% if page.intro %}<div class="blog-intro">{{ page.intro|richtext }}</div>{% endif %}
+    </section>
+
+    {% if featured_post %}
+        <section class="blog-featured reveal" aria-label="Featured article">
+            <a href="{% pageurl featured_post %}">
+                {% if featured_post.cover_image %}
+                    {% image featured_post.cover_image fill-1040x680 as featured_thumb %}
+                    <div class="blog-featured-media">
+                        <img src="{{ featured_thumb.url }}" alt="{{ featured_post.title }}">
+                    </div>
+                {% else %}
+                    <div class="blog-featured-media blog-card-placeholder" aria-hidden="true"></div>
+                {% endif %}
+                <div class="blog-featured-copy">
+                    <span class="blog-featured-kicker">Featured article</span>
+                    <h2>{{ featured_post.title }}</h2>
+                    <p>{{ featured_post.subtitle|default:featured_post.excerpt|default:featured_post.search_description|truncatechars:220 }}</p>
+                    <div class="blog-card-meta">
+                        <span>{{ featured_post.date|date:"M j, Y" }}</span>
+                        <span>{{ featured_post.estimated_read_minutes }} min read</span>
+                    </div>
+                    {% if featured_post.tags.all %}
+                        <div class="blog-tag-list" aria-label="Article tags">
+                            {% for tag in featured_post.tags.all %}
+                                <span>{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </a>
+        </section>
+
+        {% if latest_posts %}
+            <section class="blog-section-head reveal">
+                <h2>Latest Articles</h2>
+                <p>Fresh notes, build logs, and technical essays.</p>
+            </section>
+            <section class="blog-post-grid" aria-label="Latest articles">
+                {% for post in latest_posts %}
+                <article class="blog-card reveal">
+                    <a href="{% pageurl post %}">
+                        {% if post.cover_image %}
+                            {% image post.cover_image fill-760x420 as thumb %}
+                            <img src="{{ thumb.url }}" alt="{{ post.title }}">
+                        {% else %}
+                            <div class="blog-card-placeholder" aria-hidden="true"></div>
+                        {% endif %}
+                        <div class="blog-card-body">
+                            <div class="blog-card-meta">
+                                <span>{{ post.date|date:"M j, Y" }}</span>
+                                <span>{{ post.estimated_read_minutes }} min read</span>
+                            </div>
+                            <h2>{{ post.title }}</h2>
+                            <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:160 }}</p>
+                            {% if post.tags.all %}
+                                <div class="blog-tag-list" aria-label="Article tags">
+                                    {% for tag in post.tags.all %}
+                                        <span>{{ tag.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small>Read article</small>
+                        </div>
+                    </a>
+                </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% else %}
+        <section class="blog-empty reveal">
+            <div class="blog-empty-art" aria-hidden="true">
+                <span></span>
+            </div>
+            <div>
+                <strong>Articles are being prepared</strong>
+                <p>The first published essays will appear here as soon as they go live in the CMS.</p>
+            </div>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}

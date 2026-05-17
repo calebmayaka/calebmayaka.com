@@ -1,0 +1,181 @@
+{% extends "blogcms/blog_base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_description %}{{ page.excerpt|default:page.search_description|default:page.title }}{% endblock %}
+{% block seo_meta %}
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.subtitle|default:page.excerpt|default:page.search_description|default:page.title }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if page.first_published_at %}<meta property="article:published_time" content="{{ page.first_published_at|date:'c' }}">{% endif %}
+    {% if page.last_published_at %}<meta property="article:modified_time" content="{{ page.last_published_at|date:'c' }}">{% endif %}
+    <meta property="article:author" content="{{ page.display_author }}">
+    {% for tag in page.tags.all %}<meta property="article:tag" content="{{ tag.name }}">{% endfor %}
+    {% if page.cover_image %}
+        {% image page.cover_image fill-1200x630 as social_image %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}">
+        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}">
+    {% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "{{ page.title|escapejs }}",
+            "description": "{{ page.subtitle|default:page.excerpt|default:page.search_description|default:page.title|escapejs }}",
+            "author": {
+                "@type": "Person",
+                "name": "{{ page.display_author|escapejs }}"
+            },
+            "datePublished": "{{ page.first_published_at|default:page.date|date:'c' }}",
+            "dateModified": "{{ page.last_published_at|default:page.first_published_at|default:page.date|date:'c' }}",
+            "mainEntityOfPage": "{{ request.build_absolute_uri }}"{% if page.cover_image %},
+            "image": "{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}"{% endif %}
+        }
+    </script>
+{% endblock %}
+
+{% block blog_content %}
+<main class="blog-layout blog-article-layout">
+    <article class="blog-article reveal">
+        <header class="blog-article-head reveal">
+            <div class="blog-breadcrumb">
+                <span>Article</span>
+            </div>
+            <h1>{{ page.title }}</h1>
+            {% if page.subtitle %}
+                <p class="blog-article-subtitle">{{ page.subtitle }}</p>
+            {% endif %}
+            <div class="blog-article-meta">
+                <div class="blog-author-avatar">{{ page.display_author|slice:":1"|upper }}</div>
+                <div>
+                    <strong>{{ page.display_author }}</strong>
+                    <p>Posted: {{ page.date|date:"M j, Y" }} &bull; {{ page.estimated_read_minutes }} min read</p>
+                </div>
+            </div>
+            {% if page.tags.all %}
+                <div class="blog-tag-list blog-article-tags" aria-label="Article tags">
+                    {% for tag in page.tags.all %}
+                        <span>{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </header>
+
+        {% if page.cover_image %}
+            {% image page.cover_image fill-1240x680 as hero %}
+            <figure class="blog-hero reveal">
+                <img src="{{ hero.url }}" alt="{{ page.title }}">
+            </figure>
+        {% else %}
+            <figure class="blog-hero blog-hero-placeholder reveal" aria-hidden="true">
+                <span></span>
+            </figure>
+        {% endif %}
+
+        {% if page.excerpt %}
+            <section class="blog-excerpt reveal">
+                <p>{{ page.excerpt }}</p>
+            </section>
+        {% endif %}
+
+        <section class="blog-content reveal">
+            {% if page.content %}
+                {% for block in page.content %}
+                    {% if block.block_type == 'rich_text' %}
+                        <div class="blog-stream-rich">
+                            {{ block.value|richtext }}
+                        </div>
+                    {% elif block.block_type == 'code' %}
+                        <figure class="blog-code-block">
+                            <figcaption class="blog-code-head">
+                                <span>
+                                    {% if block.value.filename %}
+                                        {{ block.value.filename }}
+                                    {% else %}
+                                        Code snippet
+                                    {% endif %}
+                                </span>
+                                <span>{{ block.value.language }}</span>
+                                <button type="button" aria-label="Copy code snippet" title="Copy code" data-copy-code>Copy</button>
+                            </figcaption>
+                            <pre><code>{{ block.value.code }}</code></pre>
+                            {% if block.value.caption %}
+                                <figcaption class="blog-code-caption">{{ block.value.caption }}</figcaption>
+                            {% endif %}
+                        </figure>
+                    {% elif block.block_type == 'image' %}
+                        {% image block.value.image width-1100 as stream_image %}
+                        <figure class="blog-stream-image">
+                            <img src="{{ stream_image.url }}" alt="{{ block.value.alt_text|default:block.value.caption|default:page.title }}">
+                            {% if block.value.caption %}
+                                <figcaption>{{ block.value.caption }}</figcaption>
+                            {% endif %}
+                        </figure>
+                    {% elif block.block_type == 'quote' %}
+                        <blockquote class="blog-stream-quote">
+                            {{ block.value }}
+                        </blockquote>
+                    {% elif block.block_type == 'callout' %}
+                        <aside class="blog-callout blog-callout-{{ block.value.style }}">
+                            {% if block.value.heading %}<strong>{{ block.value.heading }}</strong>{% endif %}
+                            {{ block.value.text|richtext }}
+                        </aside>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {{ page.body|richtext }}
+            {% endif %}
+        </section>
+
+        {% if related_posts %}
+            <section class="blog-more reveal" aria-label="More articles">
+                <div class="blog-section-head">
+                    <h2>More Articles</h2>
+                    <p>Keep reading from the same archive.</p>
+                </div>
+                <div class="blog-more-grid">
+                    {% for post in related_posts %}
+                        <article class="blog-card">
+                            <a href="{% pageurl post %}">
+                                {% if post.cover_image %}
+                                    {% image post.cover_image fill-760x420 as thumb %}
+                                    <img src="{{ thumb.url }}" alt="{{ post.title }}">
+                                {% else %}
+                                    <div class="blog-card-placeholder" aria-hidden="true"></div>
+                                {% endif %}
+                                <div class="blog-card-body">
+                                    <div class="blog-card-meta">
+                                        <span>{{ post.date|date:"M j, Y" }}</span>
+                                        <span>{{ post.estimated_read_minutes }} min read</span>
+                                    </div>
+                                    <h2>{{ post.title }}</h2>
+                                    <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:140 }}</p>
+                                    <small>Read article</small>
+                                </div>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </article>
+
+    <aside class="blog-actions" aria-label="Article actions">
+        <a class="blog-action-button" href="/blog/" title="Back to articles" aria-label="Back to articles">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+        </a>
+        <button type="button" title="Copy link" aria-label="Copy article link" data-copy-link="{{ request.build_absolute_uri }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg>
+        </button>
+        <button type="button" title="Share article" aria-label="Share article" data-share-link="{{ request.build_absolute_uri }}" data-share-title="{{ page.title }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7a3 3 0 1 0-2.8-4h-.4a3 3 0 0 0 0 6h.4A3 3 0 0 0 17 7Zm-10 8a3 3 0 1 0 2.8 4h.4a3 3 0 1 0 0-6h-.4A3 3 0 0 0 7 15Zm10-4a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM9.7 13.7l4.7-2.4M9.7 10.3l4.7 2.4"/></svg>
+        </button>
+        <button type="button" title="Back to top" aria-label="Back to top" data-scroll-top>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+    </aside>
+</main>
+{% endblock %}

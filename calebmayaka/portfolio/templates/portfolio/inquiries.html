@@ -1,0 +1,81 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Inquiry CRM</p>
+        <h1>Client Inquiries</h1>
+        <span>{{ unread_count }} unread, {{ total_inquiries }} total submissions.</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dashboard' %}">Dashboard</a>
+</section>
+
+<section class="dashboard-panel inquiry-workspace reveal">
+    <form class="inquiry-filters" method="get">
+        <label>
+            <span>Search</span>
+            <input type="search" name="q" value="{{ search_query }}" placeholder="Email or message">
+        </label>
+        <label>
+            <span>Status</span>
+            <select name="status">
+                <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All status</option>
+                <option value="unread" {% if status_filter == 'unread' %}selected{% endif %}>Unread</option>
+                <option value="read" {% if status_filter == 'read' %}selected{% endif %}>Read</option>
+            </select>
+        </label>
+        <label>
+            <span>Type</span>
+            <select name="type">
+                <option value="all" {% if type_filter == 'all' %}selected{% endif %}>All types</option>
+                {% for value, label in inquiry_types %}
+                    <option value="{{ value }}" {% if type_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="submit">Filter</button>
+    </form>
+
+    {% if inquiries %}
+        <div class="inquiry-table">
+            <div class="inquiry-table-head">
+                <span>Client</span>
+                <span>Request</span>
+                <span>Status</span>
+                <span>Received</span>
+                <span>Actions</span>
+            </div>
+            {% for inquiry in inquiries %}
+                <article class="inquiry-row {% if not inquiry.is_read %}unread{% endif %}">
+                    <div>
+                        <strong>{{ inquiry.email }}</strong>
+                        <small>{{ inquiry.message|truncatechars:90 }}</small>
+                    </div>
+                    <span>{{ inquiry.get_inquiry_type_display }}</span>
+                    <span class="status-pill {% if inquiry.is_read %}is-read{% else %}is-unread{% endif %}">
+                        {% if inquiry.is_read %}Read{% else %}Unread{% endif %}
+                    </span>
+                    <time datetime="{{ inquiry.created_at|date:'c' }}">{{ inquiry.created_at|date:"M j, Y g:i A" }}</time>
+                    <div class="inquiry-row-actions">
+                        <form action="{% url 'toggle_inquiry_read' inquiry.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit">
+                                {% if inquiry.is_read %}Mark unread{% else %}Mark read{% endif %}
+                            </button>
+                        </form>
+                        <a href="mailto:{{ inquiry.email }}?subject=Re:%20{{ inquiry.get_inquiry_type_display|urlencode }}">Reply</a>
+                        <a href="{% url 'inquiry_detail' inquiry.id %}">Open</a>
+                    </div>
+                    <p>{{ inquiry.message|linebreaksbr }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">
+            <strong>No inquiries found</strong>
+            <span>Try clearing filters or wait for a new portfolio submission.</span>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
