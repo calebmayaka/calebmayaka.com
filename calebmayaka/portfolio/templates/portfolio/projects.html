@@ -4,16 +4,30 @@
 <section class="page-hero section-shell reveal">
     <p class="eyebrow">Projects</p>
     <h1>A small selection of recent projects.</h1>
-    <p>These Caleb-branded placeholders preserve the style while leaving room for real portfolio work.</p>
+    <p>Concepts and builds that show how Caleb approaches product structure, clean interfaces, and useful systems.</p>
 </section>
 
 <section class="section-shell">
     <div class="project-grid">
         {% for project in projects %}
             <article class="project-card reveal">
-                <div class="project-visual visual-{{ forloop.counter }}">
-                    <span>{{ project.category }}</span>
-                    <strong>{{ project.status }}</strong>
+                <div class="project-visual visual-{{ forloop.counter }}" aria-hidden="true">
+                    <div class="project-window">
+                        <div class="project-window-bar">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="project-window-body">
+                            <span class="project-ui-line wide"></span>
+                            <span class="project-ui-line"></span>
+                            <div class="project-ui-grid">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-visual-meta">
+                        <span>{{ project.category }}</span>
+                        <strong>{{ project.status }}</strong>
+                    </div>
                 </div>
                 <div class="project-body">
                     <p class="eyebrow">{{ project.category }}</p>
@@ -30,7 +44,7 @@
                 </div>
             </article>
 
-            <div class="modal" id="project-{{ project.id }}" aria-hidden="true" role="dialog" aria-labelledby="project-title-{{ project.id }}">
+            <div class="modal" id="project-{{ project.id }}" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="project-title-{{ project.id }}">
                 <div class="modal-panel">
                     <button class="modal-close" type="button" aria-label="Close modal">&times;</button>
                     <p class="eyebrow">{{ project.category }}</p>
@@ -45,10 +59,12 @@
                             <span>{{ tag }}</span>
                         {% endfor %}
                     </div>
+                    {% if project.link != '#' or project.repo != '#' %}
                     <div class="modal-actions">
-                        <a class="btn btn-primary" href="{{ project.link }}">Live Link</a>
-                        <a class="btn btn-secondary" href="{{ project.repo }}">Repository</a>
+                        {% if project.link != '#' %}<a class="btn btn-primary" href="{{ project.link }}" target="_blank" rel="noopener noreferrer">Live Link</a>{% endif %}
+                        {% if project.repo != '#' %}<a class="btn btn-secondary" href="{{ project.repo }}" target="_blank" rel="noopener noreferrer">Repository</a>{% endif %}
                     </div>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

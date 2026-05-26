@@ -1,8 +1,10 @@
 import math
 import re
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models import Count, Q
 from django.utils import timezone
+from portfolio.models import SiteProfile, SocialLink
 from modelcluster.fields import ParentalKey
 from modelcluster.tags import ClusterTaggableManager
 from taggit.models import TaggedItemBase
@@ -82,6 +84,7 @@ class BlogCalloutBlock(blocks.StructBlock):
 
 class BlogIndexPage(Page):
     intro = RichTextField(blank=True)
+    POSTS_PER_PAGE = 6
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
@@ -98,9 +101,19 @@ class BlogIndexPage(Page):
             .order_by('-date', '-first_published_at')
         )
         featured_post = posts.filter(featured=True).first() or posts.first()
+        remaining = posts.exclude(pk=featured_post.pk) if featured_post else posts
 
-        context['featured_post'] = featured_post
-        context['latest_posts'] = posts.exclude(pk=featured_post.pk) if featured_post else posts
+        paginator = Paginator(remaining, self.POSTS_PER_PAGE)
+        page_num = request.GET.get('page', 1)
+        try:
+            page_obj = paginator.page(page_num)
+        except (EmptyPage, PageNotAnInteger):
+            page_obj = paginator.page(max(1, paginator.num_pages))
+
+        context['featured_post'] = featured_post if page_obj.number == 1 else None
+        context['latest_posts'] = page_obj
+        context['page_obj'] = page_obj
+        context['paginator'] = paginator
         context['posts'] = posts
         return context
 
@@ -143,6 +156,10 @@ class BlogPostPage(Page):
         use_json_field=True,
     )
     tags = ClusterTaggableManager(through=BlogPageTag, blank=True)
+    noindex = models.BooleanField(
+        default=False,
+        help_text='Exclude this page from search engine indexes.',
+    )
 
     parent_page_types = ['blogcms.BlogIndexPage']
     subpage_types = []
@@ -157,6 +174,10 @@ class BlogPostPage(Page):
         FieldPanel('tags'),
         FieldPanel('content'),
         FieldPanel('body'),
+    ]
+
+    promote_panels = Page.promote_panels + [
+        FieldPanel('noindex'),
     ]
 
     search_fields = Page.search_fields + [
@@ -226,4 +247,16 @@ class BlogPostPage(Page):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['related_posts'] = self.related_posts()
+        context['prev_post'] = (
+            BlogPostPage.objects.live().public()
+            .filter(date__lt=self.date)
+            .order_by('-date').first()
+        )
+        context['next_post'] = (
+            BlogPostPage.objects.live().public()
+            .filter(date__gt=self.date)
+            .order_by('date').first()
+        )
+        context['site_profile'] = SiteProfile.objects.first()
+        context['social_links'] = SocialLink.objects.order_by('order')
         return context

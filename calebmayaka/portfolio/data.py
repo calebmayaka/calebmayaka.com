@@ -9,6 +9,7 @@ profile = {
     ),
     'location': 'Nairobi, Kenya',
     'email': 'hello@calebmayaka.com',
+    'whatsapp_url': 'https://wa.me/254798934667',
     'availability': 'Available for selected freelance and collaboration work',
     'meta_description': (
         'Portfolio of Caleb Mayaka, a full-stack developer building polished web apps, '
@@ -18,13 +19,10 @@ profile = {
 
 nav_items = [
     {'label': 'Home', 'url_name': 'home'},
-    {'label': 'Projects', 'url_name': 'projects'},
     {'label': 'Blog', 'url': '/blog/'},
 ]
 
 social_links = [
-    {'label': 'GitHub', 'url': 'https://github.com/'},
-    {'label': 'LinkedIn', 'url': 'https://www.linkedin.com/'},
     {'label': 'Email', 'url': 'mailto:hello@calebmayaka.com'},
 ]
 
@@ -99,7 +97,7 @@ projects = [
         'id': 'portfolio-system',
         'title': 'Portfolio System',
         'category': 'Personal Brand',
-        'description': 'This multi-page Django portfolio, modeled after a modern Next.js reference while staying lightweight and editable.',
+        'description': 'This multi-page Django portfolio, shaped as a modern product site while staying lightweight and editable.',
         'tags': ['Django', 'Templates', 'CSS', 'JavaScript'],
         'impact': 'Creates a strong online presence that can grow into a full project and case-study archive.',
         'status': 'Live starter',
@@ -161,7 +159,7 @@ experience = [
         'achievements': [
             'Explored Django project structure, static assets, and app-based development.',
             'Built reusable content patterns for profiles, projects, skills, and case studies.',
-            'Documented placeholders so real professional details can be swapped in cleanly.',
+            'Kept content modular so new professional details can be added cleanly.',
         ],
     },
     {
@@ -170,7 +168,7 @@ experience = [
         'period': 'Ongoing',
         'description': 'Recreating modern portfolio styles with semantic HTML, custom CSS, and small JavaScript interactions.',
         'achievements': [
-            'Translated a dynamic reference site into a lighter Django-rendered implementation.',
+            'Translated a dynamic design direction into a lighter Django-rendered implementation.',
             'Implemented cards, timelines, modal details, mobile navigation, and animated reveals.',
             'Balanced visual polish with straightforward maintainability.',
         ],
@@ -184,10 +182,10 @@ case_studies = [
         'category': 'Web Presence',
         'duration': '1 week sprint',
         'role': 'Designer & Developer',
-        'description': 'Rebuilding a static reference into a clean Django portfolio with editable content and a modern visual system.',
-        'problem': 'The starting Django project was blank, while the desired look lived in a downloaded Next.js export that was hard to edit directly.',
+        'description': 'Rebuilding the portfolio into a clean Django site with editable content and a modern visual system.',
+        'problem': 'The starting Django project needed a stronger visual system, clearer content structure, and an easier editing path.',
         'solution': 'Create a Django-native app with shared templates, local static assets, data-driven content, and lightweight JavaScript interactions.',
-        'results': ['Six public pages', 'No React build step', 'Editable Python content', 'Responsive portfolio UI'],
+        'results': ['Six public pages', 'Clear site structure', 'Editable content', 'Responsive portfolio UI'],
         'tags': ['Django', 'Templates', 'Static Files', 'UX'],
     },
     {
@@ -219,12 +217,12 @@ case_studies = [
 testimonials = [
     {
         'quote': 'Caleb\'s portfolio is being shaped to communicate craft, clarity, and momentum from the first screen.',
-        'name': 'Portfolio Placeholder',
-        'title': 'Editable testimonial slot',
+        'name': 'Portfolio Review',
+        'title': 'Design feedback note',
     },
     {
-        'quote': 'The structure is ready for real client feedback once Caleb starts adding finished projects and references.',
-        'name': 'Future Client',
-        'title': 'Replace with real quote',
+        'quote': 'The structure is ready to grow with deeper project notes, writing, and collaboration outcomes.',
+        'name': 'Content Review',
+        'title': 'Portfolio planning note',
     },
 ]

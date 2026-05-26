@@ -24,22 +24,31 @@
             } catch (error) {}
         })();
     </script>
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="alternate" type="application/rss+xml" href="/blog/feed/" title="calebmayaka.com Blog">
+    <meta name="twitter:site" content="@calebmayaka">
+    <meta name="twitter:creator" content="@calebmayaka">
     <link rel="icon" href="{% static 'portfolio/img/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'portfolio/css/portfolio.css' %}">
     <link rel="stylesheet" href="{% static 'blogcms/css/blog.css' %}?v=20260517a">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.css" id="prism-theme">
 </head>
 <body class="page-blog blog-page">
     <a class="skip-link" href="#main">Skip to content</a>
     <nav class="site-nav" aria-label="Primary navigation">
         <div class="nav-inner">
-            <a class="brand" href="/" aria-label="calebmayaka.com home">
-                <span>calebmayaka.com</span>
+            <a class="brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
+                <span>{{ profile.name|default:'Caleb Mayaka'|lower|cut:" " }}</span>
             </a>
             <div class="nav-links" id="primary-menu">
-                <a href="/">Home</a>
-                <a href="/projects/">Projects</a>
-                <a class="active" href="/blog/"><span class="active-dot"></span>Blog</a>
-                <a href="/contact/">Contact</a>
+                {% with current_active=active|default:'blog' %}
+                    {% for item in primary_nav_items %}
+                        <a class="{% if item.active_key == current_active %}active{% endif %}" href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">
+                            {% if item.active_key == current_active %}<span class="active-dot"></span>{% endif %}
+                            {{ item.label }}
+                        </a>
+                    {% endfor %}
+                {% endwith %}
             </div>
             <div class="nav-controls">
                 <button class="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false">
@@ -72,12 +81,40 @@
     </main>
 
     <footer class="site-footer">
+        <div class="footer-grid">
+            <section>
+                <a class="footer-brand brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
+                    <span>{{ profile.name|default:'Caleb Mayaka' }}</span>
+                </a>
+            </section>
+            <nav class="footer-links" aria-label="Portfolio links">
+                <h2>Explore</h2>
+                {% for item in footer_nav_items %}
+                    <a href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">{{ item.label }}</a>
+                {% endfor %}
+                <a href="/blog/">Blog</a>
+            </nav>
+            <nav class="footer-links" aria-label="Contact links">
+                <h2>Connect</h2>
+                {% if social_links %}
+                    {% for link in social_links %}
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+                    {% endfor %}
+                {% elif profile.email %}
+                    <a href="mailto:{{ profile.email }}">Email</a>
+                {% endif %}
+                <a href="/#inquiry">Start a Project</a>
+            </nav>
+        </div>
         <div class="footer-bottom">
-            <span>&copy; Caleb Mayaka 2026</span>
-            <span>Nairobi, Kenya</span>
+            <span>&copy; {{ profile.name|default:'Caleb Mayaka' }} 2026</span>
+            <span>{{ profile.location }}</span>
         </div>
     </footer>
 
-    <script src="{% static 'portfolio/js/portfolio.js' %}"></script>
+    <script src="{% static 'portfolio/js/portfolio.js' %}" defer></script>
+    <script src="{% static 'blogcms/js/blog.js' %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 </body>
 </html>

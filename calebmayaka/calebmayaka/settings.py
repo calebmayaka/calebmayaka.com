@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'portfolio',
     'blogcms',
+    'django.contrib.sitemaps',
     'taggit',
     'modelcluster',
     'wagtail.contrib.forms',
@@ -84,6 +85,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
+                'portfolio.context_processors.site_chrome',
+                'blogcms.context_processors.giscus',
             ],
         },
     },
@@ -143,3 +146,17 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 WAGTAIL_SITE_NAME = 'calebmayaka.com blog'
 WAGTAILADMIN_BASE_URL = 'http://127.0.0.1:8000/cms'
+
+# Rate limiting
+RATELIMIT_USE_CACHE = 'default'
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@calebmayaka.com'
+NOTIFY_EMAIL = 'caleb@calebmayaka.com'
+
+# Giscus comments — get IDs from https://giscus.app after connecting your repo
+GISCUS_REPO = ''           # e.g. 'calebmayaka/calebmayaka.com'
+GISCUS_REPO_ID = ''        # From https://giscus.app
+GISCUS_CATEGORY = 'Announcements'
+GISCUS_CATEGORY_ID = ''    # From https://giscus.app

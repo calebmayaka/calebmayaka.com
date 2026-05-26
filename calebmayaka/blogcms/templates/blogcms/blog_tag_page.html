@@ -1,0 +1,57 @@
+{% extends "blogcms/blog_base.html" %}
+{% load wagtailimages_tags %}
+
+{% block title %}#{{ tag }} - Blog{% endblock %}
+{% block meta_description %}Articles tagged #{{ tag }} on calebmayaka.com.{% endblock %}
+
+{% block blog_content %}
+<div class="blog-layout">
+    <div class="blog-tag-head reveal">
+        <a class="blog-tag-back" href="{{ index_url }}">&larr; All articles</a>
+        <span class="blog-tag-kicker">Tag</span>
+        <h1>#{{ tag }}</h1>
+        <p>{{ post_count }} article{% if post_count != 1 %}s{% endif %} found</p>
+    </div>
+
+    {% if posts %}
+        <section class="blog-post-grid" aria-label="Articles tagged {{ tag }}">
+            {% for post in posts %}
+            <article class="blog-card reveal">
+                <a href="{{ post.url }}">
+                    {% if post.cover_image %}
+                        {% image post.cover_image fill-760x420 as thumb %}
+                        <img src="{{ thumb.url }}" alt="{{ post.title }}">
+                    {% else %}
+                        <div class="blog-card-placeholder" aria-hidden="true"></div>
+                    {% endif %}
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">
+                            <span>{{ post.date|date:"M j, Y" }}</span>
+                            <span>{{ post.estimated_read_minutes }} min read</span>
+                        </div>
+                        <h2>{{ post.title }}</h2>
+                        <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:160 }}</p>
+                        {% if post.tags.all %}
+                            <div class="blog-tag-list" aria-label="Article tags">
+                                {% for t in post.tags.all %}
+                                    <a href="{% url 'blog_tag' t.slug %}" class="blog-tag-link">{{ t.name }}</a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small>Read article</small>
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <section class="blog-empty reveal">
+            <div class="blog-empty-art" aria-hidden="true"><span></span></div>
+            <div>
+                <strong>No articles found for #{{ tag }}</strong>
+                <p><a href="{{ index_url }}">Browse all articles</a></p>
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

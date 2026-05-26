@@ -23,11 +23,19 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from blogcms.feeds import LatestBlogPostsFeed
+from blogcms.views import blog_search_view, blog_tag_view
+from wagtail.contrib.sitemaps.views import sitemap
+
 urlpatterns = [
     path('', include('portfolio.urls')),
     path('admin/', admin.site.urls),
     path('cms/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
+    path('sitemap.xml', sitemap, name='wagtail_sitemap'),
+    path('blog/search/', blog_search_view, name='blog_search'),   # must be before blog/
+    path('blog/tags/<slug:tag>/', blog_tag_view, name='blog_tag'),  # must be before blog/
+    path('blog/feed/', LatestBlogPostsFeed(), name='blog_feed'),  # must be before blog/
     path('blog/', include(wagtail_urls)),
     re_path(r'^blog$', RedirectView.as_view(url='/blog/', permanent=True)),
 ]

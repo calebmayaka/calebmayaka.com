@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\fredr\\\\Desktop\\\\calebmayaka.com\" -Force | Select-Object Name, @{Name=\"Type\";Expression={if\\($_.PSIsContainer\\){\"Directory\"}else{\"File\"}}} | Format-Table -AutoSize)",
+      "Bash(python -m pip freeze)",
+      "Read(//tmp/**)",
+      "Bash(findstr -i ratelimit)",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\fredr\\\\Desktop\\\\calebmayaka.com\\\\env\\\\Lib\\\\site-packages\" | Where-Object { $_.Name -match \"ratelimit|routable\" } | Select-Object Name)",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\fredr\\\\Desktop\\\\calebmayaka.com\\\\env\\\\Lib\\\\site-packages\" | Where-Object { $_.Name -match \"wagtail\" } | Select-Object Name)",
+      "PowerShell(python -c \"import wagtail; print\\(wagtail.__version__\\)\" 2>&1)",
+      "PowerShell(python -c \"import django_ratelimit; print\\('ratelimit ok'\\)\" 2>&1)",
+      "PowerShell(python -c \"from wagtail.contrib.routable_page.models import RoutablePageMixin, path; print\\('RoutablePageMixin ok'\\)\" 2>&1)",
+      "Bash(python manage.py makemigrations portfolio)",
+      "Bash(python -c \"import django; print\\(django.__file__\\)\")",
+      "Bash(python -c \"import taggit; print\\('taggit ok'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python manage.py migrate)",
+      "Bash(python manage.py seed_portfolio_content)",
+      "Bash(python manage.py check)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\fredr\\\\Desktop\\\\calebmayaka.com\\\\calebmayaka\\\\blogcms\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(python -c \"import wagtail.contrib.sitemaps; print\\('exists'\\)\")",
+      "PowerShell(Move-Item -Path \"c:\\\\Users\\\\fredr\\\\Desktop\\\\calebmayaka.com\\\\calebmayaka\\\\math.webp\" -Destination \"c:\\\\Users\\\\fredr\\\\Desktop\\\\calebmayaka.com\\\\calebmayaka\\\\portfolio\\\\static\\\\portfolio\\\\img\\\\math.webp\" -Force)"
+    ]
+  }
+}

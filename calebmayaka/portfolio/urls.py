@@ -4,12 +4,11 @@ from . import views
 
 
 urlpatterns = [
+    path('robots.txt', views.robots_txt, name='robots_txt'),
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
     path('experience/', views.experience, name='experience'),
-    path('projects/', views.projects, name='projects'),
     path('case-studies/', views.case_studies, name='case_studies'),
-    path('contact/', views.contact, name='contact'),
     path('dev/login/', views.dashboard_login, name='dashboard_login'),
     path('dev/', views.inquiry_dashboard, name='dev'),
     path('dev/inquiries/<int:inquiry_id>/', views.inquiry_detail, name='inquiry_detail'),

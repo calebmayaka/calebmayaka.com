@@ -6,26 +6,17 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
+from django_ratelimit.decorators import ratelimit
 
 from blogcms.models import BlogPostPage
 
-from .data import (
-    case_studies,
-    experience as experience_items,
-    nav_items,
-    profile,
-    projects as project_items,
-    skills,
-    social_links,
-    stats,
-    tech_stack,
-    testimonials,
-)
+from .context_processors import get_site_chrome
 from .forms import (
     DashboardLoginForm,
     DashboardPasswordResetForm,
@@ -33,15 +24,31 @@ from .forms import (
     DashboardUserUpdateForm,
     InquiryForm,
 )
-from .models import DashboardUserProfile, Inquiry
+from .models import (
+    CaseStudy,
+    DashboardUserProfile,
+    Experience,
+    Inquiry,
+    NavItem,
+    Project,
+    Skill,
+    SiteProfile,
+    SocialLink,
+    Stat,
+    TechStack,
+    Testimonial,
+)
+
+
+def _get_profile_name():
+    p = SiteProfile.objects.first()
+    return p.name if p else ''
 
 
 def base_context(active):
     return {
+        **get_site_chrome(),
         'active': active,
-        'profile': profile,
-        'nav_items': nav_items,
-        'social_links': social_links,
     }
 
 
@@ -128,26 +135,37 @@ def month_starts(month_count=7):
     return months
 
 
+@ratelimit(key='ip', rate='3/h', method='POST', block=False)
 def home(request):
+    was_limited = getattr(request, 'limited', False)
     inquiry_form = InquiryForm(request.POST or None)
-    if request.method == 'POST' and inquiry_form.is_valid():
-        inquiry_form.save()
-        messages.success(request, 'Your inquiry has been sent successfully.')
-        return redirect('home')
+    if request.method == 'POST':
+        if was_limited:
+            messages.error(request, 'Too many submissions. Please wait an hour before trying again.')
+            return redirect('home')
+        if inquiry_form.is_valid():
+            if inquiry_form.cleaned_data.get('website'):
+                messages.success(request, 'Your inquiry has been sent successfully.')
+                return redirect('home')
+            inquiry_form.save()
+            messages.success(request, 'Your inquiry has been sent successfully.')
+            return redirect('home')
 
+    _profile = SiteProfile.objects.first()
     context = {
         **base_context('home'),
-        'page_title': f"{profile['name']} | {profile['role']}",
-        'stats': stats,
-        'skills': skills,
-        'projects': project_items[:3],
+        'page_title': f"{_profile.name} | {_profile.role}" if _profile else '',
+        'stats': Stat.objects.order_by('order'),
+        'skills': Skill.objects.order_by('order'),
+        'projects': Project.objects.order_by('order')[:3],
         'blog_posts': (
             BlogPostPage.objects.live()
             .public()
             .order_by('-date', '-first_published_at')
         ),
-        'experience': experience_items,
-        'testimonials': testimonials,
+        'experience': Experience.objects.order_by('order'),
+        'testimonials': Testimonial.objects.order_by('order'),
+        'tech_stack': list(TechStack.objects.order_by('order').values_list('name', flat=True)),
         'inquiry_form': inquiry_form,
     }
     return render(request, 'portfolio/home.html', context)
@@ -156,10 +174,10 @@ def home(request):
 def about(request):
     context = {
         **base_context('about'),
-        'page_title': f"About | {profile['name']}",
-        'skills': skills,
-        'tech_stack': tech_stack,
-        'stats': stats,
+        'page_title': f"About | {_get_profile_name()}",
+        'skills': Skill.objects.order_by('order'),
+        'tech_stack': list(TechStack.objects.order_by('order').values_list('name', flat=True)),
+        'stats': Stat.objects.order_by('order'),
     }
     return render(request, 'portfolio/about.html', context)
 
@@ -167,9 +185,9 @@ def about(request):
 def experience(request):
     context = {
         **base_context('experience'),
-        'page_title': f"Experience | {profile['name']}",
-        'experience': experience_items,
-        'tech_stack': tech_stack,
+        'page_title': f"Experience | {_get_profile_name()}",
+        'experience': Experience.objects.order_by('order'),
+        'tech_stack': list(TechStack.objects.order_by('order').values_list('name', flat=True)),
     }
     return render(request, 'portfolio/experience.html', context)
 
@@ -177,8 +195,8 @@ def experience(request):
 def projects(request):
     context = {
         **base_context('projects'),
-        'page_title': f"Projects | {profile['name']}",
-        'projects': project_items,
+        'page_title': f"Projects | {_get_profile_name()}",
+        'projects': Project.objects.order_by('order'),
     }
     return render(request, 'portfolio/projects.html', context)
 
@@ -186,19 +204,10 @@ def projects(request):
 def case_studies(request):
     context = {
         **base_context('case_studies'),
-        'page_title': f"Case Studies | {profile['name']}",
-        'case_studies': case_studies,
+        'page_title': f"Case Studies | {_get_profile_name()}",
+        'case_studies': CaseStudy.objects.order_by('order'),
     }
     return render(request, 'portfolio/case_studies.html', context)
-
-
-def contact(request):
-    context = {
-        **base_context('contact'),
-        'page_title': f"Contact | {profile['name']}",
-        'skills': skills,
-    }
-    return render(request, 'portfolio/contact.html', context)
 
 
 def dashboard_login(request):
@@ -225,7 +234,7 @@ def dashboard_login(request):
 
     context = {
         **base_context('dashboard'),
-        'page_title': f"Login | {profile['name']}",
+        'page_title': f"Login | {_get_profile_name()}",
         'form': form,
         'next_url': next_url,
     }
@@ -267,7 +276,7 @@ def dashboard(request):
 
     context = {
         **dashboard_context(request, 'overview'),
-        'page_title': f"Dashboard | {profile['name']}",
+        'page_title': f"Dashboard | {_get_profile_name()}",
         'latest_inquiries': inquiries[:5],
         'monthly_activity': monthly_activity,
         'type_breakdown': type_breakdown,
@@ -295,7 +304,7 @@ def inquiry_dashboard(request):
 
     context = {
         **dashboard_context(request, 'inquiries'),
-        'page_title': f"Inquiries | {profile['name']}",
+        'page_title': f"Inquiries | {_get_profile_name()}",
         'inquiries': inquiries,
         'search_query': search_query,
         'status_filter': status_filter,
@@ -310,7 +319,7 @@ def inquiry_detail(request, inquiry_id):
     inquiry = get_object_or_404(Inquiry, id=inquiry_id)
     context = {
         **dashboard_context(request, 'inquiries'),
-        'page_title': f"Inquiry Detail | {profile['name']}",
+        'page_title': f"Inquiry Detail | {_get_profile_name()}",
         'inquiry': inquiry,
     }
     return render(request, 'portfolio/inquiry_detail.html', context)
@@ -345,7 +354,7 @@ def dashboard_users(request):
     users = User.objects.select_related('dashboard_profile').order_by('username')
     context = {
         **dashboard_context(request, 'users'),
-        'page_title': f"Users | {profile['name']}",
+        'page_title': f"Users | {_get_profile_name()}",
         'users': users,
     }
     return render(request, 'portfolio/dashboard_users.html', context)
@@ -368,7 +377,7 @@ def dashboard_user_create(request):
 
     context = {
         **dashboard_context(request, 'users'),
-        'page_title': f"Create User | {profile['name']}",
+        'page_title': f"Create User | {_get_profile_name()}",
         'form': form,
         'user_mode': 'create',
     }
@@ -411,7 +420,7 @@ def dashboard_user_edit(request, user_id):
 
     context = {
         **dashboard_context(request, 'users'),
-        'page_title': f"Edit User | {profile['name']}",
+        'page_title': f"Edit User | {_get_profile_name()}",
         'form': form,
         'target_user': target_user,
         'target_profile': target_profile,
@@ -478,3 +487,12 @@ def dashboard_logout(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('dashboard_login')
+
+
+def robots_txt(request):
+    lines = [
+        'User-agent: *',
+        'Allow: /',
+        'Sitemap: https://calebmayaka.com/sitemap.xml',
+    ]
+    return HttpResponse('\n'.join(lines), content_type='text/plain')

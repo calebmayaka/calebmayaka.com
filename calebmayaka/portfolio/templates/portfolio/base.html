@@ -4,14 +4,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title|default:profile.name }}</title>
+    <title>{{ page_title|default:profile.name|default:'Caleb Mayaka' }}</title>
     <meta name="description" content="{{ meta_description|default:profile.meta_description }}">
-    <meta name="author" content="{{ profile.name }}">
-    <meta property="og:title" content="{{ page_title|default:profile.name }}">
+    <meta name="author" content="{{ profile.name|default:'Caleb Mayaka' }}">
+    <meta property="og:title" content="{{ page_title|default:profile.name|default:'Caleb Mayaka' }}">
     <meta property="og:description" content="{{ meta_description|default:profile.meta_description }}">
     <meta property="og:type" content="website">
-    {% if canonical_url %}<link rel="canonical" href="{{ canonical_url }}">{% endif %}
-    {% if og_image_url %}<meta property="og:image" content="{{ og_image_url }}">{% endif %}
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@calebmayaka">
+    <meta name="twitter:creator" content="@calebmayaka">
+    <link rel="canonical" href="{{ canonical_url|default:request.build_absolute_uri }}">
+    {% if og_image_url %}
+    <meta property="og:image" content="{{ og_image_url }}">
+    <meta name="twitter:image" content="{{ og_image_url }}">
+    {% endif %}
+    {% block head_extra %}{% endblock %}
     <script>
         (function () {
             try {
@@ -29,13 +37,13 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <nav class="site-nav" aria-label="Primary navigation">
         <div class="nav-inner">
-            <a class="brand" href="{% url 'home' %}" aria-label="{{ profile.name }} home">
-                <span>{{ profile.name }}</span>
+            <a class="brand" href="{% url 'home' %}" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
+                <span>{{ profile.name|default:'Caleb Mayaka'|lower|cut:" " }}</span>
             </a>
             <div class="nav-links" id="primary-menu">
-                {% for item in nav_items %}
-                    <a class="{% if item.url_name == active %}active{% endif %}" href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">
-                        {% if item.url_name == active %}<span class="active-dot"></span>{% endif %}
+                {% for item in primary_nav_items %}
+                    <a class="{% if item.active_key == active %}active{% endif %}" href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">
+                        {% if item.active_key == active %}<span class="active-dot"></span>{% endif %}
                         {{ item.label }}
                     </a>
                 {% endfor %}
@@ -78,12 +86,37 @@
     </main>
 
     <footer class="site-footer">
+        <div class="footer-grid">
+            <section>
+                <a class="footer-brand brand" href="{% url 'home' %}" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
+                    <span>{{ profile.name|default:'Caleb Mayaka' }}</span>
+                </a>
+            </section>
+            <nav class="footer-links" aria-label="Portfolio links">
+                <h2>Explore</h2>
+                {% for item in footer_nav_items %}
+                    <a href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">{{ item.label }}</a>
+                {% endfor %}
+                <a href="/blog/">Blog</a>
+            </nav>
+            <nav class="footer-links" aria-label="Contact links">
+                <h2>Connect</h2>
+                {% if social_links %}
+                    {% for link in social_links %}
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+                    {% endfor %}
+                {% elif profile.email %}
+                    <a href="mailto:{{ profile.email }}">Email</a>
+                {% endif %}
+                <a href="{% url 'home' %}#inquiry">Start a Project</a>
+            </nav>
+        </div>
         <div class="footer-bottom">
-            <span>&copy; {{ profile.name }} 2026</span>
+            <span>&copy; {{ profile.name|default:'Caleb Mayaka' }} 2026</span>
             <span>{{ profile.location }}</span>
         </div>
     </footer>
 
-    <script src="{% static 'portfolio/js/portfolio.js' %}"></script>
+    <script src="{% static 'portfolio/js/portfolio.js' %}" defer></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {% extends "blogcms/blog_base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
-{% block title %}{{ page.title }}{% endblock %}
+{% block title %}{{ page.seo_title|default:page.title }}{% endblock %}
 {% block meta_description %}{{ page.excerpt|default:page.search_description|default:page.title }}{% endblock %}
 {% block seo_meta %}
     <link rel="canonical" href="{{ request.build_absolute_uri }}">
@@ -19,7 +19,20 @@
         <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}">
     {% endif %}
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@calebmayaka">
+    <meta name="twitter:creator" content="@calebmayaka">
+    {% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
     <script type="application/ld+json">
+    [
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+                {"@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ request.scheme }}://{{ request.get_host }}/blog/"},
+                {"@type": "ListItem", "position": 3, "name": "{{ page.title|escapejs }}"}
+            ]
+        },
         {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
@@ -34,16 +47,21 @@
             "mainEntityOfPage": "{{ request.build_absolute_uri }}"{% if page.cover_image %},
             "image": "{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}"{% endif %}
         }
+    ]
     </script>
 {% endblock %}
 
 {% block blog_content %}
-<main class="blog-layout blog-article-layout">
+<div class="blog-layout blog-article-layout">
     <article class="blog-article reveal">
         <header class="blog-article-head reveal">
-            <div class="blog-breadcrumb">
-                <span>Article</span>
-            </div>
+            <nav class="blog-breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span aria-hidden="true">/</span>
+                <a href="{{ page.get_parent.url }}">Blog</a>
+                <span aria-hidden="true">/</span>
+                <span aria-current="page">{{ page.title }}</span>
+            </nav>
             <h1>{{ page.title }}</h1>
             {% if page.subtitle %}
                 <p class="blog-article-subtitle">{{ page.subtitle }}</p>
@@ -58,7 +76,7 @@
             {% if page.tags.all %}
                 <div class="blog-tag-list blog-article-tags" aria-label="Article tags">
                     {% for tag in page.tags.all %}
-                        <span>{{ tag.name }}</span>
+                        <a href="{% url 'blog_tag' tag.slug %}" class="blog-tag-link">{{ tag.name }}</a>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -81,6 +99,8 @@
             </section>
         {% endif %}
 
+        <nav class="blog-toc" id="blog-toc" aria-label="Table of contents"></nav>
+
         <section class="blog-content reveal">
             {% if page.content %}
                 {% for block in page.content %}
@@ -101,7 +121,7 @@
                                 <span>{{ block.value.language }}</span>
                                 <button type="button" aria-label="Copy code snippet" title="Copy code" data-copy-code>Copy</button>
                             </figcaption>
-                            <pre><code>{{ block.value.code }}</code></pre>
+                            <pre class="language-{{ block.value.language }}"><code class="language-{{ block.value.language }}">{{ block.value.code }}</code></pre>
                             {% if block.value.caption %}
                                 <figcaption class="blog-code-caption">{{ block.value.caption }}</figcaption>
                             {% endif %}
@@ -129,6 +149,62 @@
                 {{ page.body|richtext }}
             {% endif %}
         </section>
+
+        {% if site_profile %}
+        <aside class="blog-author-bio reveal">
+            <div class="blog-author-bio-avatar">{{ site_profile.initials }}</div>
+            <div class="blog-author-bio-body">
+                <strong class="blog-author-bio-name">{{ site_profile.name }}</strong>
+                <span class="blog-author-bio-role">{{ site_profile.role }}</span>
+                <p class="blog-author-bio-summary">{{ site_profile.summary }}</p>
+                {% if social_links %}
+                <div class="blog-author-bio-links">
+                    {% for link in social_links %}
+                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </aside>
+        {% endif %}
+
+        {% if prev_post or next_post %}
+        <nav class="blog-post-nav reveal" aria-label="Article navigation">
+            {% if prev_post %}
+            <a class="blog-post-nav-item blog-post-nav-item--prev" href="{% pageurl prev_post %}">
+                <span class="blog-post-nav-label">&larr; Previous</span>
+                <strong>{{ prev_post.title }}</strong>
+            </a>
+            {% else %}<div></div>{% endif %}
+            {% if next_post %}
+            <a class="blog-post-nav-item blog-post-nav-item--next" href="{% pageurl next_post %}">
+                <span class="blog-post-nav-label">Next &rarr;</span>
+                <strong>{{ next_post.title }}</strong>
+            </a>
+            {% else %}<div></div>{% endif %}
+        </nav>
+        {% endif %}
+
+        {% if GISCUS_REPO %}
+        <section class="blog-comments reveal">
+            <h2 class="blog-comments-heading">Discussion</h2>
+            <script src="https://giscus.app/client.js"
+                data-repo="{{ GISCUS_REPO }}"
+                data-repo-id="{{ GISCUS_REPO_ID }}"
+                data-category="{{ GISCUS_CATEGORY }}"
+                data-category-id="{{ GISCUS_CATEGORY_ID }}"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="top"
+                data-theme="preferred_color_scheme"
+                data-lang="en"
+                crossorigin="anonymous"
+                async>
+            </script>
+        </section>
+        {% endif %}
 
         {% if related_posts %}
             <section class="blog-more reveal" aria-label="More articles">
@@ -167,6 +243,24 @@
         <a class="blog-action-button" href="/blog/" title="Back to articles" aria-label="Back to articles">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
         </a>
+        <a class="blog-action-button blog-action-social"
+           href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ page.title|urlencode }}"
+           target="_blank" rel="noopener noreferrer"
+           title="Share on X / Twitter" aria-label="Share on X / Twitter">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+        </a>
+        <a class="blog-action-button blog-action-social"
+           href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}"
+           target="_blank" rel="noopener noreferrer"
+           title="Share on LinkedIn" aria-label="Share on LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V9h4v1.4A6 6 0 0 1 16 8z"/>
+                <rect x="2" y="9" width="4" height="12"/>
+                <circle cx="4" cy="4" r="2"/>
+            </svg>
+        </a>
         <button type="button" title="Copy link" aria-label="Copy article link" data-copy-link="{{ request.build_absolute_uri }}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg>
         </button>
@@ -177,5 +271,5 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
         </button>
     </aside>
-</main>
+</div>
 {% endblock %}

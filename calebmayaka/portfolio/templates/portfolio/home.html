@@ -1,298 +1,201 @@
 {% extends 'portfolio/base.html' %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
+{% block head_extra %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ profile.name|escapejs }}",
+    "jobTitle": "{{ profile.role|escapejs }}",
+    "url": "{{ request.scheme }}://{{ request.get_host }}/",
+    "email": "{{ profile.email|escapejs }}"{% if social_links %},
+    "sameAs": [{% for link in social_links %}"{{ link.url|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endif %}
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <section class="hero hero-scene">
-    <div class="hero-space" aria-hidden="true">
-        <span class="star star-1"></span>
-        <span class="star star-2"></span>
-        <span class="star star-3"></span>
-        <span class="star star-4"></span>
-        <span class="star star-5"></span>
-        <span class="star star-6"></span>
-        <span class="space-cube cube-left"></span>
-        <span class="space-cube cube-bottom-left"></span>
-        <span class="space-rings rings-top-right"></span>
-        <span class="space-rings rings-bottom-right"></span>
-        <span class="space-line line-right"></span>
-        <span class="space-poly poly-center"></span>
-    </div>
     <div class="hero-center reveal">
-        <h1><span data-time-greeting>Good day</span></h1>
-        <h2>Software Engineer &amp; Solution Architect</h2>
-        <p>Designing resilient software products and scalable architectures that help teams move faster.</p>
+        {% if profile.availability %}
+        <p class="hero-availability" aria-label="Availability">
+            <span class="hero-availability-dot" aria-hidden="true"></span>
+            Available for new projects
+        </p>
+        {% endif %}
+        <h1 class="hero-handle-h1">@calebmayaka</h1>
+        <p class="hero-bio">{{ profile.headline }}</p>
         <div class="hero-actions">
-            <a class="btn btn-primary" href="https://wa.me/254798934667" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path d="M20 11.5a8 8 0 0 1-11.9 7l-4.1 1.2 1.2-4A8 8 0 1 1 20 11.5Z"></path>
-                    <path d="M9.2 8.4c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.7 1.2 1.6 2.1 2.9 2.8l.7-.6c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.6v.5c0 .3 0 .5-.4.7-.4.3-1.1.5-1.8.4-3.2-.4-5.8-3-6.2-6.2-.1-.7.1-1.4.4-1.8Z"></path>
-                </svg>
-                WhatsApp Me
+            <a class="btn btn-primary hero-cta-primary" href="/blog/">
+                Read the Blog
             </a>
-            <a class="btn btn-secondary hero-build-btn" href="{% url 'contact' %}">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2c3.2 1.2 5.4 3.8 6.2 7.8l-4 4c-4-.8-6.6-3-7.8-6.2L12 2Z"></path>
-                    <path d="m7 14-3 3 3 1 1 3 3-3"></path>
-                    <path d="M14.5 7.5h.01"></path>
-                </svg>
-                Let's Build Together
+            <a class="btn btn-secondary hero-cta-secondary" href="#inquiry">
+                Get in Touch
             </a>
+            <div class="hero-socials" aria-label="Social links">
+                <a class="hero-social" href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.27-1.7-1.27-1.7-1.05-.71.08-.7.08-.7 1.16.09 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.64 1.6.24 2.77.12 3.06.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .5Z"/>
+                    </svg>
+                </a>
+                <a class="hero-social" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M18.244 2H21l-6.52 7.45L22 22h-6.78l-4.78-6.27L4.94 22H2.18l6.97-7.96L2 2h6.95l4.32 5.71L18.244 2Zm-1.18 18.27h1.55L7.04 3.63H5.4L17.064 20.27Z"/>
+                    </svg>
+                </a>
+                {% if profile.whatsapp_url %}
+                <a class="hero-social" href="{{ profile.whatsapp_url }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347Z"/>
+                        <path fill="currentColor" d="M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.062 12.062 0 0 0 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896 0-3.176-1.24-6.165-3.49-8.413M12.05 21.785h-.004a9.87 9.87 0 0 1-5.03-1.372l-.36-.214-3.741.975 1-3.638-.235-.374a9.86 9.86 0 0 1-1.516-5.27c.001-5.45 4.448-9.884 9.889-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.892 6.994c-.003 5.45-4.45 9.885-9.881 9.885"/>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
         </div>
-        <a class="scroll-cue" href="#code-showcase" aria-label="Scroll to Code Showcase">
-            <span>Scroll to explore</span>
-            <span class="mouse-icon"><i></i></span>
+        <a class="scroll-cue" href="{% if blog_posts %}#latest-posts{% else %}#code-showcase{% endif %}" aria-label="Scroll to first section">
+            <span>scroll</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14M5 13l7 7 7-7"/>
+            </svg>
         </a>
     </div>
 </section>
 
+{% if blog_posts %}
+<section class="section-shell latest-posts-shell" id="latest-posts">
+    <div class="section-heading reveal">
+        <p class="eyebrow">Latest writing</p>
+        <h2>Fresh notes from the blog</h2>
+        <p>Practical essays, build logs, and ideas from the workbench.</p>
+    </div>
+    <div class="blog-feed-grid">
+        {% for post in blog_posts|slice:":3" %}
+            <article class="blog-feed-card reveal">
+                <a href="{% pageurl post %}">
+                    {% if post.cover_image %}
+                        {% image post.cover_image fill-760x440 as post_thumb %}
+                        <div class="blog-feed-media">
+                            <img src="{{ post_thumb.url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                        </div>
+                    {% else %}
+                        <div class="blog-feed-media blog-feed-media-fallback" aria-hidden="true">
+                            <span>Blog</span>
+                        </div>
+                    {% endif %}
+                    <div class="blog-feed-copy">
+                        <div class="blog-feed-meta">
+                            <span>{{ post.date|date:"M j, Y" }}</span>
+                            <span>{{ post.estimated_read_minutes }} min read</span>
+                        </div>
+                        <h3>{{ post.title }}</h3>
+                        <p>{{ post.excerpt|default:post.search_description|truncatechars:160 }}</p>
+                        <span class="blog-feed-link">Read article</span>
+                    </div>
+                </a>
+            </article>
+        {% endfor %}
+    </div>
+    <div class="section-cta reveal">
+        <a class="btn btn-secondary" href="/blog/">View all articles &rarr;</a>
+    </div>
+</section>
+{% endif %}
+
 <section class="code-showcase section-shell" id="code-showcase">
     <div class="code-showcase-heading reveal">
+        <p class="eyebrow">Proof of work</p>
         <h2>Code <span>Showcase</span></h2>
-        <p>Explore my coding style through these snippets.</p>
+        <p>Small excerpts that reflect how this portfolio is put together.</p>
     </div>
     <div class="code-showcase-grid">
-        <div class="snippet-list">
-            <button class="snippet-card active reveal" type="button" data-snippet-id="rag" data-title="Advanced RAG Pipeline with Vector Search &amp; LLM Orchestration" data-description="Production-grade Retrieval-Augmented Generation system with semantic chunking, hybrid search, and multi-agent workflows" data-tags="RAG,Vector DB,LangChain,OpenAI,Pinecone,Redis" aria-selected="true">
-                <div class="snippet-icon ts-icon">TS</div>
-                <div>
-                    <h3>Advanced RAG Pipeline with Vector Search &amp; LLM Orchestration</h3>
-                    <p>Production-grade Retrieval-Augmented Generation system with semantic chunking, hybrid search, and multi-agent workflows</p>
-                </div>
-            </button>
-            <button class="snippet-card reveal" type="button" data-snippet-id="ml" data-title="Distributed ML Training with Kubernetes &amp; Ray" data-description="Scalable machine learning pipeline with distributed training, hyperparameter optimization, and model serving" data-tags="Ray,Kubernetes,MLOps,Distributed Training,AutoML" aria-selected="false">
+        <div class="snippet-list" role="tablist" aria-label="Code examples">
+            <button class="snippet-card active reveal" type="button" role="tab" id="snippet-tab-django" aria-controls="code-panel" data-snippet-id="django" data-title="Django Inquiry Workflow" data-description="A compact view pattern for rate-limited forms, clear feedback, and editable portfolio content." data-tags="Django,Forms,Rate limit,Messages" aria-selected="true">
                 <div class="snippet-icon py-icon">Py</div>
                 <div>
-                    <h3>Distributed ML Training with Kubernetes &amp; Ray</h3>
-                    <p>Scalable machine learning pipeline with distributed training, hyperparameter optimization, and model serving</p>
+                    <h3>Django Inquiry Workflow</h3>
+                    <p>Rate-limited form handling with a clean redirect path and user feedback.</p>
                 </div>
             </button>
-            <button class="snippet-card reveal" type="button" data-snippet-id="events" data-title="Event-Driven Microservices with CQRS &amp; Event Sourcing" data-description="Scalable microservices architecture using CQRS, Event Sourcing, and distributed event streaming with Kafka" data-tags="CQRS,Event Sourcing,Kafka,Microservices,DDD" aria-selected="false">
+            <button class="snippet-card reveal" type="button" role="tab" id="snippet-tab-ui" aria-controls="code-panel" data-snippet-id="ui" data-title="Accessible UI Interactions" data-description="Small JavaScript helpers for theme state, keyboard support, and modal behavior." data-tags="JavaScript,A11y,Theme,Modals" aria-selected="false">
                 <div class="snippet-icon js-icon">JS</div>
                 <div>
-                    <h3>Event-Driven Microservices with CQRS &amp; Event Sourcing</h3>
-                    <p>Scalable microservices architecture using CQRS, Event Sourcing, and distributed event streaming with Kafka</p>
+                    <h3>Accessible UI Interactions</h3>
+                    <p>Interface behavior kept lightweight, readable, and keyboard-friendly.</p>
                 </div>
             </button>
-            <button class="snippet-card reveal" type="button" data-snippet-id="vision" data-title="GPU-Accelerated Computer Vision Pipeline" data-description="High-performance computer vision system with CUDA acceleration, real-time object detection, and distributed inference" data-tags="CUDA,OpenCV,PyTorch,TensorRT,Real-time,Computer Vision" aria-selected="false">
-                <div class="snippet-icon py-icon">Py</div>
+            <button class="snippet-card reveal" type="button" role="tab" id="snippet-tab-template" aria-controls="code-panel" data-snippet-id="template" data-title="Content-Driven Project Cards" data-description="Reusable template markup that lets portfolio content change without redesigning the page." data-tags="Templates,Cards,Content,Responsive" aria-selected="false">
+                <div class="snippet-icon ts-icon">UI</div>
                 <div>
-                    <h3>GPU-Accelerated Computer Vision Pipeline</h3>
-                    <p>High-performance computer vision system with CUDA acceleration, real-time object detection, and distributed inference</p>
+                    <h3>Content-Driven Project Cards</h3>
+                    <p>Reusable card structure for projects, case studies, and evolving content.</p>
                 </div>
             </button>
         </div>
-        <article class="code-panel reveal">
+        <article class="code-panel reveal" id="code-panel" role="tabpanel" aria-labelledby="snippet-tab-django" aria-live="polite">
             <header class="code-panel-header">
                 <div>
-                    <h3 id="code-panel-title">Advanced RAG Pipeline with Vector Search &amp; LLM Orchestration</h3>
-                    <p id="code-panel-description">Production-grade Retrieval-Augmented Generation system with semantic chunking, hybrid search, and multi-agent workflows</p>
+                    <h3 id="code-panel-title">Django Inquiry Workflow</h3>
+                    <p id="code-panel-description">A compact view pattern for rate-limited forms, clear feedback, and editable portfolio content.</p>
                 </div>
                 <button class="copy-code" type="button" aria-label="Copy code snippet">
                     <span></span><span></span>
                 </button>
             </header>
             <div class="code-tags" id="code-panel-tags">
-                <span>RAG</span>
-                <span>Vector DB</span>
-                <span>LangChain</span>
-                <span>OpenAI</span>
-                <span>Pinecone</span>
-                <span>Redis</span>
+                <span>Django</span>
+                <span>Forms</span>
+                <span>Rate limit</span>
+                <span>Messages</span>
             </div>
-            <pre class="showcase-code"><code id="code-panel-code"><span class="line">16</span> <span class="code-blue">class</span> <span class="code-green">AdvancedRAGPipeline</span> {
-<span class="line">27</span>   <span class="code-blue">async</span> processQuery(query: <span class="code-cyan">string</span>, context?: <span class="code-green">AgentContext</span>): <span class="code-green">Promise</span>&lt;RAGResponse&gt; {
-<span class="line">46</span>     <span class="code-blue">const</span> retrievalResults = <span class="code-blue">await</span> <span class="code-green">Promise</span>.all(retrievalPromises);
-<span class="line">47</span>     <span class="code-blue">const</span> fusedResults = this.fusionRanking(retrievalResults, rewrittenQueries);
-
-<span class="line">49</span>     <span class="code-comment">// Context-aware generation with citation tracking</span>
-<span class="line">50</span>     <span class="code-blue">return</span> this.generateWithCitations(query, fusedResults, context);
-<span class="line">51</span>   }
-
-<span class="line">53</span>   private <span class="code-blue">async</span> hybridRetrieval(query: <span class="code-cyan">string</span>, params: <span class="code-green">RetrievalParams</span>) {
-<span class="line">54</span>     <span class="code-blue">const</span> [vectorResults, keywordResults] = <span class="code-blue">await</span> <span class="code-green">Promise</span>.all([
-<span class="line">55</span>       this.vectorSearch(query, params.maxResults),
-<span class="line">56</span>       this.keywordSearch(query, params.maxResults)
-<span class="line">57</span>     ]);
-
-<span class="line">59</span>     <span class="code-comment">// RRF (Reciprocal Rank Fusion) scoring</span>
-<span class="line">60</span>     <span class="code-blue">return</span> this.reciprocalRankFusion(vectorResults, keywordResults, params);
-<span class="line">61</span>   }
-
-<span class="line">63</span>   private fusionRanking(results: <span class="code-green">DocumentChunk</span>[][], queries: <span class="code-cyan">string</span>[]): <span class="code-green">DocumentChunk</span>[] {
-<span class="line">64</span>     <span class="code-blue">const</span> scoreMap = <span class="code-blue">new</span> <span class="code-green">Map</span>&lt;<span class="code-cyan">string</span>, { doc: DocumentChunk; totalScore: number }&gt;();
-<span class="line">66</span>     results.forEach((resultSet, queryIndex) =&gt; {
-<span class="line">67</span>       <span class="code-blue">const</span> queryWeight = 1 / (queryIndex + 1); <span class="code-comment">// Decay for expanded queries</span>
-<span class="line">69</span>       resultSet.forEach((doc, rank) =&gt; {
-<span class="line">70</span>         <span class="code-blue">const</span> rrf = 1 / (rank + 60); <span class="code-comment">// RRF with k=60</span>
-<span class="line">71</span>         <span class="code-blue">const</span> existing = scoreMap.get(doc.id);
-<span class="line">73</span>         <span class="code-blue">if</span> (existing) {
-<span class="line">74</span>           existing.totalScore += rrf * queryWeight;
-<span class="line">75</span>         } <span class="code-blue">else</span> {
-<span class="line">76</span>           scoreMap.set(doc.id, { doc, totalScore: rrf * queryWeight });
-<span class="line">77</span>         }
-<span class="line">78</span>       });
-<span class="line">79</span>     });
-<span class="line">80</span>   }
-<span class="line">81</span> }</code></pre>
+            <pre class="showcase-code"><code id="code-panel-code"><span class="line">1</span> <span class="code-blue">@ratelimit</span>(key=<span class="code-yellow">"ip"</span>, rate=<span class="code-yellow">"3/h"</span>, method=<span class="code-yellow">"POST"</span>, block=<span class="code-blue">False</span>)
+<span class="line">2</span> <span class="code-blue">def</span> <span class="code-green">home</span>(request):
+<span class="line">3</span>     form = <span class="code-green">InquiryForm</span>(request.POST <span class="code-blue">or</span> <span class="code-blue">None</span>)
+<span class="line">4</span>     <span class="code-blue">if</span> request.method == <span class="code-yellow">"POST"</span> <span class="code-blue">and</span> form.is_valid():
+<span class="line">5</span>         <span class="code-blue">if</span> getattr(request, <span class="code-yellow">"limited"</span>, <span class="code-blue">False</span>):
+<span class="line">6</span>             messages.error(request, <span class="code-yellow">"Please wait before trying again."</span>)
+<span class="line">7</span>             <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)
+<span class="line">8</span>         form.save()
+<span class="line">9</span>         messages.success(request, <span class="code-yellow">"Your inquiry has been sent."</span>)
+<span class="line">10</span>        <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)</code></pre>
         </article>
     </div>
 
-    <template id="snippet-rag-code"><span class="line">16</span> <span class="code-blue">class</span> <span class="code-green">AdvancedRAGPipeline</span> {
-<span class="line">27</span>   <span class="code-blue">async</span> processQuery(query: <span class="code-cyan">string</span>, context?: <span class="code-green">AgentContext</span>): <span class="code-green">Promise</span>&lt;RAGResponse&gt; {
-<span class="line">46</span>     <span class="code-blue">const</span> retrievalResults = <span class="code-blue">await</span> <span class="code-green">Promise</span>.all(retrievalPromises);
-<span class="line">47</span>     <span class="code-blue">const</span> fusedResults = this.fusionRanking(retrievalResults, rewrittenQueries);
+    <template id="snippet-django-code"><span class="line">1</span> <span class="code-blue">@ratelimit</span>(key=<span class="code-yellow">"ip"</span>, rate=<span class="code-yellow">"3/h"</span>, method=<span class="code-yellow">"POST"</span>, block=<span class="code-blue">False</span>)
+<span class="line">2</span> <span class="code-blue">def</span> <span class="code-green">home</span>(request):
+<span class="line">3</span>     form = <span class="code-green">InquiryForm</span>(request.POST <span class="code-blue">or</span> <span class="code-blue">None</span>)
+<span class="line">4</span>     <span class="code-blue">if</span> request.method == <span class="code-yellow">"POST"</span> <span class="code-blue">and</span> form.is_valid():
+<span class="line">5</span>         <span class="code-blue">if</span> getattr(request, <span class="code-yellow">"limited"</span>, <span class="code-blue">False</span>):
+<span class="line">6</span>             messages.error(request, <span class="code-yellow">"Please wait before trying again."</span>)
+<span class="line">7</span>             <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)
+<span class="line">8</span>         form.save()
+<span class="line">9</span>         messages.success(request, <span class="code-yellow">"Your inquiry has been sent."</span>)
+<span class="line">10</span>        <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)</template>
 
-<span class="line">49</span>     <span class="code-comment">// Context-aware generation with citation tracking</span>
-<span class="line">50</span>     <span class="code-blue">return</span> this.generateWithCitations(query, fusedResults, context);
-<span class="line">51</span>   }
+    <template id="snippet-ui-code"><span class="line">1</span> <span class="code-blue">const</span> setTheme = (theme) =&gt; {
+<span class="line">2</span>   <span class="code-blue">const</span> isLight = theme === <span class="code-yellow">"light"</span>;
+<span class="line">3</span>   root.classList.toggle(<span class="code-yellow">"light"</span>, isLight);
+<span class="line">4</span>   root.classList.toggle(<span class="code-yellow">"dark"</span>, !isLight);
+<span class="line">5</span>   themeToggle.setAttribute(<span class="code-yellow">"aria-pressed"</span>, String(isLight));
+<span class="line">6</span> };
 
-<span class="line">53</span>   private <span class="code-blue">async</span> hybridRetrieval(query: <span class="code-cyan">string</span>, params: <span class="code-green">RetrievalParams</span>) {
-<span class="line">54</span>     <span class="code-blue">const</span> [vectorResults, keywordResults] = <span class="code-blue">await</span> <span class="code-green">Promise</span>.all([
-<span class="line">55</span>       this.vectorSearch(query, params.maxResults),
-<span class="line">56</span>       this.keywordSearch(query, params.maxResults)
-<span class="line">57</span>     ]);
+<span class="line">8</span> document.querySelectorAll(<span class="code-yellow">".modal-open"</span>).forEach((button) =&gt; {
+<span class="line">9</span>   button.addEventListener(<span class="code-yellow">"click"</span>, () =&gt; {
+<span class="line">10</span>    openModal(document.getElementById(button.dataset.modalTarget), button);
+<span class="line">11</span>  });
+<span class="line">12</span> });</template>
 
-<span class="line">59</span>     <span class="code-comment">// RRF (Reciprocal Rank Fusion) scoring</span>
-<span class="line">60</span>     <span class="code-blue">return</span> this.reciprocalRankFusion(vectorResults, keywordResults, params);
-<span class="line">61</span>   }
-
-<span class="line">63</span>   private fusionRanking(results: <span class="code-green">DocumentChunk</span>[][], queries: <span class="code-cyan">string</span>[]): <span class="code-green">DocumentChunk</span>[] {
-<span class="line">64</span>     <span class="code-blue">const</span> scoreMap = <span class="code-blue">new</span> <span class="code-green">Map</span>&lt;<span class="code-cyan">string</span>, { doc: DocumentChunk; totalScore: number }&gt;();
-<span class="line">66</span>     results.forEach((resultSet, queryIndex) =&gt; {
-<span class="line">67</span>       <span class="code-blue">const</span> queryWeight = 1 / (queryIndex + 1); <span class="code-comment">// Decay for expanded queries</span>
-<span class="line">69</span>       resultSet.forEach((doc, rank) =&gt; {
-<span class="line">70</span>         <span class="code-blue">const</span> rrf = 1 / (rank + 60); <span class="code-comment">// RRF with k=60</span>
-<span class="line">71</span>         <span class="code-blue">const</span> existing = scoreMap.get(doc.id);
-<span class="line">73</span>         <span class="code-blue">if</span> (existing) {
-<span class="line">74</span>           existing.totalScore += rrf * queryWeight;
-<span class="line">75</span>         } <span class="code-blue">else</span> {
-<span class="line">76</span>           scoreMap.set(doc.id, { doc, totalScore: rrf * queryWeight });
-<span class="line">77</span>         }
-<span class="line">78</span>       });
-<span class="line">79</span>     });
-<span class="line">80</span>   }
-<span class="line">81</span> }</template>
-
-    <template id="snippet-ml-code"><span class="line">1</span> <span class="code-comment"># Distributed ML Training Pipeline with Ray and Kubernetes</span>
-<span class="line">2</span> <span class="code-blue">import</span> ray
-<span class="line">3</span> <span class="code-blue">from</span> ray <span class="code-blue">import</span> tune, train
-<span class="line">4</span> <span class="code-blue">from</span> ray.train <span class="code-blue">import</span> ScalingConfig, RunConfig
-<span class="line">5</span> <span class="code-blue">from</span> ray.train.huggingface <span class="code-blue">import</span> HuggingFaceTrainer
-<span class="line">6</span> <span class="code-blue">from</span> ray.tune.schedulers <span class="code-blue">import</span> ASHAScheduler
-<span class="line">7</span> <span class="code-blue">from</span> ray.tune.search.optuna <span class="code-blue">import</span> OptunaSearch
-<span class="line">8</span> <span class="code-blue">import</span> torch
-<span class="line">9</span> <span class="code-blue">import</span> transformers
-<span class="line">10</span> <span class="code-blue">from</span> kubernetes <span class="code-blue">import</span> client, config
-<span class="line">11</span> <span class="code-blue">import</span> asyncio
-<span class="line">12</span> <span class="code-blue">from</span> typing <span class="code-blue">import</span> Dict, List, Optional
-<span class="line">13</span> <span class="code-blue">import</span> wandb
-<span class="line">14</span> <span class="code-blue">from</span> dataclasses <span class="code-blue">import</span> dataclass
-
-<span class="line">16</span> <span class="code-blue">@dataclass</span>
-<span class="line">17</span> <span class="code-blue">class</span> <span class="code-green">DistributedTrainingConfig</span>:
-<span class="line">18</span>     model_name: <span class="code-cyan">str</span>
-<span class="line">19</span>     dataset_path: <span class="code-cyan">str</span>
-<span class="line">20</span>     num_workers: <span class="code-cyan">int</span>
-<span class="line">21</span>     gpu_per_worker: <span class="code-cyan">int</span>
-<span class="line">22</span>     batch_size_per_worker: <span class="code-cyan">int</span>
-<span class="line">23</span>     learning_rate_range: <span class="code-cyan">tuple</span>
-<span class="line">24</span>     epochs: <span class="code-cyan">int</span>
-<span class="line">25</span>     checkpoint_freq: <span class="code-cyan">int</span>
-
-<span class="line">27</span> <span class="code-blue">class</span> <span class="code-green">KubernetesMLPipeline</span>:
-<span class="line">28</span>     <span class="code-blue">def</span> <span class="code-cyan">__init__</span>(self, k8s_config_path: <span class="code-cyan">str</span>, ray_cluster_config: <span class="code-green">Dict</span>):
-<span class="line">29</span>         config.load_kube_config(config_file=k8s_config_path)
-<span class="line">30</span>         self.k8s_client = client.AppsV1Api()
-<span class="line">31</span>         self.ray_config = ray_cluster_config
-
-<span class="line">33</span>     <span class="code-blue">async def</span> setup_distributed_cluster(self) -&gt; ray.cluster_utils.Cluster:
-<span class="line">34</span>         <span class="code-yellow">"""Initialize Ray cluster on Kubernetes with auto-scaling"""</span>
-<span class="line">35</span>         cluster_config = {
-<span class="line">36</span>             <span class="code-yellow">"cluster_name"</span>: <span class="code-yellow">"ml-training-cluster"</span>,
-<span class="line">37</span>             <span class="code-yellow">"provider"</span>: {<span class="code-yellow">"type"</span>: <span class="code-yellow">"kubernetes"</span>, <span class="code-yellow">"namespace"</span>: <span class="code-yellow">"ml-workloads"</span>},
-<span class="line">38</span>         }</template>
-
-    <template id="snippet-events-code"><span class="line">16</span> <span class="code-blue">const</span> <span class="code-green">OrderCreatedEventSchema</span> = z.<span class="code-cyan">object</span>({
-<span class="line">19</span>   items: z.<span class="code-cyan">array</span>(z.<span class="code-cyan">object</span>({
-<span class="line">22</span>     price: z.<span class="code-cyan">number</span>()
-<span class="line">23</span>   })),
-<span class="line">24</span>   totalAmount: z.<span class="code-cyan">number</span>(),
-<span class="line">25</span>   createdAt: z.<span class="code-cyan">date</span>()
-<span class="line">26</span> });
-
-<span class="line">28</span> <span class="code-blue">type</span> <span class="code-green">DomainEvent</span> =
-<span class="line">29</span>   | { type: <span class="code-yellow">'UserRegistered'</span>; data: z.<span class="code-cyan">infer</span>&lt;<span class="code-green">typeof</span> UserRegisteredEventSchema&gt; }
-<span class="line">30</span>   | { type: <span class="code-yellow">'OrderCreated'</span>; data: z.<span class="code-cyan">infer</span>&lt;<span class="code-green">typeof</span> OrderCreatedEventSchema&gt; }
-<span class="line">31</span>   | { type: <span class="code-yellow">'PaymentProcessed'</span>; data: PaymentProcessedEvent }
-<span class="line">32</span>   | { type: <span class="code-yellow">'InventoryUpdated'</span>; data: InventoryUpdatedEvent };
-
-<span class="line">34</span> <span class="code-comment">// Event Sourcing Infrastructure</span>
-<span class="line">35</span> <span class="code-blue">export class</span> <span class="code-green">EventSourcingRepository</span>&lt;T extends AggregateRoot&gt; {
-<span class="line">36</span>   <span class="code-blue">constructor</span>(
-<span class="line">37</span>     private eventStore: EventStore,
-<span class="line">38</span>     private kafkaProducer: Producer,
-<span class="line">39</span>     private redis: Redis,
-<span class="line">40</span>     private aggregateFactory: (id: <span class="code-cyan">string</span>) =&gt; T
-<span class="line">41</span>   ) {}
-
-<span class="line">43</span>   <span class="code-blue">async</span> save(aggregate: T): <span class="code-green">Promise</span>&lt;void&gt; {
-<span class="line">44</span>     <span class="code-blue">const</span> uncommittedEvents = aggregate.getUncommittedEvents();
-<span class="line">45</span>     <span class="code-blue">if</span> (uncommittedEvents.length === 0) <span class="code-blue">return</span>;
-
-<span class="line">47</span>     <span class="code-blue">const</span> streamName = `${aggregate.constructor.name}-${aggregate.id}`;
-<span class="line">48</span>     <span class="code-blue">const</span> expectedRevision = aggregate.version - uncommittedEvents.length;
-
-<span class="line">50</span>     <span class="code-comment">// Transactional event store write</span>
-<span class="line">51</span>     <span class="code-blue">const</span> eventData = uncommittedEvents.<span class="code-cyan">map</span>(event =&gt; ({
-<span class="line">52</span>       id: crypto.<span class="code-cyan">randomUUID</span>(),
-<span class="line">53</span>       type: event.type,
-<span class="line">54</span>       data: event.data,
-<span class="line">55</span>       metadata: {
-<span class="line">56</span>         aggregateId: aggregate.id,
-<span class="line">57</span>         aggregateType: aggregate.constructor.name
-<span class="line">58</span>       }
-<span class="line">59</span>     }));
-<span class="line">60</span>   }
-<span class="line">61</span> }</template>
-
-    <template id="snippet-vision-code"><span class="line">1</span> <span class="code-comment"># GPU-Accelerated Computer Vision Pipeline with TensorRT Optimization</span>
-<span class="line">2</span> <span class="code-blue">import</span> torch
-<span class="line">3</span> <span class="code-blue">import</span> torchvision.transforms <span class="code-blue">as</span> transforms
-<span class="line">4</span> <span class="code-blue">import</span> tensorrt <span class="code-blue">as</span> trt
-<span class="line">5</span> <span class="code-blue">import</span> pycuda.driver <span class="code-blue">as</span> cuda
-<span class="line">6</span> <span class="code-blue">import</span> pycuda.autoinit
-<span class="line">7</span> <span class="code-blue">import</span> numpy <span class="code-blue">as</span> np
-<span class="line">8</span> <span class="code-blue">import</span> cv2
-<span class="line">9</span> <span class="code-blue">from</span> concurrent.futures <span class="code-blue">import</span> ThreadPoolExecutor, as_completed
-<span class="line">10</span> <span class="code-blue">import</span> asyncio
-<span class="line">11</span> <span class="code-blue">from</span> typing <span class="code-blue">import</span> List, Tuple, Dict, Optional
-<span class="line">12</span> <span class="code-blue">from</span> dataclasses <span class="code-blue">import</span> dataclass
-<span class="line">13</span> <span class="code-blue">import</span> tritonclient.grpc <span class="code-blue">as</span> grpcclient
-<span class="line">14</span> <span class="code-blue">from</span> collections <span class="code-blue">import</span> deque
-<span class="line">15</span> <span class="code-blue">import</span> time
-
-<span class="line">17</span> <span class="code-blue">@dataclass</span>
-<span class="line">18</span> <span class="code-blue">class</span> <span class="code-green">DetectionResult</span>:
-<span class="line">19</span>     class_id: <span class="code-cyan">int</span>
-<span class="line">20</span>     confidence: <span class="code-cyan">float</span>
-<span class="line">21</span>     bbox: <span class="code-green">Tuple</span>[<span class="code-cyan">int</span>, <span class="code-cyan">int</span>, <span class="code-cyan">int</span>, <span class="code-cyan">int</span>]
-<span class="line">22</span>     mask: <span class="code-green">Optional</span>[np.ndarray] = <span class="code-blue">None</span>
-<span class="line">23</span>     keypoints: <span class="code-green">Optional</span>[<span class="code-green">List</span>[<span class="code-green">Tuple</span>[<span class="code-cyan">float</span>, <span class="code-cyan">float</span>]]] = <span class="code-blue">None</span>
-
-<span class="line">25</span> <span class="code-blue">class</span> <span class="code-green">TensorRTOptimizer</span>:
-<span class="line">26</span>     <span class="code-yellow">"""Optimize PyTorch models for high-performance inference with TensorRT"""</span>
-
-<span class="line">28</span>     <span class="code-blue">def</span> <span class="code-cyan">__init__</span>(self, max_batch_size: <span class="code-cyan">int</span> = 32, precision: <span class="code-cyan">str</span> = <span class="code-yellow">"fp16"</span>):
-<span class="line">29</span>         self.max_batch_size = max_batch_size
-<span class="line">30</span>         self.precision = precision
-<span class="line">31</span>         self.logger = trt.Logger(trt.Logger.WARNING)
-
-<span class="line">33</span>     <span class="code-blue">def</span> <span class="code-cyan">optimize_model</span>(
-<span class="line">34</span>         self,
-<span class="line">35</span>         onnx_path: <span class="code-cyan">str</span>,
-<span class="line">36</span>         engine_path: <span class="code-cyan">str</span>,
-<span class="line">37</span>         input_shape: <span class="code-green">Tuple</span>[<span class="code-cyan">int</span>, <span class="code-cyan">int</span>, <span class="code-cyan">int</span>, <span class="code-cyan">int</span>]
-<span class="line">38</span>     ) -&gt; <span class="code-blue">None</span>:</template>
+    <template id="snippet-template-code"><span class="line">1</span> &lt;article class=<span class="code-yellow">"project-card reveal"</span>&gt;
+<span class="line">2</span>   &lt;div class=<span class="code-yellow">"project-visual"</span> aria-hidden=<span class="code-yellow">"true"</span>&gt;
+<span class="line">3</span>     &lt;div class=<span class="code-yellow">"project-window"</span>&gt;&lt;/div&gt;
+<span class="line">4</span>   &lt;/div&gt;
+<span class="line">5</span>   &lt;div class=<span class="code-yellow">"project-body"</span>&gt;
+<span class="line">6</span>     &lt;p class=<span class="code-yellow">"eyebrow"</span>&gt;Project category&lt;/p&gt;
+<span class="line">7</span>     &lt;h2&gt;Project title&lt;/h2&gt;
+<span class="line">8</span>     &lt;p&gt;A concise outcome-focused summary.&lt;/p&gt;
+<span class="line">9</span>   &lt;/div&gt;
+<span class="line">10</span> &lt;/article&gt;</template>
 </section>
 
 <section class="bento-showcase section-shell">
@@ -302,14 +205,14 @@
                 <div class="bento-inner">
                     <span class="bento-icon target-icon" aria-hidden="true"></span>
                     <h2>Client-First Approach</h2>
-                    <p>Building trust through transparent communication and collaboration.</p>
+                    <p>Building trust through transparent communication and clear next steps.</p>
                 </div>
             </article>
             <article class="bento-card reveal">
                 <div class="bento-inner">
                     <span class="bento-icon globe-icon" aria-hidden="true"></span>
-                    <h2>Global Flexibility</h2>
-                    <p>Available across time zones for seamless worldwide collaboration.</p>
+                    <h2>Flexible Collaboration</h2>
+                    <p>Comfortable working across time zones, teams, and product stages.</p>
                 </div>
             </article>
         </div>
@@ -318,16 +221,16 @@
             <div class="bento-inner">
                 <span class="bento-icon code-icon" aria-hidden="true"></span>
                 <h2>Modern Tech Stack</h2>
-                <p>Technologies and tools I use to build innovative solutions</p>
+                <p>Tools for maintainable interfaces, dependable backends, and practical automation.</p>
                 <div class="tech-logo-grid">
-                    <span><strong class="next-logo">N</strong><em>Next.js</em></span>
-                    <span><strong class="react-logo">⚛</strong><em>React</em></span>
-                    <span><strong class="ts-logo">TS</strong><em>TypeScript</em></span>
-                    <span><strong class="js-logo">JS</strong><em>JavaScript</em></span>
                     <span><strong class="python-logo">Py</strong><em>Python</em></span>
-                    <span><strong class="fast-logo">F</strong><em>FastAPI</em></span>
-                    <span><strong class="node-logo">JS</strong><em>Node.js</em></span>
-                    <span><strong class="framer-logo">F</strong><em>Framer</em></span>
+                    <span><strong class="next-logo">D</strong><em>Django</em></span>
+                    <span><strong class="js-logo">JS</strong><em>JavaScript</em></span>
+                    <span><strong class="ts-logo">UI</strong><em>HTML/CSS</em></span>
+                    <span><strong class="fast-logo">API</strong><em>REST APIs</em></span>
+                    <span><strong class="node-logo">DB</strong><em>Data models</em></span>
+                    <span><strong class="framer-logo">AI</strong><em>AI workflows</em></span>
+                    <span><strong class="react-logo">UX</strong><em>Product UX</em></span>
                 </div>
             </div>
         </article>
@@ -336,15 +239,15 @@
             <article class="bento-card reveal">
                 <div class="bento-inner">
                     <span class="bento-icon bolt-icon" aria-hidden="true"></span>
-                    <h2>AI-Powered Solutions</h2>
-                    <p>Specializing in intelligent automation and LLM integrations.</p>
+                    <h2>AI-Ready Features</h2>
+                    <p>Automation, content workflows, and LLM integrations shaped around real tasks.</p>
                 </div>
             </article>
             <article class="bento-card reveal">
                 <div class="bento-inner">
                     <span class="bento-icon briefcase-icon" aria-hidden="true"></span>
                     <h2>Ready to Collaborate</h2>
-                    <p>Let's create something amazing together</p>
+                    <p>Start with a focused first version and keep improving from there.</p>
                 </div>
             </article>
         </div>
@@ -355,7 +258,7 @@
     <div class="section-heading reveal">
         <p class="eyebrow">Capabilities</p>
         <h2>Focused services for useful web products</h2>
-        <p>Modeled after the reference portfolio’s rich cards, but rebuilt as maintainable Django templates.</p>
+        <p>Designing careful interfaces around dependable Django systems and practical product workflows.</p>
     </div>
     <div class="card-grid">
         {% for skill in skills %}
@@ -373,57 +276,18 @@
     </div>
 </section>
 
-<section class="section-shell blog-feed-shell" id="blog">
-    <div class="section-heading reveal blog-feed-heading">
-        <p class="eyebrow">Blog</p>
-        <h2>Published insights from my Wagtail CMS</h2>
-        <p>Every article below is pulled directly from the posts you have published in Wagtail.</p>
-    </div>
-    {% if blog_posts %}
-        <div class="blog-feed-grid">
-            {% for post in blog_posts %}
-                <article class="blog-feed-card reveal">
-                    <a href="{% pageurl post %}">
-                        {% if post.cover_image %}
-                            {% image post.cover_image fill-760x440 as post_thumb %}
-                            <div class="blog-feed-media">
-                                <img src="{{ post_thumb.url }}" alt="{{ post.title }}">
-                            </div>
-                        {% else %}
-                            <div class="blog-feed-media blog-feed-media-fallback" aria-hidden="true">
-                                <span>Blog</span>
-                            </div>
-                        {% endif %}
-                        <div class="blog-feed-copy">
-                            <div class="blog-feed-meta">
-                                <span>{{ post.date|date:"M j, Y" }}</span>
-                                <span>{{ post.estimated_read_minutes }} min read</span>
-                            </div>
-                            <h3>{{ post.title }}</h3>
-                            <p>{{ post.excerpt|default:post.search_description|truncatechars:190 }}</p>
-                            <span class="blog-feed-link">Read article</span>
-                        </div>
-                    </a>
-                </article>
-            {% endfor %}
-        </div>
-    {% else %}
-        <article class="blog-feed-empty reveal">
-            <h3>No published posts yet</h3>
-            <p>Publish your first blog in Wagtail and it will appear here automatically.</p>
-            <a class="btn btn-secondary" href="/blog/">Open blog hub</a>
-        </article>
-    {% endif %}
-</section>
-
 <section class="inquiry-section section-shell" id="inquiry">
     <div class="section-heading reveal">
         <p class="eyebrow">Inquiry</p>
         <h2>Tell me what you need built</h2>
-        <p>Share your email, inquiry type, and the details. I’ll review it and respond with the clearest next step.</p>
+        <p>Share your email, inquiry type, and the details. I'll review it and respond with the clearest next step.</p>
     </div>
     <form class="inquiry-form reveal" action="{% url 'home' %}#inquiry" method="post">
         {% csrf_token %}
+        <div style="display:none!important;position:absolute;left:-9999px;" aria-hidden="true">
+            <label for="{{ inquiry_form.website.id_for_label }}">Website</label>
+            {{ inquiry_form.website }}
+        </div>
         <div class="form-field">
             <label for="{{ inquiry_form.email.id_for_label }}">{{ inquiry_form.email.label }}</label>
             {{ inquiry_form.email }}
@@ -446,7 +310,7 @@
 <section class="cta-band section-shell reveal">
     <h2>Ready to build something useful?</h2>
     <p>Start with a small, clear first version and let the work sharpen from there.</p>
-    <a class="btn btn-primary" href="{% url 'contact' %}">Let's Collaborate</a>
+    <a class="btn btn-primary" href="#inquiry">Let's Collaborate</a>
 </section>
 
 {% endblock %}

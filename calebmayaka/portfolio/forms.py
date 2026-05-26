@@ -7,6 +7,17 @@ from .models import DashboardUserProfile, Inquiry
 
 
 class InquiryForm(forms.ModelForm):
+    # Honeypot: bots fill it in, humans leave it blank
+    website = forms.CharField(
+        required=False,
+        label='',
+        widget=forms.TextInput(attrs={
+            'tabindex': '-1',
+            'autocomplete': 'off',
+            'aria-hidden': 'true',
+        }),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['inquiry_type'].choices = [('', 'Select inquiry type'), *Inquiry.INQUIRY_TYPE_CHOICES]
