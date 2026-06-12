@@ -41,6 +41,61 @@
   }
 })();
 
+// Article reading progress bar
+(function () {
+    var progressLine = document.querySelector('.progress-line');
+    var article = document.querySelector('article.blog-article');
+    if (!progressLine || !article) return;
+
+    // Cached bounds — recalculated on resize so late-loading images don't skew results
+    var articleTop = 0;
+    var readableEnd = 0;
+    var ticking = false;
+
+    function recalcBounds() {
+        // getBoundingClientRect is viewport-relative; add scrollY for document-absolute top
+        articleTop = article.getBoundingClientRect().top + window.scrollY;
+        // readableEnd: the scroll position at which the article bottom
+        // reaches the bottom of the viewport (i.e. the reader has finished)
+        readableEnd = articleTop + article.offsetHeight - window.innerHeight;
+    }
+
+    function updateProgress() {
+        var scale = readableEnd > articleTop
+            ? Math.max(0, Math.min(1, (window.scrollY - articleTop) / (readableEnd - articleTop)))
+            : 0;
+        progressLine.style.transform = 'scaleX(' + scale + ')';
+        ticking = false;
+    }
+
+    function onScroll() {
+        if (!ticking) {
+            requestAnimationFrame(updateProgress);
+            ticking = true;
+        }
+    }
+
+    function onResize() {
+        recalcBounds();
+        updateProgress();
+    }
+
+    recalcBounds();
+    updateProgress();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
+})();
+
+// Lazy-load Twitter/X widget only when tweet embeds are on the page
+(function () {
+    if (!document.querySelector('.blog-stream-tweet')) return;
+    var s = document.createElement('script');
+    s.src = 'https://platform.twitter.com/widgets.js';
+    s.charset = 'utf-8';
+    s.async = true;
+    document.body.appendChild(s);
+})();
+
 // Sync Giscus theme with site dark/light toggle
 (function () {
   var root = document.documentElement;

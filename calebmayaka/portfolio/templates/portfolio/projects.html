@@ -1,5 +1,38 @@
 {% extends 'portfolio/base.html' %}
 
+{% block head_extra %}
+<script type="application/ld+json">
+[
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ public_site_url }}/"},
+            {"@type": "ListItem", "position": 2, "name": "Projects", "item": "{{ public_canonical_url }}"}
+        ]
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Projects | {{ profile.name|default:'Caleb Mayaka'|escapejs }}",
+        "description": "A selection of recent web development projects by {{ profile.name|default:'Caleb Mayaka'|escapejs }}.",
+        "url": "{{ public_canonical_url }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ profile.name|default:'Caleb Mayaka'|escapejs }}"
+        }{% if projects %},
+        "hasPart": [{% for project in projects %}
+            {
+                "@type": "WebPage",
+                "name": "{{ project.title|escapejs }}"{% if project.link %},
+                "url": "{{ project.link|escapejs }}"{% endif %}
+            }{% if not forloop.last %},{% endif %}{% endfor %}
+        ]{% endif %}
+    }
+]
+</script>
+{% endblock %}
+
 {% block content %}
 <section class="page-hero section-shell reveal">
     <p class="eyebrow">Projects</p>

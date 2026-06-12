@@ -3,4 +3,6 @@ wagtail==7.4.1
 django-taggit==6.1.0
 django-modelcluster==6.5
 django-ratelimit==4.1.0
+geoip2==5.2.0
 Pillow==12.2.0
+whitenoise==6.9.0

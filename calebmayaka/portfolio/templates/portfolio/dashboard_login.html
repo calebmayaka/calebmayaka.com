@@ -4,10 +4,10 @@
 <section class="dashboard-login-screen">
     <div class="dashboard-login-panel reveal">
         <a class="dashboard-login-brand" href="{% url 'home' %}">calebmayaka.com</a>
-        <div>
+
+        <div class="dashboard-login-head">
             <p>Admin access</p>
-            <h1>Sign in to your dashboard</h1>
-            <span>Use your dashboard account (email + password) to manage operations.</span>
+            <h1>Sign in</h1>
         </div>
 
         <form class="dashboard-login-form" method="post" novalidate>
@@ -28,7 +28,7 @@
                 {{ form.password }}
                 {{ form.password.errors }}
             </label>
-            <button type="submit">Login</button>
+            <button type="submit">Sign in</button>
         </form>
     </div>
 </section>

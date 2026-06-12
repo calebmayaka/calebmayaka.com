@@ -7,7 +7,7 @@
         <h1>{{ inquiry.email }}</h1>
         <span>{{ inquiry.get_inquiry_type_display }} submitted on {{ inquiry.created_at|date:"M j, Y g:i A" }}</span>
     </div>
-    <a class="dashboard-action-button" href="{% url 'dev' %}">Back to Inquiries</a>
+    <a class="dashboard-action-button" href="{% url 'dev_inquiries' %}">Back to Inquiries</a>
 </section>
 
 <section class="dashboard-panel inquiry-detail-panel reveal">

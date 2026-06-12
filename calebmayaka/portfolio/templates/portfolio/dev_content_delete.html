@@ -1,0 +1,24 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>{{ config.plural }}</p>
+        <h1>Delete {{ config.label }}</h1>
+        <span>This action removes the item from the public site content.</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dev_content_list' content_type %}">Cancel</a>
+</section>
+
+<section class="dashboard-panel content-delete-panel reveal">
+    <div class="dashboard-empty danger">
+        <strong>{{ item }}</strong>
+        <span>Confirm deletion with the button below. This cannot be undone from the dashboard.</span>
+    </div>
+    <form method="post" class="content-delete-actions">
+        {% csrf_token %}
+        <button type="submit">Delete {{ config.label }}</button>
+        <a href="{% url 'dev_content_list' content_type %}">Keep Item</a>
+    </form>
+</section>
+{% endblock %}

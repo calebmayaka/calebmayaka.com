@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Caleb Mayaka — Software Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ambient layers -->
+<div class="bg-field"></div>
+<canvas id="particles"></canvas>
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top" aria-label="Caleb Mayaka home">
+      <svg class="reactor" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14" stroke="url(#g1)" stroke-width="1.4" opacity="0.6"/>
+        <circle cx="16" cy="16" r="9" stroke="#2fd6ee" stroke-width="1.4"/>
+        <circle cx="16" cy="16" r="4" fill="#2fd6ee"/>
+        <g stroke="#2fd6ee" stroke-width="1.4">
+          <path d="M16 7v3M16 22v3M7 16h3M22 16h3"/>
+        </g>
+        <defs><linearGradient id="g1" x1="2" y1="2" x2="30" y2="30"><stop stop-color="#2fd6ee"/><stop offset="1" stop-color="#4b8cff"/></linearGradient></defs>
+      </svg>
+      Caleb&nbsp;Mayaka
+    </a>
+    <div class="nav-links">
+      <a href="#top" data-spy class="active">Home</a>
+      <a href="#work" data-spy>Work</a>
+      <a href="#expertise" data-spy>Expertise</a>
+      <a href="#writing" data-spy>Writing</a>
+      <a href="#about" data-spy>About</a>
+    </div>
+    <a href="#contact" class="nav-cta">Get in touch</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero" data-screen-label="Hero">
+    <div class="hero-figure">
+      <div class="figure-inner">
+        <img src="assets/hero-figure.jpg" alt="" aria-hidden="true" />
+      </div>
+      <span class="reactor-glow" aria-hidden="true"></span>
+    </div>
+
+    <canvas class="hero-sparks" aria-hidden="true"></canvas>
+
+    <div class="wrap hero-inner">
+      <div class="hero-content">
+        <a href="#" class="hero-handle">@calebmayaka</a>
+        <h1>Building efficient digital solutions through <span class="grad">software engineering</span> and innovation.</h1>
+
+        <div class="hero-actions">
+          <a href="#writing" class="btn btn-primary">
+            Read the Blog
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+
+          <div class="hero-socials">
+            <a class="social" href="#" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C18.5 5 19.5 5.3 19.5 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+            </a>
+            <a class="social" href="#" aria-label="X">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2H21l-6.6 7.5L22 22h-6.3l-4.9-6.4L5 22H2.2l7-8L2 2h6.5l4.4 5.9L18.2 2Zm-2.2 18h1.7L8.1 3.8H6.3L16 20Z"/></svg>
+            </a>
+            <a class="social" href="#" aria-label="WhatsApp">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.8-1.9-.9-.3-.1-.5-.2-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.6-.8-2.7-1.5-3.7-3.3-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2 .8 2.7.9 3.6.8.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.2-.3-.2-.6-.4ZM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.3a8.3 8.3 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.3 8.3 0 1 1 12 20.3Z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a href="#work" class="scroll-ind" aria-label="Scroll down">
+      <span class="mouse"></span>
+      <span>Scroll</span>
+    </a>
+  </header>
+
+  <!-- ===================== WORK ===================== -->
+  <section id="work" class="wrap" data-screen-label="Featured Work">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow reveal">Selected Work</span>
+        <h2 class="section-title reveal" data-d="1">Systems, interfaces &amp; intelligence — shipped.</h2>
+      </div>
+      <a href="#" class="link-more reveal" data-d="2">View all projects
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="project-grid">
+      <!-- card 1 -->
+      <article class="project-card reveal">
+        <div class="project-thumb">
+          <div class="ph-label">[ project shot · 16:10 ]</div>
+          <div class="glowline"></div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">PyTorch</span><span class="tag">Edge AI</span></div>
+          <h3>Sentinel — On-device vision</h3>
+          <p>A low-latency object &amp; anomaly detection pipeline running fully on-device, optimized for constrained hardware.</p>
+          <div class="project-meta">
+            <span>Machine Learning · 2025</span>
+            <span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- card 2 -->
+      <article class="project-card reveal" data-d="1">
+        <div class="project-thumb">
+          <div class="ph-label">[ project shot · 16:10 ]</div>
+          <div class="glowline"></div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">Go</span><span class="tag">Distributed</span></div>
+          <h3>Relay — Realtime sync engine</h3>
+          <p>A fault-tolerant message relay that keeps thousands of clients in sync with sub-100ms propagation.</p>
+          <div class="project-meta">
+            <span>Systems · 2025</span>
+            <span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- card 3 -->
+      <article class="project-card reveal">
+        <div class="project-thumb">
+          <div class="ph-label">[ project shot · 16:10 ]</div>
+          <div class="glowline"></div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">ESP32</span><span class="tag">Firmware</span></div>
+          <h3>Aura — Ambient sensor mesh</h3>
+          <p>A self-organizing mesh of environmental sensors with a custom firmware stack and a clean realtime dashboard.</p>
+          <div class="project-meta">
+            <span>Hardware · 2024</span>
+            <span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- card 4 -->
+      <article class="project-card reveal" data-d="1">
+        <div class="project-thumb">
+          <div class="ph-label">[ project shot · 16:10 ]</div>
+          <div class="glowline"></div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">TypeScript</span><span class="tag">LLM</span></div>
+          <h3>Forge — Dev copilot</h3>
+          <p>An LLM-powered assistant that turns natural-language intent into reviewed, test-backed pull requests.</p>
+          <div class="project-meta">
+            <span>AI Tooling · 2024</span>
+            <span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== EXPERTISE ===================== -->
+  <section id="expertise" class="tech" data-screen-label="Expertise">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow reveal">Capabilities</span>
+          <h2 class="section-title reveal" data-d="1">A full stack — from silicon to interface.</h2>
+        </div>
+      </div>
+
+      <div class="tech-grid">
+        <div class="tech-card reveal">
+          <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></div>
+          <h4>AI &amp; ML</h4>
+          <ul><li>PyTorch · TensorFlow</li><li>LLMs &amp; RAG</li><li>Computer vision</li><li>Model optimization</li></ul>
+        </div>
+        <div class="tech-card reveal" data-d="1">
+          <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <h4>Systems</h4>
+          <ul><li>Go · Rust · C++</li><li>Distributed systems</li><li>Networking</li><li>Performance tuning</li></ul>
+        </div>
+        <div class="tech-card reveal" data-d="2">
+          <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+          <h4>Hardware</h4>
+          <ul><li>ESP32 · ARM</li><li>Embedded firmware</li><li>Sensor fusion</li><li>PCB prototyping</li></ul>
+        </div>
+        <div class="tech-card reveal" data-d="3">
+          <div class="tc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v14H3zM3 21h18"/><path d="M8 8l3 3-3 3M13 14h4"/></svg></div>
+          <h4>Experiences</h4>
+          <ul><li>TypeScript · React</li><li>WebGL · Canvas</li><li>Design systems</li><li>Motion &amp; interaction</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WRITING ===================== -->
+  <section id="writing" class="wrap" data-screen-label="Writing">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow reveal">From the Blog</span>
+        <h2 class="section-title reveal" data-d="1">Notes on building things that last.</h2>
+      </div>
+      <a href="#" class="link-more reveal" data-d="2">All articles
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="blog-list">
+      <a class="blog-row reveal" href="#">
+        <span class="blog-date">May 2026</span>
+        <h3>Running language models at the edge without melting your hardware</h3>
+        <span class="b-tag">AI</span>
+        <span class="blog-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="blog-row reveal" href="#">
+        <span class="blog-date">Mar 2026</span>
+        <h3>Designing realtime systems that fail gracefully</h3>
+        <span class="b-tag">Systems</span>
+        <span class="blog-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="blog-row reveal" href="#">
+        <span class="blog-date">Jan 2026</span>
+        <h3>What firmware taught me about writing better software</h3>
+        <span class="b-tag">Hardware</span>
+        <span class="blog-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT ===================== -->
+  <section id="about" class="wrap" data-screen-label="About">
+    <div class="about-grid">
+      <div class="about-copy">
+        <span class="eyebrow reveal">About</span>
+        <h2 class="section-title reveal" data-d="1">Engineer at heart, builder by obsession.</h2>
+        <p class="reveal" data-d="1">I'm <strong>Caleb Mayaka</strong>, a software engineer who lives at the intersection of intelligence, systems, and hardware. I care about the craft beneath the surface — the architecture, the latency budget, the millisecond that makes an interface feel alive.</p>
+        <p class="reveal" data-d="2">Whether it's training a model, shaving cycles off a hot path, or coaxing firmware onto a tiny board, I'm chasing the same thing: <strong>solutions that are efficient, considered, and genuinely useful.</strong></p>
+        <div class="about-stats">
+          <div class="stat reveal"><div class="num">5+</div><div class="lbl">YEARS BUILDING</div></div>
+          <div class="stat reveal" data-d="1"><div class="num">30+</div><div class="lbl">PROJECTS SHIPPED</div></div>
+          <div class="stat reveal" data-d="2"><div class="num">∞</div><div class="lbl">THINGS TO LEARN</div></div>
+          <div class="stat reveal" data-d="3"><div class="num">AI</div><div class="lbl">CURRENT FOCUS</div></div>
+        </div>
+      </div>
+      <div class="about-visual reveal" data-d="1">
+        <img src="assets/hero-figure.jpg" alt="" aria-hidden="true" />
+        <div class="hud"><span>// SYS.ONLINE</span><span>v.2026</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section id="contact" class="wrap contact" data-screen-label="Contact">
+    <div class="contact-card reveal">
+      <svg class="reactor-lg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="28" stroke="url(#g2)" stroke-width="1.6" opacity="0.5"/>
+        <circle cx="32" cy="32" r="18" stroke="#2fd6ee" stroke-width="1.6"/>
+        <circle cx="32" cy="32" r="8" fill="#2fd6ee"/>
+        <circle cx="32" cy="32" r="8" fill="#2fd6ee" opacity="0.4"><animate attributeName="r" values="8;13;8" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.45;0;0.45" dur="2.8s" repeatCount="indefinite"/></circle>
+        <g stroke="#2fd6ee" stroke-width="1.6"><path d="M32 14v6M32 44v6M14 32h6M44 32h6"/></g>
+        <defs><linearGradient id="g2" x1="4" y1="4" x2="60" y2="60"><stop stop-color="#2fd6ee"/><stop offset="1" stop-color="#4b8cff"/></linearGradient></defs>
+      </svg>
+      <h2>Let's build something<br />worth remembering.</h2>
+      <p>Have a project, a role, or just a wild idea? I'm always open to a good conversation about software, AI, and the future.</p>
+      <div class="contact-actions">
+        <a href="/cdn-cgi/l/email-protection#6d05080101022d0e0c01080f000c140c060c4309081b" class="btn btn-primary">
+          Get in Touch
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#" class="btn btn-ghost">Download CV</a>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <div class="foot-inner">
+        <a class="brand" href="#top">
+          <svg class="reactor" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="9" stroke="#2fd6ee" stroke-width="1.4"/>
+            <circle cx="16" cy="16" r="4" fill="#2fd6ee"/>
+            <g stroke="#2fd6ee" stroke-width="1.4"><path d="M16 7v3M16 22v3M7 16h3M22 16h3"/></g>
+          </svg>
+          Caleb&nbsp;Mayaka
+        </a>
+        <div class="foot-links">
+          <a class="social" href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C18.5 5 19.5 5.3 19.5 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg></a>
+          <a class="social" href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2H21l-6.6 7.5L22 22h-6.3l-4.9-6.4L5 22H2.2l7-8L2 2h6.5l4.4 5.9L18.2 2Zm-2.2 18h1.7L8.1 3.8H6.3L16 20Z"/></svg></a>
+          <a class="social" href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.8-1.9-.9-.3-.1-.5-.2-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.6-.8-2.7-1.5-3.7-3.3-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2 .8 2.7.9 3.6.8.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.2-.3-.2-.6-.4ZM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.3a8.3 8.3 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.3 8.3 0 1 1 12 20.3Z"/></svg></a>
+        </div>
+        <span class="foot-copy">© <span id="year">2026</span> Caleb Mayaka · Crafted with intent</span>
+      </div>
+    </footer>
+  </section>
+
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="app.js"></script>
+</body>
+</html>

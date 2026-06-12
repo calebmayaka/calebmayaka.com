@@ -15,10 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('site/', include('site.urls'))
 """
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
+from django.views.static import serve as serve_static
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
@@ -40,5 +40,10 @@ urlpatterns = [
     re_path(r'^blog$', RedirectView.as_view(url='/blog/', permanent=True)),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve uploaded media files through Django.
+# django.conf.urls.static.static() only works when DEBUG=True, so we use
+# the serve view directly — works in both debug and production modes.
+# WhiteNoise only handles /static/; media must be served this way.
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve_static, {'document_root': settings.MEDIA_ROOT}),
+]

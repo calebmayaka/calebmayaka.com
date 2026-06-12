@@ -1,22 +1,39 @@
 {% extends "blogcms/blog_base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags blogcms_tags static %}
 
 {% block title %}{{ page.seo_title|default:page.title }}{% endblock %}
 {% block meta_description %}{{ page.excerpt|default:page.search_description|default:page.title }}{% endblock %}
+{% block third_party_hints %}
+    {% if page.has_code_blocks or page.has_math_blocks %}
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    {% endif %}
+{% endblock %}
+{% block extra_styles %}
+    {% if page.has_code_blocks %}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.css" id="prism-theme">
+    {% endif %}
+    {% if page.has_math_blocks %}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+    {% endif %}
+{% endblock %}
 {% block seo_meta %}
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="canonical" href="{{ public_canonical_url }}">
     <meta property="og:title" content="{{ page.title }}">
     <meta property="og:description" content="{{ page.subtitle|default:page.excerpt|default:page.search_description|default:page.title }}">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="{{ public_canonical_url }}">
     {% if page.first_published_at %}<meta property="article:published_time" content="{{ page.first_published_at|date:'c' }}">{% endif %}
     {% if page.last_published_at %}<meta property="article:modified_time" content="{{ page.last_published_at|date:'c' }}">{% endif %}
     <meta property="article:author" content="{{ page.display_author }}">
     {% for tag in page.tags.all %}<meta property="article:tag" content="{{ tag.name }}">{% endfor %}
     {% if page.cover_image %}
         {% image page.cover_image fill-1200x630 as social_image %}
-        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}">
-        <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}">
+        <meta property="og:image" content="{{ public_site_url }}{{ social_image.url }}">
+        <meta name="twitter:image" content="{{ public_site_url }}{{ social_image.url }}">
+    {% else %}
+        <meta property="og:image" content="{{ public_site_url }}{% static 'portfolio/img/og-default.jpg' %}">
+        <meta name="twitter:image" content="{{ public_site_url }}{% static 'portfolio/img/og-default.jpg' %}">
     {% endif %}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@calebmayaka">
@@ -28,8 +45,8 @@
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
-                {"@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ request.scheme }}://{{ request.get_host }}/blog/"},
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ public_site_url }}/"},
+                {"@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ public_site_url }}/blog/"},
                 {"@type": "ListItem", "position": 3, "name": "{{ page.title|escapejs }}"}
             ]
         },
@@ -44,11 +61,23 @@
             },
             "datePublished": "{{ page.first_published_at|default:page.date|date:'c' }}",
             "dateModified": "{{ page.last_published_at|default:page.first_published_at|default:page.date|date:'c' }}",
-            "mainEntityOfPage": "{{ request.build_absolute_uri }}"{% if page.cover_image %},
-            "image": "{{ request.scheme }}://{{ request.get_host }}{{ social_image.url }}"{% endif %}
+            "mainEntityOfPage": "{{ public_canonical_url }}"{% if page.cover_image %},
+            "image": "{{ public_site_url }}{{ social_image.url }}"{% endif %}
         }
     ]
     </script>
+{% endblock %}
+
+{% block extra_scripts %}
+    {% if page.has_code_blocks %}
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+    {% endif %}
+    {% if page.has_math_blocks %}
+        <script defer crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+        <script defer crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+            onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
+    {% endif %}
 {% endblock %}
 
 {% block blog_content %}
@@ -70,7 +99,7 @@
                 <div class="blog-author-avatar">{{ page.display_author|slice:":1"|upper }}</div>
                 <div>
                     <strong>{{ page.display_author }}</strong>
-                    <p>Posted: {{ page.date|date:"M j, Y" }} &bull; {{ page.estimated_read_minutes }} min read</p>
+                    <p>Posted: {{ page.date|date:"M j, Y" }} &bull; {{ page.estimated_read_minutes }} min read{% if page.view_count %} &bull; {{ page.view_count }} read{{ page.view_count|pluralize }}{% endif %}</p>
                 </div>
             </div>
             {% if page.tags.all %}
@@ -83,9 +112,19 @@
         </header>
 
         {% if page.cover_image %}
+            {% image page.cover_image fill-760x417 as hero_small %}
             {% image page.cover_image fill-1240x680 as hero %}
+            {% image page.cover_image fill-1600x878 as hero_large %}
             <figure class="blog-hero reveal">
-                <img src="{{ hero.url }}" alt="{{ page.title }}">
+                <img
+                    src="{{ hero.url }}"
+                    srcset="{{ hero_small.url }} 760w, {{ hero.url }} 1240w, {{ hero_large.url }} 1600w"
+                    sizes="(max-width: 760px) 100vw, min(100vw, 1240px)"
+                    width="{{ hero.width }}"
+                    height="{{ hero.height }}"
+                    alt="{{ page.title }}"
+                    fetchpriority="high"
+                    decoding="async">
             </figure>
         {% else %}
             <figure class="blog-hero blog-hero-placeholder reveal" aria-hidden="true">
@@ -99,55 +138,99 @@
             </section>
         {% endif %}
 
-        <nav class="blog-toc" id="blog-toc" aria-label="Table of contents"></nav>
-
         <section class="blog-content reveal">
-            {% if page.content %}
-                {% for block in page.content %}
-                    {% if block.block_type == 'rich_text' %}
-                        <div class="blog-stream-rich">
-                            {{ block.value|richtext }}
-                        </div>
-                    {% elif block.block_type == 'code' %}
-                        <figure class="blog-code-block">
-                            <figcaption class="blog-code-head">
-                                <span>
-                                    {% if block.value.filename %}
-                                        {{ block.value.filename }}
-                                    {% else %}
-                                        Code snippet
-                                    {% endif %}
-                                </span>
-                                <span>{{ block.value.language }}</span>
-                                <button type="button" aria-label="Copy code snippet" title="Copy code" data-copy-code>Copy</button>
-                            </figcaption>
-                            <pre class="language-{{ block.value.language }}"><code class="language-{{ block.value.language }}">{{ block.value.code }}</code></pre>
-                            {% if block.value.caption %}
-                                <figcaption class="blog-code-caption">{{ block.value.caption }}</figcaption>
-                            {% endif %}
-                        </figure>
-                    {% elif block.block_type == 'image' %}
-                        {% image block.value.image width-1100 as stream_image %}
-                        <figure class="blog-stream-image">
-                            <img src="{{ stream_image.url }}" alt="{{ block.value.alt_text|default:block.value.caption|default:page.title }}">
-                            {% if block.value.caption %}
-                                <figcaption>{{ block.value.caption }}</figcaption>
-                            {% endif %}
-                        </figure>
-                    {% elif block.block_type == 'quote' %}
-                        <blockquote class="blog-stream-quote">
-                            {{ block.value }}
-                        </blockquote>
-                    {% elif block.block_type == 'callout' %}
-                        <aside class="blog-callout blog-callout-{{ block.value.style }}">
-                            {% if block.value.heading %}<strong>{{ block.value.heading }}</strong>{% endif %}
-                            {{ block.value.text|richtext }}
-                        </aside>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                {{ page.body|richtext }}
+            {% if page.body %}
+                <div class="blog-stream-rich">{{ page.body|richtext }}</div>
             {% endif %}
+            {% for block in page.content %}
+                {% if block.block_type == 'rich_text' %}
+                    <div class="blog-stream-rich">
+                        {{ block.value|richtext }}
+                    </div>
+                {% elif block.block_type == 'code' %}
+                    <figure class="blog-code-block">
+                        <figcaption class="blog-code-head">
+                            <span>
+                                {% if block.value.filename %}
+                                    {{ block.value.filename }}
+                                {% else %}
+                                    Code snippet
+                                {% endif %}
+                            </span>
+                            <span>{{ block.value.language }}</span>
+                            <button type="button" aria-label="Copy code snippet" title="Copy code" data-copy-code>Copy</button>
+                        </figcaption>
+                        <pre class="language-{{ block.value.language }}"><code class="language-{{ block.value.language }}">{{ block.value.code }}</code></pre>
+                        {% if block.value.caption %}
+                            <figcaption class="blog-code-caption">{{ block.value.caption }}</figcaption>
+                        {% endif %}
+                    </figure>
+                {% elif block.block_type == 'image' %}
+                    {% image block.value.image width-560 as stream_image_small %}
+                    {% image block.value.image width-1100 as stream_image %}
+                    {% image block.value.image width-1400 as stream_image_large %}
+                    <figure class="blog-stream-image">
+                        <img
+                            src="{{ stream_image.url }}"
+                            srcset="{{ stream_image_small.url }} 560w, {{ stream_image.url }} 1100w, {{ stream_image_large.url }} 1400w"
+                            sizes="(max-width: 760px) 100vw, min(100vw, 1100px)"
+                            width="{{ stream_image.width }}"
+                            height="{{ stream_image.height }}"
+                            alt="{{ block.value.alt_text|default:block.value.caption|default:page.title }}"
+                            loading="lazy"
+                            decoding="async">
+                        {% if block.value.caption %}
+                            <figcaption>{{ block.value.caption }}</figcaption>
+                        {% endif %}
+                    </figure>
+                {% elif block.block_type == 'quote' %}
+                    <blockquote class="blog-stream-quote">
+                        {{ block.value }}
+                    </blockquote>
+                {% elif block.block_type == 'callout' %}
+                    <aside class="blog-callout blog-callout-{{ block.value.style }}">
+                        {% if block.value.heading %}<strong>{{ block.value.heading }}</strong>{% endif %}
+                        {{ block.value.text|richtext }}
+                    </aside>
+                {% elif block.block_type == 'video' %}
+                    <figure class="blog-stream-video">
+                        {% with video_url=block.value.url|embed_url:public_site_url %}
+                        {% if video_url %}
+                        <div class="blog-stream-video-wrap">
+                            <iframe
+                                src="{{ video_url }}"
+                                title="{{ block.value.caption|default:'Video embed' }}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen
+                                loading="lazy"
+                            ></iframe>
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                        {% if block.value.caption %}
+                            <figcaption>{{ block.value.caption }}</figcaption>
+                        {% endif %}
+                    </figure>
+                {% elif block.block_type == 'tweet' %}
+                    <div class="blog-stream-tweet">
+                        <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark">
+                            <a href="{{ block.value.tweet_url }}">View post on X / Twitter</a>
+                        </blockquote>
+                    </div>
+                {% elif block.block_type == 'table' %}
+                    <div class="blog-stream-table">
+                        {% include_block block %}
+                    </div>
+                {% elif block.block_type == 'math' %}
+                    {% if block.value.display == 'block' %}
+                        <div class="blog-stream-math blog-stream-math--block">$${{ block.value.latex }}$$</div>
+                    {% else %}
+                        <p class="blog-stream-math blog-stream-math--inline">\({{ block.value.latex }}\)</p>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
         </section>
 
         {% if site_profile %}
@@ -185,6 +268,24 @@
         </nav>
         {% endif %}
 
+        <section class="blog-subscribe blog-subscribe--inline reveal" aria-label="Newsletter subscription">
+            <div class="blog-subscribe-inner">
+                <div class="blog-subscribe-copy">
+                    <h2>Enjoyed this? Get new articles by email</h2>
+                    <p>No spam. Unsubscribe any time.</p>
+                </div>
+                <form class="blog-subscribe-form" method="post" action="{% url 'blog_subscribe' %}">
+                    {% csrf_token %}
+                    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
+                    <div class="blog-subscribe-row">
+                        <label for="sub-email-post" class="sr-only">Email address</label>
+                        <input type="email" id="sub-email-post" name="email" placeholder="you@example.com" required autocomplete="email">
+                        <button type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
         {% if GISCUS_REPO %}
         <section class="blog-comments reveal">
             <h2 class="blog-comments-heading">Discussion</h2>
@@ -215,23 +316,34 @@
                 <div class="blog-more-grid">
                     {% for post in related_posts %}
                         <article class="blog-card">
-                            <a href="{% pageurl post %}">
+                            <a class="blog-card-media-link" href="{% pageurl post %}" aria-label="Read {{ post.title }}">
                                 {% if post.cover_image %}
+                                    {% image post.cover_image fill-380x210 as thumb_small %}
                                     {% image post.cover_image fill-760x420 as thumb %}
-                                    <img src="{{ thumb.url }}" alt="{{ post.title }}">
+                                    {% image post.cover_image fill-1140x630 as thumb_large %}
+                                    <img
+                                        src="{{ thumb.url }}"
+                                        srcset="{{ thumb_small.url }} 380w, {{ thumb.url }} 760w, {{ thumb_large.url }} 1140w"
+                                        sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 360px"
+                                        width="{{ thumb.width }}"
+                                        height="{{ thumb.height }}"
+                                        alt="{{ post.title }}"
+                                        loading="lazy"
+                                        decoding="async">
                                 {% else %}
                                     <div class="blog-card-placeholder" aria-hidden="true"></div>
                                 {% endif %}
-                                <div class="blog-card-body">
-                                    <div class="blog-card-meta">
-                                        <span>{{ post.date|date:"M j, Y" }}</span>
-                                        <span>{{ post.estimated_read_minutes }} min read</span>
-                                    </div>
-                                    <h2>{{ post.title }}</h2>
-                                    <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:140 }}</p>
-                                    <small>Read article</small>
-                                </div>
                             </a>
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span>{{ post.date|date:"M j, Y" }}</span>
+                                    <span>{{ post.estimated_read_minutes }} min read</span>
+                                    {% if post.view_count %}<span>{{ post.view_count }} read{{ post.view_count|pluralize }}</span>{% endif %}
+                                </div>
+                                <h2><a class="blog-card-title-link" href="{% pageurl post %}">{{ post.title }}</a></h2>
+                                <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:140 }}</p>
+                                <a class="blog-read-link" href="{% pageurl post %}">Read article</a>
+                            </div>
                         </article>
                     {% endfor %}
                 </div>
@@ -239,37 +351,60 @@
         {% endif %}
     </article>
 
-    <aside class="blog-actions" aria-label="Article actions">
-        <a class="blog-action-button" href="/blog/" title="Back to articles" aria-label="Back to articles">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
-        </a>
-        <a class="blog-action-button blog-action-social"
-           href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ page.title|urlencode }}"
-           target="_blank" rel="noopener noreferrer"
-           title="Share on X / Twitter" aria-label="Share on X / Twitter">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-        </a>
-        <a class="blog-action-button blog-action-social"
-           href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}"
-           target="_blank" rel="noopener noreferrer"
-           title="Share on LinkedIn" aria-label="Share on LinkedIn">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V9h4v1.4A6 6 0 0 1 16 8z"/>
-                <rect x="2" y="9" width="4" height="12"/>
-                <circle cx="4" cy="4" r="2"/>
-            </svg>
-        </a>
-        <button type="button" title="Copy link" aria-label="Copy article link" data-copy-link="{{ request.build_absolute_uri }}">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg>
-        </button>
-        <button type="button" title="Share article" aria-label="Share article" data-share-link="{{ request.build_absolute_uri }}" data-share-title="{{ page.title }}">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7a3 3 0 1 0-2.8-4h-.4a3 3 0 0 0 0 6h.4A3 3 0 0 0 17 7Zm-10 8a3 3 0 1 0 2.8 4h.4a3 3 0 1 0 0-6h-.4A3 3 0 0 0 7 15Zm10-4a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM9.7 13.7l4.7-2.4M9.7 10.3l4.7 2.4"/></svg>
-        </button>
-        <button type="button" title="Back to top" aria-label="Back to top" data-scroll-top>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
-        </button>
+    <aside class="blog-sidebar" aria-label="Article sidebar">
+
+        {# TOC — moved here from inside .blog-article. blog.js finds it by #blog-toc. #}
+        <nav class="blog-toc" id="blog-toc" aria-label="Table of contents"></nav>
+
+        {# Compact related posts — text only, no images #}
+        {% if related_posts %}
+        <section class="blog-sidebar-related" aria-label="Related articles">
+            <p class="blog-sidebar-related-heading">Read next</p>
+            <ul>
+                {% for post in related_posts|slice:":3" %}
+                <li>
+                    <a href="{% pageurl post %}">{{ post.title }}</a>
+                    <span>{{ post.date|date:"M j, Y" }} &middot; {{ post.estimated_read_minutes }} min</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {# Action buttons — same 6 as before, demoted from aside to div #}
+        <div class="blog-actions">
+            <a class="blog-action-button" href="/blog/" title="Back to articles" aria-label="Back to articles">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+            </a>
+            <a class="blog-action-button blog-action-social"
+               href="https://twitter.com/intent/tweet?url={{ public_canonical_url|urlencode }}&text={{ page.title|urlencode }}"
+               target="_blank" rel="noopener noreferrer"
+               title="Share on X / Twitter" aria-label="Share on X / Twitter">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+            <a class="blog-action-button blog-action-social"
+               href="https://www.linkedin.com/sharing/share-offsite/?url={{ public_canonical_url|urlencode }}"
+               target="_blank" rel="noopener noreferrer"
+               title="Share on LinkedIn" aria-label="Share on LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V9h4v1.4A6 6 0 0 1 16 8z"/>
+                    <rect x="2" y="9" width="4" height="12"/>
+                    <circle cx="4" cy="4" r="2"/>
+                </svg>
+            </a>
+            <button type="button" title="Copy link" aria-label="Copy article link" data-copy-link="{{ public_canonical_url }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg>
+            </button>
+            <button type="button" title="Share article" aria-label="Share article" data-share-link="{{ public_canonical_url }}" data-share-title="{{ page.title }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7a3 3 0 1 0-2.8-4h-.4a3 3 0 0 0 0 6h.4A3 3 0 0 0 17 7Zm-10 8a3 3 0 1 0 2.8 4h.4a3 3 0 1 0 0-6h-.4A3 3 0 0 0 7 15Zm10-4a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM9.7 13.7l4.7-2.4M9.7 10.3l4.7 2.4"/></svg>
+            </button>
+            <button type="button" title="Back to top" aria-label="Back to top" data-scroll-top>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+            </button>
+        </div>
+
     </aside>
 </div>
 {% endblock %}

@@ -1,0 +1,21 @@
+{
+  "name": "Caleb Mayaka",
+  "short_name": "calebmayaka",
+  "description": "Software developer — Django, Python, AI workflows and product UX.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#000000",
+  "theme_color": "#b695ff",
+  "icons": [
+    {
+      "src": "/static/portfolio/img/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/portfolio/img/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

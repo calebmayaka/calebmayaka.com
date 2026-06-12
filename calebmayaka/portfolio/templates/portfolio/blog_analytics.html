@@ -1,0 +1,209 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Blog Analytics</p>
+        <h1>Article Visits</h1>
+        <span>Per-post visit logs, IPs, referrers, user agents, and local GeoIP fields.</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dev' %}">Overview</a>
+</section>
+
+<form class="inquiry-filters blog-analytics-filters reveal" method="get">
+    <label>
+        Range
+        <select name="range">
+            {% for option in range_options %}
+                <option value="{{ option.key }}"{% if option.key == range_key %} selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        Post
+        <select name="post">
+            <option value="">All posts</option>
+            {% for post in posts %}
+                <option value="{{ post.id }}"{% if post_filter == post.id|stringformat:'s' %} selected{% endif %}>{{ post.title }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        Country
+        <select name="country">
+            <option value="">All countries</option>
+            {% for country in countries %}
+                <option value="{{ country.country_code }}"{% if country_filter|upper == country.country_code|upper %} selected{% endif %}>
+                    {{ country.country_name|default:country.country_code }} ({{ country.count }})
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        Search
+        <input type="search" name="q" value="{{ search_query }}" placeholder="IP, city, referrer, user agent">
+    </label>
+    <button type="submit">Filter</button>
+    <a class="dashboard-action-button" href="{% url 'dev_blog_analytics' %}">Reset</a>
+</form>
+
+<section class="dashboard-kpi-grid">
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"></path><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path></svg>
+        </span>
+        <div>
+            <strong>{{ kpis.total_visits }}</strong>
+            <span>Total Visits</span>
+        </div>
+        <small>{{ range_key }}</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path></svg>
+        </span>
+        <div>
+            <strong>{{ kpis.unique_ips }}</strong>
+            <span>Unique IPs</span>
+        </div>
+        <small>Distinct addresses</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 8V4H8M12 4h4M8 12H4m16 0h-4M8 20h8a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4Zm1-8h.01M15 12h.01M9 16h6"></path></svg>
+        </span>
+        <div>
+            <strong>{{ kpis.bot_visits }}</strong>
+            <span>Bot-like</span>
+        </div>
+        <small>By user agent</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s7-4.7 7-11a7 7 0 1 0-14 0c0 6.3 7 11 7 11Z"></path><path d="M12 10.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path></svg>
+        </span>
+        <div>
+            <strong>{% if kpis.top_country %}{{ kpis.top_country.country_code }}{% else %}N/A{% endif %}</strong>
+            <span>Top Country</span>
+        </div>
+        <small>{% if kpis.top_country %}{{ kpis.top_country.country_name }}{% else %}No GeoIP data{% endif %}</small>
+    </article>
+</section>
+
+<section class="dashboard-layout">
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Top Posts</h2>
+                <p>Most visited posts in the selected range.</p>
+            </div>
+        </div>
+        {% if top_posts %}
+            <div class="dashboard-table analytics-rank-table">
+                <div class="dashboard-table-head">
+                    <span>#</span>
+                    <span>Post</span>
+                    <span>Visits</span>
+                </div>
+                {% for post in top_posts %}
+                    <div class="dashboard-table-row">
+                        <span>{{ forloop.counter }}</span>
+                        <span><strong>{{ post.post__title }}</strong></span>
+                        <strong>{{ post.count }}</strong>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>No visits found</strong>
+                <span>Try widening the range or clearing filters.</span>
+            </div>
+        {% endif %}
+    </article>
+
+    <aside class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Top Locations</h2>
+                <p>Countries and cities from the local GeoIP database.</p>
+            </div>
+        </div>
+        <div class="dashboard-health-list">
+            {% for country in top_countries %}
+                <div class="health-row">
+                    <span>{{ country.country_name|default:country.country_code }}</span>
+                    <strong>{{ country.count }}</strong>
+                </div>
+            {% empty %}
+                <div class="health-row">
+                    <span>Countries</span>
+                    <strong>None</strong>
+                </div>
+            {% endfor %}
+            {% for city in top_cities %}
+                <div class="health-row">
+                    <span>{{ city.city }}{% if city.country_name %}, {{ city.country_name }}{% endif %}</span>
+                    <strong>{{ city.count }}</strong>
+                </div>
+            {% empty %}
+                <div class="health-row">
+                    <span>Cities</span>
+                    <strong>None</strong>
+                </div>
+            {% endfor %}
+        </div>
+    </aside>
+</section>
+
+<section class="dashboard-panel reveal">
+    <div class="dashboard-panel-heading">
+        <div>
+            <h2>Recent Visits</h2>
+            <p>Showing 50 rows per page.</p>
+        </div>
+    </div>
+    {% if page_obj %}
+        <div class="dashboard-table blog-analytics-table">
+            <div class="dashboard-table-head">
+                <span>Time</span>
+                <span>Post</span>
+                <span>IP</span>
+                <span>Location</span>
+                <span>Referrer</span>
+                <span>User Agent</span>
+                <span>Bot</span>
+            </div>
+            {% for visit in page_obj %}
+                <div class="dashboard-table-row">
+                    <time datetime="{{ visit.visited_at|date:'c' }}">{{ visit.visited_at|date:"M j, H:i" }}</time>
+                    <span><strong>{{ visit.post.title }}</strong><small>{{ visit.path }}</small></span>
+                    <span>{{ visit.ip_address }}<small>{{ visit.ip_source }}</small></span>
+                    <span>{{ visit.location_label }}</span>
+                    <span>{{ visit.referer|default:"Direct"|truncatechars:42 }}</span>
+                    <span>{{ visit.user_agent|default:"Unknown"|truncatechars:70 }}</span>
+                    <span class="status-pill {% if visit.is_likely_bot %}is-unread{% else %}is-read{% endif %}">
+                        {% if visit.is_likely_bot %}Yes{% else %}No{% endif %}
+                    </span>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if paginator.num_pages > 1 %}
+            <nav class="dashboard-pagination" aria-label="Blog analytics pages">
+                {% if page_obj.has_previous %}
+                    <a href="?{% if filter_query %}{{ filter_query }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+                <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?{% if filter_query %}{{ filter_query }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="dashboard-empty">
+            <strong>No visits found</strong>
+            <span>Visit rows will appear after published articles receive traffic.</span>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+Confirm your subscription — calebmayaka.com
+============================================
+
+Thanks for signing up! Click the link below to confirm your email
+address and activate your subscription to new articles.
+
+{{ confirm_url }}
+
+Once confirmed you'll receive an email whenever a new article is
+published at calebmayaka.com.
+
+---
+Didn't request this? Just ignore this email — you won't be subscribed.
+Unsubscribe at any time: {{ unsubscribe_url }}

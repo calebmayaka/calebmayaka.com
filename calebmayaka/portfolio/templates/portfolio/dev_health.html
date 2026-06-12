@@ -1,0 +1,78 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Operations</p>
+        <h1>Site Health</h1>
+        <span>Read-only checks for production settings, email, and site content.</span>
+    </div>
+    {% if is_dashboard_admin %}
+        <a class="dashboard-action-button" href="{% url 'dev_smtp' %}">SMTP Test</a>
+    {% endif %}
+</section>
+
+<section class="dashboard-health-grid">
+    {% for check in health_checks %}
+        <article class="dashboard-panel health-card {{ check.state }} reveal">
+            <div>
+                <span class="status-pill {% if check.state == 'healthy' %}is-read{% else %}is-unread{% endif %}">
+                    {{ check.status_label|default:check.state|title }}
+                </span>
+                <h2>{{ check.label }}</h2>
+                <strong>{{ check.value }}</strong>
+                <p>{{ check.detail }}</p>
+            </div>
+        </article>
+    {% endfor %}
+</section>
+
+<section class="dashboard-bottom-grid">
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Content Status</h2>
+                <p>{{ content_status.published_posts }} published posts, {{ content_status.draft_posts }} drafts.</p>
+            </div>
+            <a href="/cms/">Open CMS</a>
+        </div>
+        <div class="dashboard-content-grid">
+            {% for item in content_status.counts %}
+                <a href="{{ item.url }}">
+                    <span>{{ item.label }}</span>
+                    <strong>{{ item.count }}</strong>
+                </a>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Latest Blog Posts</h2>
+                <p>Recent Wagtail blog content.</p>
+            </div>
+        </div>
+        {% if content_status.latest_posts %}
+            <div class="dashboard-mini-list">
+                {% for post in content_status.latest_posts %}
+                    <div>
+                        <span>
+                            <strong>{{ post.title }}</strong>
+                            <small>{{ post.date|date:"M j, Y" }}</small>
+                        </span>
+                        <span class="status-pill {% if post.live %}is-read{% else %}is-unread{% endif %}">
+                            {% if post.live %}Live{% else %}Draft{% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>No blog posts yet</strong>
+                <span>New Wagtail posts will appear here.</span>
+            </div>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

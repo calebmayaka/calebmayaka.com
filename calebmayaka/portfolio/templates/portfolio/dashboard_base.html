@@ -2,22 +2,47 @@
 
 {% block content %}
 <section class="dashboard-shell">
-    <aside class="dashboard-sidebar" id="dashboard-navigation" aria-label="Admin navigation">
-        <a class="dashboard-brand" href="{% url 'dashboard' %}">
+    <aside class="dashboard-sidebar" id="dashboard-navigation" aria-label="Developer navigation">
+        <a class="dashboard-brand" href="{% url 'dev' %}">
+            <span class="dashboard-brand-mark">CM</span>
             <strong>calebmayaka.com</strong>
         </a>
 
         <nav class="dashboard-nav">
-            <span class="dashboard-nav-label">Menu</span>
-            <a class="{% if dashboard_active == 'overview' %}active{% endif %}" href="{% url 'dashboard' %}">
+            <span class="dashboard-nav-label">General</span>
+            <a class="{% if dashboard_active == 'overview' %}active{% endif %}" href="{% url 'dev' %}">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10Zm10 8h8v-8h-8v8ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z"></path></svg>
-                <span>Dashboard</span>
+                <span>Overview</span>
             </a>
-            <a class="{% if dashboard_active == 'inquiries' %}active{% endif %}" href="{% url 'dashboard_inquiries' %}">
+            <a class="{% if dashboard_active == 'inquiries' %}active{% endif %}" href="{% url 'dev_inquiries' %}">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16v11H7l-3 3V5Zm4 4h8M8 12h5"></path></svg>
                 <span>Inquiries</span>
                 {% if unread_count %}<strong>{{ unread_count }}</strong>{% endif %}
             </a>
+
+            <span class="dashboard-nav-label">Operations</span>
+            {% if is_dashboard_admin %}
+                <a class="{% if dashboard_active == 'smtp' %}active{% endif %}" href="{% url 'dev_smtp' %}">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4Zm0 4 8 5 8-5"></path></svg>
+                    <span>SMTP Test</span>
+                </a>
+            {% endif %}
+            <a class="{% if dashboard_active == 'health' %}active{% endif %}" href="{% url 'dev_health' %}">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-5"></path></svg>
+                <span>Site Health</span>
+            </a>
+            {% if is_dashboard_admin %}
+                <a class="{% if dashboard_active == 'blog_analytics' %}active{% endif %}" href="{% url 'dev_blog_analytics' %}">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3M20 16V6"></path></svg>
+                    <span>Blog Analytics</span>
+                </a>
+            {% endif %}
+            {% if is_dashboard_admin %}
+                <a class="{% if dashboard_active == 'content' %}active{% endif %}" href="{% url 'dev_content' %}">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16M7 5v14"></path></svg>
+                    <span>Content</span>
+                </a>
+            {% endif %}
             {% if is_dashboard_admin %}
                 <a class="{% if dashboard_active == 'users' %}active{% endif %}" href="{% url 'dashboard_users' %}">
                     <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 11A4.5 4.5 0 1 0 8.5 2a4.5 4.5 0 0 0 0 9Zm9.5 10v-2a4 4 0 0 0-3-3.88M16 3.13a4.5 4.5 0 0 1 0 8.74"></path></svg>
@@ -25,27 +50,14 @@
                 </a>
             {% endif %}
 
-            <span class="dashboard-nav-label">Workspace</span>
-            <a class="disabled" href="#" aria-disabled="true">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M7 4h10v16H7V4Zm0 8h10"></path></svg>
-                <span>Projects</span>
-                <em>Next</em>
-            </a>
-            <a class="disabled" href="#" aria-disabled="true">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h14v14H5V5Zm4 4h6M9 13h6"></path></svg>
-                <span>Content</span>
-                <em>Next</em>
-            </a>
-            <a class="disabled" href="#" aria-disabled="true">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"></path></svg>
-                <span>Calendar</span>
-                <em>Next</em>
-            </a>
-
             <span class="dashboard-nav-label">Support</span>
             <a href="{% url 'home' %}">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 6H5v13h13v-5M14 5h5v5M13 11l6-6"></path></svg>
                 <span>View Website</span>
+            </a>
+            <a href="/cms/">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19.5V4a2 2 0 0 1 2-2h11v20H6a2 2 0 0 1-2-2.5ZM8 6h5M8 10h5"></path></svg>
+                <span>Open CMS</span>
             </a>
         </nav>
 
@@ -63,9 +75,9 @@
             <a class="dashboard-icon-button dashboard-menu-button" href="#dashboard-navigation" aria-label="Open menu">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
             </a>
-            <form class="dashboard-command" action="{% url 'dev' %}" method="get">
+            <form class="dashboard-command" action="{% url 'dev_inquiries' %}" method="get">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.3-4.3M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z"></path></svg>
-                <input type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search inquiries or type command...">
+                <input type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search inquiries...">
                 <kbd>&#8984; K</kbd>
             </form>
             <button class="theme-toggle dashboard-icon-button" type="button" aria-label="Switch theme" aria-pressed="false">
@@ -79,7 +91,7 @@
                     <path d="M20.9 13.4A8.5 8.5 0 1 1 10.6 3.1 6.7 6.7 0 0 0 20.9 13.4Z"></path>
                 </svg>
             </button>
-            <a class="dashboard-icon-button notification-dot" href="{% url 'dev' %}" aria-label="Unread inquiries">
+            <a class="dashboard-icon-button notification-dot" href="{% url 'dev_inquiries' %}?status=unread" aria-label="Unread inquiries">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"></path></svg>
             </a>
             <details class="dashboard-profile-menu">
@@ -87,10 +99,24 @@
                     <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path></svg>
                 </summary>
                 <div class="dashboard-profile-dropdown">
-                    <button type="button" disabled>Manage profile (Coming soon)</button>
+                    <strong>{{ request.user.email|default:request.user.username }}</strong>
+                    <span>{{ dashboard_role_label }}</span>
                 </div>
             </details>
         </header>
+
+        {% if messages %}
+        <ul class="dashboard-flash-list" role="status" aria-live="polite" aria-atomic="false">
+            {% for message in messages %}
+            <li class="dashboard-flash {{ message.tags }}" data-flash>
+                <span>{{ message }}</span>
+                <button type="button" class="dashboard-flash-close" aria-label="Dismiss notification">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         {% block dashboard_content %}{% endblock %}
     </div>

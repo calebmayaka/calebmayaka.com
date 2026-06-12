@@ -4,11 +4,11 @@
 {% block title %}{{ page.seo_title|default:page.title }}{% endblock %}
 {% block meta_description %}{{ page.search_description|default:"Essays, notes, and technical writing from calebmayaka.com." }}{% endblock %}
 {% block seo_meta %}
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="canonical" href="{{ public_canonical_url }}">
     <meta property="og:title" content="{{ page.title }}">
     <meta property="og:description" content="{{ page.search_description|default:'Essays, notes, and technical writing from calebmayaka.com.' }}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="{{ public_canonical_url }}">
     <meta name="twitter:card" content="summary_large_image">
 {% endblock %}
 
@@ -32,25 +32,36 @@
         </button>
     </form>
 
-    {% if latest_posts %}
+    {% if featured_post or latest_posts %}
         {% if featured_post %}
         <section class="blog-featured reveal" aria-label="Featured article">
-            <a href="{% pageurl featured_post %}">
+            <div class="blog-featured-inner">
                 {% if featured_post.cover_image %}
+                    {% image featured_post.cover_image fill-640x420 as featured_small %}
                     {% image featured_post.cover_image fill-1040x680 as featured_thumb %}
-                    <div class="blog-featured-media">
-                        <img src="{{ featured_thumb.url }}" alt="{{ featured_post.title }}" loading="lazy" decoding="async">
-                    </div>
+                    {% image featured_post.cover_image fill-1400x915 as featured_large %}
+                    <a class="blog-featured-media blog-featured-media-link" href="{% pageurl featured_post %}" aria-label="Read {{ featured_post.title }}">
+                        <img
+                            src="{{ featured_thumb.url }}"
+                            srcset="{{ featured_small.url }} 640w, {{ featured_thumb.url }} 1040w, {{ featured_large.url }} 1400w"
+                            sizes="(max-width: 760px) 100vw, 52vw"
+                            width="{{ featured_thumb.width }}"
+                            height="{{ featured_thumb.height }}"
+                            alt="{{ featured_post.title }}"
+                            loading="lazy"
+                            decoding="async">
+                    </a>
                 {% else %}
-                    <div class="blog-featured-media blog-card-placeholder" aria-hidden="true"></div>
+                    <a class="blog-featured-media blog-card-placeholder blog-featured-media-link" href="{% pageurl featured_post %}" aria-label="Read {{ featured_post.title }}"></a>
                 {% endif %}
                 <div class="blog-featured-copy">
                     <span class="blog-featured-kicker">Featured article</span>
-                    <h2>{{ featured_post.title }}</h2>
+                    <h2><a class="blog-featured-title-link" href="{% pageurl featured_post %}">{{ featured_post.title }}</a></h2>
                     <p>{{ featured_post.subtitle|default:featured_post.excerpt|default:featured_post.search_description|truncatechars:220 }}</p>
                     <div class="blog-card-meta">
                         <span>{{ featured_post.date|date:"M j, Y" }}</span>
                         <span>{{ featured_post.estimated_read_minutes }} min read</span>
+                        {% if featured_post.view_count %}<span>{{ featured_post.view_count }} read{{ featured_post.view_count|pluralize }}</span>{% endif %}
                     </div>
                     {% if featured_post.tags.all %}
                         <div class="blog-tag-list" aria-label="Article tags">
@@ -59,32 +70,45 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <span class="blog-featured-cta">Read article &rarr;</span>
+                    <a class="blog-featured-cta" href="{% pageurl featured_post %}">Read article &rarr;</a>
                 </div>
-            </a>
+            </div>
         </section>
         {% endif %}
 
-        <section class="blog-section-head reveal">
-            <h2>{% if featured_post %}Latest Articles{% else %}All Articles{% endif %}</h2>
-            <p>Fresh notes, build logs, and technical essays.</p>
-        </section>
-        <section class="blog-post-grid" aria-label="Latest articles">
-            {% for post in latest_posts %}
-            <article class="blog-card reveal">
-                <a href="{% pageurl post %}">
-                    {% if post.cover_image %}
-                        {% image post.cover_image fill-760x420 as thumb %}
-                        <img src="{{ thumb.url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
-                    {% else %}
-                        <div class="blog-card-placeholder" aria-hidden="true"></div>
-                    {% endif %}
+        {% if latest_posts %}
+            <section class="blog-section-head reveal">
+                <h2>{% if featured_post %}Latest Articles{% else %}All Articles{% endif %}</h2>
+                <p>Fresh notes, build logs, and technical essays.</p>
+            </section>
+            <section class="blog-post-grid" aria-label="Latest articles">
+                {% for post in latest_posts %}
+                <article class="blog-card reveal">
+                    <a class="blog-card-media-link" href="{% pageurl post %}" aria-label="Read {{ post.title }}">
+                        {% if post.cover_image %}
+                            {% image post.cover_image fill-380x210 as thumb_small %}
+                            {% image post.cover_image fill-760x420 as thumb %}
+                            {% image post.cover_image fill-1140x630 as thumb_large %}
+                            <img
+                                src="{{ thumb.url }}"
+                                srcset="{{ thumb_small.url }} 380w, {{ thumb.url }} 760w, {{ thumb_large.url }} 1140w"
+                                sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 360px"
+                                width="{{ thumb.width }}"
+                                height="{{ thumb.height }}"
+                                alt="{{ post.title }}"
+                                loading="lazy"
+                                decoding="async">
+                        {% else %}
+                            <div class="blog-card-placeholder" aria-hidden="true"></div>
+                        {% endif %}
+                    </a>
                     <div class="blog-card-body">
                         <div class="blog-card-meta">
                             <span>{{ post.date|date:"M j, Y" }}</span>
                             <span>{{ post.estimated_read_minutes }} min read</span>
+                            {% if post.view_count %}<span>{{ post.view_count }} read{{ post.view_count|pluralize }}</span>{% endif %}
                         </div>
-                        <h2>{{ post.title }}</h2>
+                        <h2><a class="blog-card-title-link" href="{% pageurl post %}">{{ post.title }}</a></h2>
                         <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:160 }}</p>
                         {% if post.tags.all %}
                             <div class="blog-tag-list" aria-label="Article tags">
@@ -93,11 +117,29 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <small>Read article &rarr;</small>
+                        <a class="blog-read-link" href="{% pageurl post %}">Read article &rarr;</a>
                     </div>
-                </a>
-            </article>
-            {% endfor %}
+                </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        <section class="blog-subscribe reveal" aria-label="Newsletter subscription">
+            <div class="blog-subscribe-inner">
+                <div class="blog-subscribe-copy">
+                    <h2>Get new articles by email</h2>
+                    <p>No spam. Unsubscribe any time.</p>
+                </div>
+                <form class="blog-subscribe-form" method="post" action="{% url 'blog_subscribe' %}">
+                    {% csrf_token %}
+                    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
+                    <div class="blog-subscribe-row">
+                        <label for="sub-email-index" class="sr-only">Email address</label>
+                        <input type="email" id="sub-email-index" name="email" placeholder="you@example.com" required autocomplete="email">
+                        <button type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
         </section>
 
         {% if paginator.num_pages > 1 %}

@@ -1,0 +1,22 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="error-page section-shell">
+    <div class="error-page-inner reveal">
+        <p class="error-code" aria-hidden="true">404</p>
+        <div class="error-content">
+            <p class="eyebrow">Page not found</p>
+            <h1>This page doesn't exist</h1>
+            <p class="error-desc">
+                The URL <code>{{ request.path }}</code> didn't match any page on this site.
+                It may have been moved, deleted, or the link might be mistyped.
+            </p>
+            <div class="error-actions">
+                <a class="btn btn-primary" href="/">Back to home</a>
+                <a class="btn btn-secondary" href="/blog/">Browse the blog</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,5 +1,38 @@
 {% extends 'portfolio/base.html' %}
 
+{% block head_extra %}
+<script type="application/ld+json">
+[
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ public_site_url }}/"},
+            {"@type": "ListItem", "position": 2, "name": "Case Studies", "item": "{{ public_canonical_url }}"}
+        ]
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Case Studies | {{ profile.name|default:'Caleb Mayaka'|escapejs }}",
+        "description": "Structured project narratives focused on the problem, the decisions, and the value of the result.",
+        "url": "{{ public_canonical_url }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ profile.name|default:'Caleb Mayaka'|escapejs }}"
+        }{% if case_studies %},
+        "hasPart": [{% for study in case_studies %}
+            {
+                "@type": "WebPage",
+                "name": "{{ study.title|escapejs }}",
+                "description": "{{ study.description|truncatechars:160|escapejs }}"
+            }{% if not forloop.last %},{% endif %}{% endfor %}
+        ]{% endif %}
+    }
+]
+</script>
+{% endblock %}
+
 {% block content %}
 <section class="page-hero section-shell reveal">
     <p class="eyebrow">Case Studies</p>

@@ -17,30 +17,40 @@
         <section class="blog-post-grid" aria-label="Articles tagged {{ tag }}">
             {% for post in posts %}
             <article class="blog-card reveal">
-                <a href="{{ post.url }}">
+                <a class="blog-card-media-link" href="{{ post.url }}" aria-label="Read {{ post.title }}">
                     {% if post.cover_image %}
+                        {% image post.cover_image fill-380x210 as thumb_small %}
                         {% image post.cover_image fill-760x420 as thumb %}
-                        <img src="{{ thumb.url }}" alt="{{ post.title }}">
+                        {% image post.cover_image fill-1140x630 as thumb_large %}
+                        <img
+                            src="{{ thumb.url }}"
+                            srcset="{{ thumb_small.url }} 380w, {{ thumb.url }} 760w, {{ thumb_large.url }} 1140w"
+                            sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 360px"
+                            width="{{ thumb.width }}"
+                            height="{{ thumb.height }}"
+                            alt="{{ post.title }}"
+                            loading="lazy"
+                            decoding="async">
                     {% else %}
                         <div class="blog-card-placeholder" aria-hidden="true"></div>
                     {% endif %}
-                    <div class="blog-card-body">
-                        <div class="blog-card-meta">
-                            <span>{{ post.date|date:"M j, Y" }}</span>
-                            <span>{{ post.estimated_read_minutes }} min read</span>
-                        </div>
-                        <h2>{{ post.title }}</h2>
-                        <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:160 }}</p>
-                        {% if post.tags.all %}
-                            <div class="blog-tag-list" aria-label="Article tags">
-                                {% for t in post.tags.all %}
-                                    <a href="{% url 'blog_tag' t.slug %}" class="blog-tag-link">{{ t.name }}</a>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <small>Read article</small>
-                    </div>
                 </a>
+                <div class="blog-card-body">
+                    <div class="blog-card-meta">
+                        <span>{{ post.date|date:"M j, Y" }}</span>
+                        <span>{{ post.estimated_read_minutes }} min read</span>
+                    </div>
+                    <h2><a class="blog-card-title-link" href="{{ post.url }}">{{ post.title }}</a></h2>
+                    <p>{{ post.subtitle|default:post.excerpt|default:post.search_description|truncatechars:160 }}</p>
+                    {% if post.tags.all %}
+                        <div class="blog-tag-list" aria-label="Article tags">
+                            {% for t in post.tags.all %}
+                                <a href="{% url 'blog_tag' t.slug %}" class="blog-tag-link">{{ t.name }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <a class="blog-read-link" href="{{ post.url }}">Read article</a>
+                </div>
             </article>
             {% endfor %}
         </section>

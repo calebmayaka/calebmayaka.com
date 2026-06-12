@@ -10,22 +10,68 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def load_dotenv(path):
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
+
+
+def env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def env_int(name, default):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return int(value)
+
+
+def env_list(name, default=None):
+    value = os.environ.get(name)
+    if value is None:
+        return default or []
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
+load_dotenv(BASE_DIR / '.env')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-np+9rvt@7jds5qr*ao#or2jrb717+s!j*aakpbq=m4-(g345jm'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool('DJANGO_DEBUG', False)
 
-ALLOWED_HOSTS = []
+# Add allowed hosts for production. 
+ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', ['calebmayaka.com', 'www.calebmayaka.com'])
+
+
+# csrf trusted origins for production.
+CSRF_TRUSTED_ORIGINS = env_list(
+    'DJANGO_CSRF_TRUSTED_ORIGINS',
+    ['https://calebmayaka.com', 'https://www.calebmayaka.com'],
+)
 
 
 # Application definition
@@ -39,6 +85,7 @@ INSTALLED_APPS = [
     'wagtail.contrib.forms',
     'wagtail.contrib.settings',
     'wagtail.contrib.redirects',
+    'wagtail.contrib.table_block',
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
@@ -58,6 +105,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise serves compressed, cache-busted static files directly from Python.
+    # Must come immediately after SecurityMiddleware and before everything else.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,7 +118,9 @@ MIDDLEWARE = [
 ]
 
 
-SESSION_COOKIE_AGE = 300
+# Dashboard session: 30 min idle timeout, extended on each request.
+# Override via SESSION_COOKIE_AGE env var (seconds).
+SESSION_COOKIE_AGE = env_int('SESSION_COOKIE_AGE', 1800)
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -86,6 +138,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
                 'portfolio.context_processors.site_chrome',
+                'blogcms.context_processors.public_urls',
                 'blogcms.context_processors.giscus',
             ],
         },
@@ -100,10 +153,19 @@ WSGI_APPLICATION = 'calebmayaka.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', ''),
+        'PORT': os.environ.get('DB_PORT', ''),
     }
 }
+
+if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+    db_name = Path(DATABASES['default']['NAME'])
+    if not db_name.is_absolute():
+        DATABASES['default']['NAME'] = BASE_DIR / db_name
 
 
 # Password validation
@@ -144,19 +206,154 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ── File upload limits ────────────────────────────────────────────────────────
+# Django's default is 2.5 MB, which is too small for typical blog cover images.
+# Set to 15 MB so users can upload high-quality photos without hitting a wall.
+DATA_UPLOAD_MAX_MEMORY_SIZE = env_int('DATA_UPLOAD_MAX_MEMORY_SIZE', 15 * 1024 * 1024)  # 15 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = env_int('FILE_UPLOAD_MAX_MEMORY_SIZE', 15 * 1024 * 1024)  # 15 MB
+
+# ── Wagtail image settings ────────────────────────────────────────────────────
+# Cap at 20 megapixels (e.g. 5000×4000). Wagtail's default is 128 MP which can
+# exhaust memory on very large raw images. 20 MP covers any typical photo.
+WAGTAILIMAGES_MAX_IMAGE_PIXELS = env_int('WAGTAILIMAGES_MAX_IMAGE_PIXELS', 20_000_000)
+
+# WhiteNoise static file storage.
+# In production (DEBUG=False): CompressedManifestStaticFilesStorage adds content-hash
+# fingerprints to filenames and brotli/gzip pre-compression.
+# In development (DEBUG=True): falls back to the default so runserver works without
+# needing to run collectstatic first.
+if not DEBUG:
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
 WAGTAIL_SITE_NAME = 'calebmayaka.com blog'
-WAGTAILADMIN_BASE_URL = 'http://127.0.0.1:8000/cms'
+WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'https://calebmayaka.com/cms')
+PUBLIC_SITE_URL = os.environ.get('PUBLIC_SITE_URL', 'https://www.calebmayaka.com').rstrip('/')
+
+# Blog analytics. GEOIP_PATH should point to a directory containing
+# GeoLite2-City.mmdb on the server.
+GEOIP_PATH = os.environ.get('GEOIP_PATH', '')
+BLOG_VISIT_RETENTION_DAYS = env_int('BLOG_VISIT_RETENTION_DAYS', 90)
+
+# Cache — used by rate limiting (django-ratelimit) and general caching.
+# For production with multiple workers, point CACHE_BACKEND at Redis:
+#   CACHE_BACKEND=django.core.cache.backends.redis.RedisCache
+#   CACHE_LOCATION=redis://127.0.0.1:6379/1
+CACHES = {
+    'default': {
+        'BACKEND': os.environ.get(
+            'CACHE_BACKEND',
+            'django.core.cache.backends.locmem.LocMemCache',
+        ),
+        'LOCATION': os.environ.get('CACHE_LOCATION', 'portfolio-default'),
+    }
+}
 
 # Rate limiting
 RATELIMIT_USE_CACHE = 'default'
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@calebmayaka.com'
-NOTIFY_EMAIL = 'caleb@calebmayaka.com'
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = env_int('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
+EMAIL_USE_SSL = env_bool('EMAIL_USE_SSL', False)
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@calebmayaka.com')
+NOTIFY_EMAIL = os.environ.get('NOTIFY_EMAIL', 'caleb@calebmayaka.com')
 
 # Giscus comments — get IDs from https://giscus.app after connecting your repo
-GISCUS_REPO = ''           # e.g. 'calebmayaka/calebmayaka.com'
-GISCUS_REPO_ID = ''        # From https://giscus.app
-GISCUS_CATEGORY = 'Announcements'
-GISCUS_CATEGORY_ID = ''    # From https://giscus.app
+GISCUS_REPO = os.environ.get('GISCUS_REPO', '')
+GISCUS_REPO_ID = os.environ.get('GISCUS_REPO_ID', '')
+GISCUS_CATEGORY = os.environ.get('GISCUS_CATEGORY', 'Announcements')
+GISCUS_CATEGORY_ID = os.environ.get('GISCUS_CATEGORY_ID', '')
+
+
+USE_X_FORWARDED_HOST = env_bool('USE_X_FORWARDED_HOST', False)
+
+# ── HTTPS / HSTS ──────────────────────────────────────────────────────────────
+# Production .env should set:
+#   SECURE_SSL_REDIRECT=true
+#   SECURE_HSTS_SECONDS=31536000
+#   SECURE_HSTS_INCLUDE_SUBDOMAINS=true
+#   SECURE_HSTS_PRELOAD=true
+#
+# Leave these False/0 in local dev so plain HTTP still works.
+SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', False)
+SECURE_HSTS_SECONDS = env_int('SECURE_HSTS_SECONDS', 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD', False)
+
+# Trust the X-Forwarded-Proto header from the reverse proxy (Nginx / Caddy).
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+# Log warnings+ to console always.
+# Log INFO+ from portfolio/blogcms to a rotating file in production.
+_LOGS_DIR = BASE_DIR / 'logs'
+_LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname} [{name}] {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': _LOGS_DIR / 'django.log',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB per file
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'WARNING'),
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'portfolio': {
+            'handlers': ['console', 'file'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        'blogcms': {
+            'handlers': ['console', 'file'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
+

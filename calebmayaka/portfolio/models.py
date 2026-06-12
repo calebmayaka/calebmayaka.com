@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import JSONField
@@ -246,3 +248,47 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f'{self.name} — {self.title}'
+
+
+# ---------------------------------------------------------------------------
+# Newsletter
+# ---------------------------------------------------------------------------
+
+class Subscriber(models.Model):
+    email = models.EmailField(unique=True)
+    is_confirmed = models.BooleanField(default=False)
+    confirm_token = models.CharField(max_length=64, unique=True, editable=False)
+    unsubscribe_token = models.CharField(max_length=64, unique=True, editable=False)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-subscribed_at']
+        verbose_name = 'Subscriber'
+        verbose_name_plural = 'Subscribers'
+
+    def __str__(self):
+        return self.email
+
+    def save(self, *args, **kwargs):
+        if not self.confirm_token:
+            self.confirm_token = secrets.token_urlsafe(32)
+        if not self.unsubscribe_token:
+            self.unsubscribe_token = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
+
+
+class DigestLog(models.Model):
+    subject = models.CharField(max_length=200)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    recipient_count = models.PositiveIntegerField(default=0)
+    post_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-sent_at']
+        verbose_name = 'Digest log'
+        verbose_name_plural = 'Digest logs'
+
+    def __str__(self):
+        label = self.sent_at.strftime('%Y-%m-%d %H:%M')
+        return f'Digest — {label} ({self.recipient_count} sent)'

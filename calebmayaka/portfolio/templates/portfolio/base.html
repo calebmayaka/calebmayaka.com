@@ -1,14 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title|default:profile.name|default:'Caleb Mayaka' }}</title>
-    <meta name="description" content="{{ meta_description|default:profile.meta_description }}">
+    <title>{{ page_title|default:'Caleb Mayaka' }}</title>
+    <meta name="description" content="{{ meta_description|default:'' }}">
     <meta name="author" content="{{ profile.name|default:'Caleb Mayaka' }}">
-    <meta property="og:title" content="{{ page_title|default:profile.name|default:'Caleb Mayaka' }}">
-    <meta property="og:description" content="{{ meta_description|default:profile.meta_description }}">
+    <meta property="og:title" content="{{ page_title|default:'Caleb Mayaka' }}">
+    <meta property="og:description" content="{{ meta_description|default:'' }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta name="twitter:card" content="summary_large_image">
@@ -18,19 +18,48 @@
     {% if og_image_url %}
     <meta property="og:image" content="{{ og_image_url }}">
     <meta name="twitter:image" content="{{ og_image_url }}">
+    {% else %}
+    <meta property="og:image" content="{{ public_site_url }}{% static 'portfolio/img/og-default.jpg' %}">
+    <meta name="twitter:image" content="{{ public_site_url }}{% static 'portfolio/img/og-default.jpg' %}">
     {% endif %}
     {% block head_extra %}{% endblock %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "{{ profile.name|default:'Caleb Mayaka'|escapejs }}",
+        "url": "{{ public_site_url }}/",
+        "description": "{{ profile.meta_description|default:''|escapejs }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "{{ public_site_url }}/blog/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
     <script>
         (function () {
             try {
-                var theme = localStorage.getItem('portfolio-theme') || 'dark';
-                document.documentElement.classList.toggle('light', theme === 'light');
-                document.documentElement.classList.toggle('dark', theme !== 'light');
-                document.documentElement.style.colorScheme = theme === 'light' ? 'light' : 'dark';
-            } catch (error) {}
+                var t = localStorage.getItem('portfolio-theme') || 'ironman';
+                var valid = { dark: 1, light: 1, ironman: 1 };
+                if (!valid[t]) t = 'dark';
+                document.documentElement.classList.add(t);
+                document.documentElement.style.colorScheme = t === 'light' ? 'light' : 'dark';
+            } catch (e) {}
         })();
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preload" href="{% static 'portfolio/fonts/inter-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="alternate" type="application/rss+xml" href="/blog/feed/" title="calebmayaka.com Blog">
     <link rel="icon" href="{% static 'portfolio/img/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'portfolio/img/apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'portfolio/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'portfolio/css/portfolio.css' %}">
 </head>
 <body class="page-{{ active|default:'site' }}">
@@ -38,6 +67,15 @@
     <nav class="site-nav" aria-label="Primary navigation">
         <div class="nav-inner">
             <a class="brand" href="{% url 'home' %}" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
+                <svg class="im-reactor-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                    <circle cx="16" cy="16" r="14" stroke="url(#imG1)" stroke-width="1.4" opacity="0.6"/>
+                    <circle cx="16" cy="16" r="9" stroke="#2fd6ee" stroke-width="1.4"/>
+                    <circle cx="16" cy="16" r="4" fill="#2fd6ee"/>
+                    <g stroke="#2fd6ee" stroke-width="1.4"><path d="M16 7v3M16 22v3M7 16h3M22 16h3"/></g>
+                    <defs><linearGradient id="imG1" x1="2" y1="2" x2="30" y2="30">
+                        <stop stop-color="#2fd6ee"/><stop offset="1" stop-color="#4b8cff"/>
+                    </linearGradient></defs>
+                </svg>
                 <span>{{ profile.name|default:'Caleb Mayaka'|lower|cut:" " }}</span>
             </a>
             <div class="nav-links" id="primary-menu">
@@ -64,6 +102,11 @@
                     <svg class="theme-icon theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
                         <path d="M20.9 13.4A8.5 8.5 0 1 1 10.6 3.1 6.7 6.7 0 0 0 20.9 13.4Z"></path>
                     </svg>
+                    <svg class="theme-icon theme-bolt" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                        <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
                 </button>
                 <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu">
                     <span></span><span></span><span></span>
@@ -78,7 +121,12 @@
         {% if messages %}
             <div class="message-stack" role="status" aria-live="polite">
                 {% for message in messages %}
-                    <div class="site-message {{ message.tags }}">{{ message }}</div>
+                    <div class="site-message {{ message.tags }}" data-site-message>
+                        <span>{{ message }}</span>
+                        <button class="site-message-close" type="button" aria-label="Dismiss notification">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
                 {% endfor %}
             </div>
         {% endif %}
@@ -112,7 +160,7 @@
             </nav>
         </div>
         <div class="footer-bottom">
-            <span>&copy; {{ profile.name|default:'Caleb Mayaka' }} 2026</span>
+            <span>&copy; {% now "Y" %} {{ profile.name|default:'Caleb Mayaka' }}</span>
             <span>{{ profile.location }}</span>
         </div>
     </footer>

@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}{{ subject }}
+{% for post in posts %}
+---
+
+{{ post.title }}
+{% if post.subtitle %}{{ post.subtitle }}{% elif post.excerpt %}{{ post.excerpt }}{% elif post.search_description %}{{ post.search_description }}{% endif %}
+
+{{ post.date|date:"F j, Y" }} · {{ post.estimated_read_minutes }} min read · {{ post.view_count }} read{{ post.view_count|pluralize }}
+
+Read: {{ public_site_url }}{% pageurl post %}
+{% endfor %}
+
+---
+You're receiving this because you subscribed at calebmayaka.com.
+Unsubscribe: {{ unsubscribe_url }}

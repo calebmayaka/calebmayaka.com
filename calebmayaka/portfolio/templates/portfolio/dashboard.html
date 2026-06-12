@@ -1,6 +1,15 @@
 {% extends 'portfolio/dashboard_base.html' %}
 
 {% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Developer Console</p>
+        <h1>Website Operations</h1>
+        <span>Monitor inquiries, content, email, and production settings from one place.</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dev_health' %}">Open Health</a>
+</section>
+
 <section class="dashboard-kpi-grid">
     <article class="dashboard-kpi reveal">
         <span class="dashboard-kpi-icon">
@@ -10,7 +19,7 @@
             <strong>{{ total_inquiries }}</strong>
             <span>Total Inquiries</span>
         </div>
-        <small>+{{ consultation_count }} consultations</small>
+        <small>{{ consultation_count }} consultations</small>
     </article>
     <article class="dashboard-kpi reveal">
         <span class="dashboard-kpi-icon">
@@ -18,9 +27,9 @@
         </span>
         <div>
             <strong>{{ unread_count }}</strong>
-            <span>Unread Messages</span>
+            <span>Unread Queue</span>
         </div>
-        <small>Needs review</small>
+        <small class="{% if unread_count %}is-warning{% endif %}">Needs review</small>
     </article>
     <article class="dashboard-kpi reveal">
         <span class="dashboard-kpi-icon">
@@ -32,16 +41,26 @@
         </div>
         <small>{{ read_count }} marked read</small>
     </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4Zm0 4 8 5 8-5"></path></svg>
+        </span>
+        <div>
+            <strong>{% if smtp_config.ready %}Ready{% else %}Check{% endif %}</strong>
+            <span>SMTP Status</span>
+        </div>
+        <small class="{% if not smtp_config.ready %}is-warning{% endif %}">{{ smtp_config.host }}</small>
+    </article>
 </section>
 
 <section class="dashboard-layout">
     <article class="dashboard-panel dashboard-chart-panel reveal">
         <div class="dashboard-panel-heading">
             <div>
-                <h1>Inquiry Statistics</h1>
-                <p>Monthly inquiry volume from your portfolio contact form.</p>
+                <h2>Inquiry Activity</h2>
+                <p>Monthly inquiry volume from the portfolio contact form.</p>
             </div>
-            <a href="{% url 'dashboard_inquiries' %}">Open inbox</a>
+            <a href="{% url 'dev_inquiries' %}">Open inbox</a>
         </div>
         <div class="dashboard-chart" aria-label="Monthly inquiry chart">
             {% for month in monthly_activity %}
@@ -57,27 +76,86 @@
     <aside class="dashboard-panel dashboard-tracker reveal">
         <div class="dashboard-panel-heading">
             <div>
-                <h2>Inquiry Pipeline</h2>
-                <p>Live snapshot of admin work.</p>
+                <h2>Operational Snapshot</h2>
+                <p>Quick status for production-critical settings.</p>
             </div>
-            <span class="dashboard-dot-menu">...</span>
         </div>
-        <div class="dashboard-progress-ring" style="--progress: {{ response_rate }}%">
-            <strong>{{ response_rate }}%</strong>
-            <span>Reviewed</span>
+        <div class="dashboard-health-list">
+            {% for check in health_checks %}
+                <div class="health-row {{ check.state }}">
+                    <span>{{ check.label }}</span>
+                    <strong>{{ check.value }}</strong>
+                </div>
+            {% endfor %}
         </div>
-        <div class="dashboard-pipeline-list">
+    </aside>
+</section>
+
+<section class="dashboard-layout">
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
             <div>
-                <span>Unread queue</span>
-                <strong>{{ unread_count }}</strong>
+                <h2>Top Posts by Views</h2>
+                <p>Most-read articles since view tracking began.</p>
             </div>
-            <div>
-                <span>Website leads</span>
-                <strong>{{ website_count }}</strong>
+            <a href="/cms/">Open CMS</a>
+        </div>
+        {% if content_status.top_posts %}
+            <div class="dashboard-table blog-views-table">
+                <div class="dashboard-table-head">
+                    <span>#</span>
+                    <span>Post</span>
+                    <span>Views</span>
+                    <span>Published</span>
+                </div>
+                {% for post in content_status.top_posts %}
+                    <a class="dashboard-table-row" href="{{ post.url }}" target="_blank" rel="noopener noreferrer">
+                        <span style="color:var(--dash-muted);font-size:0.78rem;font-weight:600;">{{ forloop.counter }}</span>
+                        <span>
+                            <strong>{{ post.title }}</strong>
+                            <small>{{ post.estimated_read_minutes }} min read</small>
+                        </span>
+                        <strong>{{ post.view_count }}</strong>
+                        <time datetime="{{ post.date|date:'c' }}">{{ post.date|date:"M j, Y" }}</time>
+                    </a>
+                {% endfor %}
             </div>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>No views tracked yet</strong>
+                <span>View counts will appear here after visitors read published posts.</span>
+            </div>
+        {% endif %}
+    </article>
+
+    <aside class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
             <div>
-                <span>Consultations</span>
-                <strong>{{ consultation_count }}</strong>
+                <h2>Blog Overview</h2>
+                <p>Reads, posts, and publishing activity.</p>
+            </div>
+            {% if is_dashboard_admin %}<a href="{% url 'dev_blog_analytics' %}">Analytics</a>{% endif %}
+        </div>
+        <div class="dashboard-health-list">
+            <div class="health-row">
+                <span>Total reads</span>
+                <strong>{{ content_status.total_views }}</strong>
+            </div>
+            <div class="health-row">
+                <span>Visits in 7 days</span>
+                <strong>{{ content_status.analytics.total_visits }}</strong>
+            </div>
+            <div class="health-row">
+                <span>Unique IPs in 7 days</span>
+                <strong>{{ content_status.analytics.unique_ips }}</strong>
+            </div>
+            <div class="health-row">
+                <span>Published posts</span>
+                <strong>{{ content_status.published_posts }}</strong>
+            </div>
+            <div class="health-row">
+                <span>Draft posts</span>
+                <strong>{{ content_status.draft_posts }}</strong>
             </div>
         </div>
     </aside>
@@ -90,7 +168,7 @@
                 <h2>Latest Inquiries</h2>
                 <p>Newest client messages submitted from the site.</p>
             </div>
-            <a href="{% url 'dashboard_inquiries' %}">View all</a>
+            <a href="{% url 'dev_inquiries' %}">View all</a>
         </div>
         {% if latest_inquiries %}
             <div class="dashboard-table">
@@ -101,7 +179,7 @@
                     <span>Date</span>
                 </div>
                 {% for inquiry in latest_inquiries %}
-                    <a class="dashboard-table-row" href="{% url 'dashboard_inquiries' %}?q={{ inquiry.email|urlencode }}">
+                    <a class="dashboard-table-row" href="{% url 'inquiry_detail' inquiry.id %}">
                         <span>
                             <strong>{{ inquiry.email }}</strong>
                             <small>{{ inquiry.message|truncatechars:58 }}</small>
@@ -125,17 +203,17 @@
     <article class="dashboard-panel reveal">
         <div class="dashboard-panel-heading">
             <div>
-                <h2>Lead Types</h2>
-                <p>Breakdown by requested service.</p>
+                <h2>Content Status</h2>
+                <p>Counts from Wagtail and portfolio models.</p>
             </div>
+            <a href="/cms/">Open CMS</a>
         </div>
-        <div class="dashboard-type-list">
-            {% for item in type_breakdown %}
-                <div>
+        <div class="dashboard-content-grid">
+            {% for item in content_status.counts %}
+                <a href="{{ item.url }}">
                     <span>{{ item.label }}</span>
                     <strong>{{ item.count }}</strong>
-                    <i><b style="width: {{ item.percent }}%"></b></i>
-                </div>
+                </a>
             {% endfor %}
         </div>
     </article>
@@ -144,49 +222,56 @@
 <section class="dashboard-panel dashboard-modules reveal">
     <div class="dashboard-panel-heading">
         <div>
-            <h2>Feature Roadmap</h2>
-            <p>Admin modules that can be switched on as the portfolio grows.</p>
+            <h2>Operations Modules</h2>
+            <p>Focused tools for running this site.</p>
         </div>
     </div>
     <div class="dashboard-module-grid">
-        <a class="dashboard-module-card active" href="{% url 'dashboard_inquiries' %}">
+        <a class="dashboard-module-card active" href="{% url 'dev_inquiries' %}">
             <span>01</span>
             <strong>Inquiry CRM</strong>
-            <small>Live inbox, filters, and read tracking.</small>
+            <small>Search, review, reply, and mark submissions.</small>
         </a>
-        <div class="dashboard-module-card">
-            <span>02</span>
-            <strong>Content Manager</strong>
-            <small>Manage site copy, sections, and portfolio content from one place.</small>
-        </div>
+        {% if is_dashboard_admin %}
+            <a class="dashboard-module-card active" href="{% url 'dev_smtp' %}">
+                <span>02</span>
+                <strong>SMTP Test</strong>
+                <small>Send a controlled test message from Django mail settings.</small>
+            </a>
+        {% endif %}
+        <a class="dashboard-module-card active" href="{% url 'dev_health' %}">
+            <span>03</span>
+            <strong>Site Health</strong>
+            <small>Inspect production, email, and content configuration.</small>
+        </a>
+        {% if is_dashboard_admin %}
+            <a class="dashboard-module-card active" href="{% url 'dev_blog_analytics' %}">
+                <span>04</span>
+                <strong>Blog Analytics</strong>
+                <small>View article visits, IPs, GeoIP locations, and referrers.</small>
+            </a>
+        {% endif %}
+        {% if is_dashboard_admin %}
+            <a class="dashboard-module-card active" href="{% url 'dev_content' %}">
+                <span>05</span>
+                <strong>Content Control</strong>
+                <small>Edit portfolio content models without leaving /dev.</small>
+            </a>
+        {% endif %}
         {% if is_dashboard_admin %}
             <a class="dashboard-module-card active" href="{% url 'dashboard_users' %}">
-                <span>03</span>
+                <span>06</span>
                 <strong>User Manager</strong>
-                <small>Create, edit, deactivate, and reset dashboard users.</small>
+                <small>Create, deactivate, and reset dashboard users.</small>
             </a>
-        {% else %}
-            <div class="dashboard-module-card">
-                <span>03</span>
-                <strong>User Manager</strong>
-                <small>Admin-only module for access and role management.</small>
-            </div>
         {% endif %}
-        <div class="dashboard-module-card">
-            <span>04</span>
-            <strong>Project Manager</strong>
-            <small>Publish, archive, and feature portfolio projects.</small>
-        </div>
-        <div class="dashboard-module-card">
-            <span>05</span>
-            <strong>Content Studio</strong>
-            <small>Edit case studies, testimonials, and site copy.</small>
-        </div>
-        <div class="dashboard-module-card">
-            <span>06</span>
-            <strong>Analytics</strong>
-            <small>Track traffic, conversions, and client interest.</small>
-        </div>
+        {% if is_dashboard_admin %}
+            <a class="dashboard-module-card active" href="{% url 'dev_newsletter' %}">
+                <span>07</span>
+                <strong>Newsletter</strong>
+                <small>Manage subscribers and send article digests by email.</small>
+            </a>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

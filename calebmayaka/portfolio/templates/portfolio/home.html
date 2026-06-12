@@ -1,5 +1,5 @@
 {% extends 'portfolio/base.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block head_extra %}
 <script type="application/ld+json">
@@ -17,13 +17,43 @@
 
 {% block content %}
 <section class="hero hero-scene">
+    <div class="hero-math-bg" aria-hidden="true">
+        <img src="{% static 'portfolio/img/math.webp' %}" width="1920" height="1280" alt="" fetchpriority="high" decoding="async">
+    </div>
+    <!-- Ironman mode: hero figure + sparks (hidden in dark/light) -->
+    <div class="im-hero-figure" aria-hidden="true">
+        <div class="im-figure-inner">
+            <img src="{% static 'portfolio/img/hero-figure.jpg' %}" alt="" decoding="async">
+        </div>
+    </div>
+    <canvas class="im-hero-sparks" aria-hidden="true"></canvas>
+
+    <!-- Ironman mode: hero content (replaces .hero-center in ironman) -->
+    <div class="im-hero-content">
+        <h1 class="im-hero-h1">Engineering For The Future</h1>
+        <div class="hero-actions">
+            <a class="btn btn-primary hero-cta-primary" href="/blog/">Read the Blog</a>
+            <a class="btn btn-secondary hero-cta-secondary" href="#inquiry">Get in Touch</a>
+            <div class="hero-socials" aria-label="Social links">
+                <a class="hero-social" href="https://github.com/calebmayaka" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.27-1.7-1.27-1.7-1.05-.71.08-.7.08-.7 1.16.09 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.64 1.6.24 2.77.12 3.06.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .5Z"/>
+                    </svg>
+                </a>
+                <a class="hero-social" href="https://x.com/ombogomayaka" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M18.244 2H21l-6.52 7.45L22 22h-6.78l-4.78-6.27L4.94 22H2.18l6.97-7.96L2 2h6.95l4.32 5.71L18.244 2Zm-1.18 18.27h1.55L7.04 3.63H5.4L17.064 20.27Z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <a class="im-scroll-ind" href="{% if blog_posts %}#latest-posts{% else %}#code-showcase{% endif %}" aria-label="Scroll down">
+            <span class="im-mouse"></span>
+            <span>Scroll</span>
+        </a>
+    </div>
+
     <div class="hero-center reveal">
-        {% if profile.availability %}
-        <p class="hero-availability" aria-label="Availability">
-            <span class="hero-availability-dot" aria-hidden="true"></span>
-            Available for new projects
-        </p>
-        {% endif %}
         <h1 class="hero-handle-h1">@calebmayaka</h1>
         <p class="hero-bio">{{ profile.headline }}</p>
         <div class="hero-actions">
@@ -34,12 +64,12 @@
                 Get in Touch
             </a>
             <div class="hero-socials" aria-label="Social links">
-                <a class="hero-social" href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <a class="hero-social" href="https://github.com/calebmayaka" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.27-1.7-1.27-1.7-1.05-.71.08-.7.08-.7 1.16.09 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.64 1.6.24 2.77.12 3.06.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .5Z"/>
                     </svg>
                 </a>
-                <a class="hero-social" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+                <a class="hero-social" href="https://x.com/ombogomayaka" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="currentColor" d="M18.244 2H21l-6.52 7.45L22 22h-6.78l-4.78-6.27L4.94 22H2.18l6.97-7.96L2 2h6.95l4.32 5.71L18.244 2Zm-1.18 18.27h1.55L7.04 3.63H5.4L17.064 20.27Z"/>
                     </svg>
@@ -67,7 +97,6 @@
 <section class="section-shell latest-posts-shell" id="latest-posts">
     <div class="section-heading reveal">
         <p class="eyebrow">Latest writing</p>
-        <h2>Fresh notes from the blog</h2>
         <p>Practical essays, build logs, and ideas from the workbench.</p>
     </div>
     <div class="blog-feed-grid">
@@ -75,9 +104,19 @@
             <article class="blog-feed-card reveal">
                 <a href="{% pageurl post %}">
                     {% if post.cover_image %}
+                        {% image post.cover_image fill-380x220 as post_thumb_small %}
                         {% image post.cover_image fill-760x440 as post_thumb %}
+                        {% image post.cover_image fill-1140x660 as post_thumb_large %}
                         <div class="blog-feed-media">
-                            <img src="{{ post_thumb.url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                            <img
+                                src="{{ post_thumb.url }}"
+                                srcset="{{ post_thumb_small.url }} 380w, {{ post_thumb.url }} 760w, {{ post_thumb_large.url }} 1140w"
+                                sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 360px"
+                                width="{{ post_thumb.width }}"
+                                height="{{ post_thumb.height }}"
+                                alt="{{ post.title }}"
+                                loading="lazy"
+                                decoding="async">
                         </div>
                     {% else %}
                         <div class="blog-feed-media blog-feed-media-fallback" aria-hidden="true">
@@ -88,6 +127,7 @@
                         <div class="blog-feed-meta">
                             <span>{{ post.date|date:"M j, Y" }}</span>
                             <span>{{ post.estimated_read_minutes }} min read</span>
+                            {% if post.view_count %}<span>{{ post.view_count }} read{{ post.view_count|pluralize }}</span>{% endif %}
                         </div>
                         <h3>{{ post.title }}</h3>
                         <p>{{ post.excerpt|default:post.search_description|truncatechars:160 }}</p>
@@ -263,7 +303,7 @@
     <div class="card-grid">
         {% for skill in skills %}
             <article class="feature-card reveal">
-                <span class="card-number">0{{ forloop.counter }}</span>
+                <span class="card-number">{{ forloop.counter|stringformat:"02d" }}</span>
                 <h3>{{ skill.title }}</h3>
                 <p>{{ skill.description }}</p>
                 <div class="tag-list">

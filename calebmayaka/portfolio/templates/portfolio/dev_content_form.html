@@ -1,0 +1,126 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>{{ config.plural }}</p>
+        <h1>{% if mode == 'create' %}Create {{ config.label }}{% else %}Edit {{ config.label }}{% endif %}</h1>
+        <span>{{ config.group }}</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dev_content_list' content_type %}">Back</a>
+</section>
+
+<section class="content-workspace reveal">
+    <aside class="content-rail" aria-label="Content sections">
+        {% for group in content_nav_groups %}
+            <div class="content-rail-group">
+                <span>{{ group.label }}</span>
+                {% for item in group.items %}
+                    {% if item.url %}
+                        <a href="{{ item.url }}">
+                            <strong>{{ item.label }}</strong>
+                            <em>{{ item.count }}</em>
+                        </a>
+                    {% else %}
+                        <a class="{% if item.active %}active{% endif %}" href="{% url 'dev_content_list' item.key %}">
+                            <strong>{{ item.label }}</strong>
+                            <em>{{ item.count }}</em>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </aside>
+
+    <form method="post" class="content-editor-panel content-form" id="content-edit-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <ul class="errorlist">{{ form.non_field_errors }}</ul>
+        {% endif %}
+
+        <div class="content-editor-heading">
+            <div>
+                <h2>{% if mode == 'create' %}New {{ config.label }}{% else %}{{ item }}{% endif %}</h2>
+                <p>{{ config.plural }}</p>
+            </div>
+            <button type="submit" id="content-save-btn">
+                Save
+                <kbd class="content-save-hint" title="Ctrl+S / ⌘S">⌘S</kbd>
+            </button>
+        </div>
+
+        <div class="content-form-layout">
+            <div class="content-form-main">
+                {% for field in main_fields %}
+                    <label>
+                        <span>{{ field.label }}</span>
+                        {{ field }}
+                        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                        {{ field.errors }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            {% if side_fields %}
+                <aside class="content-form-side">
+                    {% if config.description %}
+                        <h3>{{ config.description|truncatechars:72 }}</h3>
+                    {% else %}
+                        <h3>Details</h3>
+                    {% endif %}
+                    {% for field in side_fields %}
+                        <label>
+                            <span>{{ field.label }}</span>
+                            {{ field }}
+                            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                            {{ field.errors }}
+                        </label>
+                    {% endfor %}
+                </aside>
+            {% endif %}
+        </div>
+
+        <div class="content-form-actions">
+            <button type="submit">Save {{ config.label }}</button>
+            <a href="{% url 'dev_content_list' content_type %}">Cancel</a>
+        </div>
+    </form>
+</section>
+
+<script>
+(function () {
+    const form = document.getElementById('content-edit-form');
+    const saveBtn = document.getElementById('content-save-btn');
+    if (!form) return;
+
+    let isDirty = false;
+
+    // Track unsaved changes
+    form.addEventListener('input', function () { isDirty = true; });
+    form.addEventListener('change', function () { isDirty = true; });
+
+    // Clear dirty flag on submit so the beforeunload guard doesn't fire
+    form.addEventListener('submit', function () { isDirty = false; });
+
+    // Warn before navigating away with unsaved changes
+    window.addEventListener('beforeunload', function (event) {
+        if (!isDirty) return;
+        event.preventDefault();
+        event.returnValue = 'You have unsaved changes. Leave this page?';
+    });
+
+    // Ctrl+S / Cmd+S to save
+    document.addEventListener('keydown', function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+            if (saveBtn) {
+                saveBtn.textContent = 'Saving…';
+                saveBtn.disabled = true;
+            }
+            isDirty = false;
+            form.submit();
+        }
+    });
+})();
+</script>
+{% endblock %}

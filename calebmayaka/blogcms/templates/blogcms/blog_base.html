@@ -4,15 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>{% block title %}Blog{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Essays, notes, and technical writing from calebmayaka.com.{% endblock %}">
     {% block seo_meta %}
-        <link rel="canonical" href="{{ request.build_absolute_uri }}">
+        <link rel="canonical" href="{{ public_canonical_url }}">
         <meta property="og:title" content="{% block og_title %}Blog{% endblock %}">
         <meta property="og:description" content="{% block og_description %}Essays, notes, and technical writing from calebmayaka.com.{% endblock %}">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta property="og:url" content="{{ public_canonical_url }}">
+        <meta property="og:image" content="{{ public_site_url }}{% static 'portfolio/img/og-default.jpg' %}">
         <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="{{ public_site_url }}{% static 'portfolio/img/og-default.jpg' %}">
     {% endblock %}
     <script>
         (function () {
@@ -24,14 +27,19 @@
             } catch (error) {}
         })();
     </script>
+    <link rel="preload" href="{% static 'portfolio/fonts/inter-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <link rel="alternate" type="application/rss+xml" href="/blog/feed/" title="calebmayaka.com Blog">
     <meta name="twitter:site" content="@calebmayaka">
     <meta name="twitter:creator" content="@calebmayaka">
+    {% block third_party_hints %}{% endblock %}
+    <link rel="dns-prefetch" href="https://giscus.app">
     <link rel="icon" href="{% static 'portfolio/img/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'portfolio/img/apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'portfolio/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'portfolio/css/portfolio.css' %}">
-    <link rel="stylesheet" href="{% static 'blogcms/css/blog.css' %}?v=20260517a">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.css" id="prism-theme">
+    <link rel="stylesheet" href="{% static 'blogcms/css/blog.css' %}?v=20260527e">
+    {% block extra_styles %}{% endblock %}
 </head>
 <body class="page-blog blog-page">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -107,14 +115,13 @@
             </nav>
         </div>
         <div class="footer-bottom">
-            <span>&copy; {{ profile.name|default:'Caleb Mayaka' }} 2026</span>
+            <span>&copy; {% now "Y" %} {{ profile.name|default:'Caleb Mayaka' }}</span>
             <span>{{ profile.location }}</span>
         </div>
     </footer>
 
     <script src="{% static 'portfolio/js/portfolio.js' %}" defer></script>
     <script src="{% static 'blogcms/js/blog.js' %}" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

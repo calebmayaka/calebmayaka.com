@@ -26,26 +26,188 @@
         }
     };
 
-    const setTheme = (theme) => {
-        const nextTheme = theme === 'light' ? 'light' : 'dark';
-        root.classList.toggle('light', nextTheme === 'light');
-        root.classList.toggle('dark', nextTheme === 'dark');
-        root.style.colorScheme = nextTheme;
+    const THEMES = ['dark', 'light', 'ironman'];
 
-        if (themeToggle) {
-            const isLight = nextTheme === 'light';
-            themeToggle.setAttribute('aria-pressed', String(isLight));
-            themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    // ── Ironman particle state ─────────────────────────────────────
+    let imParticleRaf = null;
+    let imSparkRaf    = null;
+    let imParticleCanvas = null;
+
+    const initIronmanParticles = () => {
+        if (reduceMotion) return;
+
+        // ── Ambient full-page particle canvas ──────────────────────
+        if (!imParticleCanvas) {
+            imParticleCanvas = document.createElement('canvas');
+            imParticleCanvas.id = 'im-particles';
+            imParticleCanvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
+            document.body.prepend(imParticleCanvas);
+        }
+        const pctx = imParticleCanvas.getContext('2d');
+        const COLORS = ['47,214,238', '75,140,255', '200,232,255'];
+        let pw, ph, pdpr, pparticles;
+
+        const pResize = () => {
+            pdpr = Math.min(window.devicePixelRatio || 1, 2);
+            pw = imParticleCanvas.width  = innerWidth  * pdpr;
+            ph = imParticleCanvas.height = innerHeight * pdpr;
+            imParticleCanvas.style.width  = innerWidth  + 'px';
+            imParticleCanvas.style.height = innerHeight + 'px';
+            const count = Math.min(90, Math.floor((innerWidth * innerHeight) / 22000));
+            pparticles = Array.from({ length: count }, () => ({
+                x: Math.random() * pw, y: Math.random() * ph,
+                r: (Math.random() * 1.6 + 0.4) * pdpr,
+                vx: (Math.random() - 0.5) * 0.18 * pdpr,
+                vy: (Math.random() - 0.5) * 0.18 * pdpr - 0.04 * pdpr,
+                a: Math.random() * 0.5 + 0.12,
+                tw: Math.random() * Math.PI * 2,
+                tws: Math.random() * 0.02 + 0.005,
+                c: COLORS[(Math.random() * COLORS.length) | 0],
+            }));
+        };
+
+        const pTick = () => {
+            pctx.clearRect(0, 0, pw, ph);
+            for (const p of pparticles) {
+                p.x += p.vx; p.y += p.vy; p.tw += p.tws;
+                if (p.x < -10) p.x = pw + 10;
+                if (p.x > pw + 10) p.x = -10;
+                if (p.y < -10) p.y = ph + 10;
+                if (p.y > ph + 10) p.y = -10;
+                const alpha = p.a * (0.55 + 0.45 * Math.sin(p.tw));
+                pctx.beginPath();
+                pctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                pctx.fillStyle = `rgba(${p.c},${alpha})`;
+                pctx.shadowBlur = 8 * pdpr;
+                pctx.shadowColor = `rgba(${p.c},${alpha})`;
+                pctx.fill();
+            }
+            pctx.shadowBlur = 0;
+            imParticleRaf = requestAnimationFrame(pTick);
+        };
+
+        pResize();
+        window._imPResize = pResize;
+        window.addEventListener('resize', pResize);
+        pTick();
+
+        // ── Hero sparks canvas ──────────────────────────────────────
+        const sparkCanvas = document.querySelector('.im-hero-sparks');
+        const heroEl = document.querySelector('.hero-scene');
+        if (sparkCanvas && heroEl) {
+            const sctx = sparkCanvas.getContext('2d');
+            let sw, sh, sdpr, sparks;
+            const SPARK_COLORS = ['255,150,70', '255,196,120', '255,228,170', '120,210,255', '47,214,238'];
+
+            const spawnSpark = (seed) => {
+                const cx = (0.42 + Math.random() * 0.46) * sw;
+                const hot = Math.random() < 0.4;
+                return {
+                    x: cx + (Math.random() - 0.5) * 0.18 * sw,
+                    y: seed ? Math.random() * sh : sh + Math.random() * 50 * sdpr,
+                    r: (hot ? Math.random() * 0.7 + 0.3 : Math.random() * 1.2 + 0.5) * sdpr,
+                    vy: -(Math.random() * 0.5 + 0.25) * sdpr,
+                    sway: Math.random() * Math.PI * 2, swaySp: Math.random() * 0.03 + 0.01,
+                    swayAmp: (Math.random() * 0.5 + 0.2) * sdpr,
+                    life: 0, ttl: Math.random() * 320 + 200,
+                    a: hot ? Math.random() * 0.45 + 0.55 : Math.random() * 0.45 + 0.25,
+                    c: SPARK_COLORS[(Math.random() * SPARK_COLORS.length) | 0],
+                };
+            };
+
+            const sResize = () => {
+                sdpr = Math.min(window.devicePixelRatio || 1, 2);
+                sw = sparkCanvas.width  = heroEl.clientWidth  * sdpr;
+                sh = sparkCanvas.height = heroEl.clientHeight * sdpr;
+                sparkCanvas.style.width  = heroEl.clientWidth  + 'px';
+                sparkCanvas.style.height = heroEl.clientHeight + 'px';
+                const n = Math.min(140, Math.floor(heroEl.clientWidth / 11));
+                sparks = Array.from({ length: n }, () => spawnSpark(true));
+            };
+
+            const sTick = () => {
+                sctx.clearRect(0, 0, sw, sh);
+                if (window.scrollY < heroEl.clientHeight * 1.05) {
+                    for (const e of sparks) {
+                        e.life++; e.y += e.vy; e.sway += e.swaySp;
+                        e.x += Math.cos(e.sway) * e.swayAmp; e.vy -= 0.0015 * sdpr;
+                        if (e.y < -20 || e.life > e.ttl) Object.assign(e, spawnSpark(false));
+                        const fadeIn  = Math.min(1, e.life / 40);
+                        const fadeOut = Math.min(1, (e.ttl - e.life) / 70);
+                        const flick   = 0.55 + 0.45 * Math.sin(e.life * 0.45);
+                        const alpha   = e.a * fadeIn * fadeOut * flick;
+                        sctx.beginPath();
+                        sctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+                        sctx.fillStyle = `rgba(${e.c},${alpha})`;
+                        sctx.shadowBlur = 12 * sdpr;
+                        sctx.shadowColor = `rgba(${e.c},${alpha})`;
+                        sctx.fill();
+                    }
+                }
+                sctx.shadowBlur = 0;
+                imSparkRaf = requestAnimationFrame(sTick);
+            };
+
+            sResize();
+            window._imSResize = sResize;
+            window.addEventListener('resize', sResize);
+            sTick();
+        }
+
+        // ── Figure parallax (scroll + pointer) ─────────────────────
+        const figInner = document.querySelector('.im-figure-inner');
+        if (figInner && hasFinePointer) {
+            let imRaf;
+            window._imPointerMove = (ev) => {
+                if (window.scrollY > window.innerHeight * 0.6) return;
+                cancelAnimationFrame(imRaf);
+                imRaf = requestAnimationFrame(() => {
+                    const dx = (ev.clientX / window.innerWidth  - 0.5) * 16;
+                    const dy = (ev.clientY / window.innerHeight - 0.5) * 12;
+                    figInner.style.transform = `translate(${dx}px, ${dy}px)`;
+                });
+            };
+            window.addEventListener('pointermove', window._imPointerMove);
         }
     };
 
-    setTheme(getStoredTheme() || 'dark');
+    const destroyIronmanParticles = () => {
+        if (imParticleRaf) { cancelAnimationFrame(imParticleRaf); imParticleRaf = null; }
+        if (imSparkRaf)    { cancelAnimationFrame(imSparkRaf);    imSparkRaf    = null; }
+        if (imParticleCanvas) {
+            imParticleCanvas.remove();
+            imParticleCanvas = null;
+        }
+        if (window._imPResize) { window.removeEventListener('resize', window._imPResize); window._imPResize = null; }
+        if (window._imSResize) { window.removeEventListener('resize', window._imSResize); window._imSResize = null; }
+        if (window._imPointerMove) { window.removeEventListener('pointermove', window._imPointerMove); window._imPointerMove = null; }
+        const figInner = document.querySelector('.im-figure-inner');
+        if (figInner) figInner.style.transform = '';
+    };
+
+    const setTheme = (theme) => {
+        THEMES.forEach((t) => root.classList.remove(t));
+        root.classList.add(theme);
+        root.style.colorScheme = theme === 'light' ? 'light' : 'dark';
+
+        if (themeToggle) {
+            const labels = { dark: 'Switch to light mode', light: 'Switch to arc mode', ironman: 'Switch to dark mode' };
+            themeToggle.setAttribute('aria-pressed', String(theme === 'light'));
+            themeToggle.setAttribute('aria-label', labels[theme] || 'Toggle theme');
+        }
+
+        if (theme === 'ironman') initIronmanParticles();
+        else destroyIronmanParticles();
+    };
+
+    setTheme(getStoredTheme() || 'ironman');
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const nextTheme = root.classList.contains('light') ? 'dark' : 'light';
-            setTheme(nextTheme);
-            storeTheme(nextTheme);
+            const current = THEMES.find((t) => root.classList.contains(t)) || 'dark';
+            const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
+            setTheme(next);
+            storeTheme(next);
         });
     }
 
@@ -97,6 +259,12 @@
     const updateProgress = () => {
         if (!progressLine) return;
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        // Article-specific tracking is handled by blog.js on blog post pages.
+        // Here we only manage the scroll cue; blog.js drives the bar itself.
+        if (document.querySelector('article.blog-article')) {
+            if (scrollCue) scrollCue.classList.toggle('is-hidden', scrollTop > 80);
+            return;
+        }
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const scale = maxScroll > 0 ? Math.min(scrollTop / maxScroll, 1) : 0;
         progressLine.style.transform = `scaleX(${scale})`;
@@ -106,6 +274,16 @@
     };
 
     updateProgress();
+
+    // Ironman hero figure scroll parallax
+    window.addEventListener('scroll', () => {
+        if (!root.classList.contains('ironman') || reduceMotion) return;
+        const figInner = document.querySelector('.im-figure-inner');
+        if (figInner && window.scrollY < window.innerHeight) {
+            figInner.style.transform = `translateY(${window.scrollY * 0.12}px) scale(${1 + window.scrollY * 0.00006})`;
+        }
+    }, { passive: true });
+
     window.addEventListener('scroll', updateProgress, { passive: true });
 
     if (heroScene && !reduceMotion && hasFinePointer) {
@@ -396,6 +574,27 @@
         });
     });
 
+    // ── Inquiry form — prevent double-submit & show loading state ────
+    const inquiryForm = document.querySelector('.inquiry-form');
+    if (inquiryForm) {
+        const submitBtn = inquiryForm.querySelector('button[type="submit"]');
+        inquiryForm.addEventListener('submit', () => {
+            if (!submitBtn || submitBtn.disabled) return;
+            submitBtn.disabled = true;
+            submitBtn.dataset.originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending…';
+            submitBtn.style.opacity = '0.72';
+        });
+        // Re-enable if the page stays (e.g. validation error scrolled back)
+        window.addEventListener('pageshow', () => {
+            if (submitBtn && submitBtn.disabled) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = submitBtn.dataset.originalText || 'Send Inquiry';
+                submitBtn.style.opacity = '';
+            }
+        });
+    }
+
     // Wire aria-invalid + aria-describedby for form field errors
     document.querySelectorAll('.form-field').forEach((field) => {
         const errors = field.querySelector('.errorlist');
@@ -408,4 +607,89 @@
             input.setAttribute('aria-describedby', errorId);
         }
     });
+
+    // ── Dashboard flash message auto-dismiss ──────────────────────
+    document.querySelectorAll('[data-flash]').forEach((flash) => {
+        const dismiss = () => {
+            flash.style.transition = 'opacity 0.28s ease, transform 0.28s ease';
+            flash.style.opacity = '0';
+            flash.style.transform = 'translateY(-4px)';
+            setTimeout(() => flash.remove(), 300);
+        };
+
+        const closeBtn = flash.querySelector('.dashboard-flash-close');
+        if (closeBtn) closeBtn.addEventListener('click', dismiss);
+
+        // Auto-dismiss after 4 s; keyboard users have the close button too
+        const timer = setTimeout(dismiss, 4000);
+        // Cancel auto-dismiss if the user hovers over the banner
+        flash.addEventListener('mouseenter', () => clearTimeout(timer));
+    });
+
+    // ── Public site message auto-dismiss ──────────────────────────
+    document.querySelectorAll('[data-site-message]').forEach((msg) => {
+        const dismiss = () => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-6px)';
+            setTimeout(() => {
+                if (msg.parentElement) msg.remove();
+            }, 320);
+        };
+
+        const closeBtn = msg.querySelector('.site-message-close');
+        if (closeBtn) closeBtn.addEventListener('click', dismiss);
+
+        // Auto-dismiss after 5 s; pause timer on hover so users can read it
+        let timer = setTimeout(dismiss, 5000);
+        msg.addEventListener('mouseenter', () => clearTimeout(timer));
+        msg.addEventListener('mouseleave', () => { timer = setTimeout(dismiss, 2500); });
+    });
+
+    // ── Content list client-side filter ───────────────────────────
+    document.querySelectorAll('.content-filter-input').forEach((input) => {
+        const listId = input.dataset.filterTarget;
+        const list = listId ? document.getElementById(listId) : null;
+        if (!list) return;
+
+        input.addEventListener('input', () => {
+            const query = input.value.trim().toLowerCase();
+            list.querySelectorAll('.content-list-row').forEach((row) => {
+                const label = row.querySelector('.content-list-main strong')?.textContent.toLowerCase() || '';
+                const secondary = row.querySelector('.content-list-main span')?.textContent.toLowerCase() || '';
+                const matches = !query || label.includes(query) || secondary.includes(query);
+                row.style.display = matches ? '' : 'none';
+            });
+        });
+    });
+
+    // ── Inline delete confirmation dialog ─────────────────────────
+    const deleteDialog = document.getElementById('content-delete-dialog');
+    const deleteForm   = document.getElementById('content-delete-form');
+    const deleteLabel  = document.getElementById('content-delete-dialog-label');
+    const deleteCancel = document.getElementById('content-delete-cancel');
+
+    if (deleteDialog) {
+        document.querySelectorAll('.content-delete-trigger').forEach((trigger) => {
+            trigger.addEventListener('click', () => {
+                if (deleteForm) deleteForm.action = trigger.dataset.deleteUrl || '';
+                if (deleteLabel) {
+                    const name = trigger.dataset.itemLabel || 'this item';
+                    deleteLabel.textContent = `"${name}" — this action cannot be undone from the dashboard.`;
+                }
+                deleteDialog.showModal();
+            });
+        });
+
+        if (deleteCancel) {
+            deleteCancel.addEventListener('click', () => deleteDialog.close());
+        }
+
+        // Close on backdrop click
+        deleteDialog.addEventListener('click', (event) => {
+            if (event.target === deleteDialog) deleteDialog.close();
+        });
+
+        // Close on Escape (native for <dialog>, but keep explicit for clarity)
+        deleteDialog.addEventListener('cancel', () => deleteDialog.close());
+    }
 })();

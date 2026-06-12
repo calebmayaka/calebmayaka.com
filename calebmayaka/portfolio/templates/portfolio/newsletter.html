@@ -1,0 +1,158 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Newsletter</p>
+        <h1>Email Digest</h1>
+        <span>Manage subscribers and send article digests to your mailing list.</span>
+    </div>
+</section>
+
+<section class="dashboard-kpi-grid">
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <div>
+            <strong>{{ total_subscribers }}</strong>
+            <span>Total subscribers</span>
+        </div>
+        <small>All time</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg>
+        </span>
+        <div>
+            <strong>{{ confirmed_count }}</strong>
+            <span>Confirmed</span>
+        </div>
+        <small class="{% if confirmed_count %}{% else %}is-warning{% endif %}">Active list</small>
+    </article>
+    <article class="dashboard-kpi reveal">
+        <span class="dashboard-kpi-icon">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </span>
+        <div>
+            <strong>{{ pending_count }}</strong>
+            <span>Pending confirm</span>
+        </div>
+        <small class="{% if pending_count %}is-warning{% endif %}">Awaiting email click</small>
+    </article>
+</section>
+
+<section class="dashboard-layout">
+
+    <!-- Send Digest form -->
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Send Digest</h2>
+                <p>Select posts and send a digest to {{ confirmed_count }} confirmed subscriber{{ confirmed_count|pluralize }}.</p>
+            </div>
+        </div>
+        {% if confirmed_count %}
+            <form method="post" action="{% url 'dev_send_digest' %}">
+                {% csrf_token %}
+                <div class="dashboard-form-field">
+                    <label for="id_subject">Subject line</label>
+                    {{ digest_form.subject }}
+                    {% if digest_form.subject.errors %}
+                        <span class="dashboard-field-error">{{ digest_form.subject.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="dashboard-form-field">
+                    <label>Posts to include</label>
+                    <div class="newsletter-post-checklist">
+                        {% for choice in digest_form.post_ids %}
+                            <label class="newsletter-check-row">
+                                {{ choice.tag }}
+                                <span>{{ choice.choice_label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {% if digest_form.post_ids.errors %}
+                        <span class="dashboard-field-error">{{ digest_form.post_ids.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <button type="submit" class="dashboard-action-button"
+                    onclick="return confirm('Send this digest to {{ confirmed_count }} subscriber{{ confirmed_count|pluralize }}?')">
+                    Send digest &rarr;
+                </button>
+            </form>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>No confirmed subscribers yet</strong>
+                <span>The send form will appear here once at least one subscriber confirms their email.</span>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- Digest history -->
+    <aside class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Send History</h2>
+                <p>Recent digest sends.</p>
+            </div>
+        </div>
+        {% if digest_logs %}
+            <div class="dashboard-health-list">
+                {% for log in digest_logs %}
+                    <div class="health-row">
+                        <span>
+                            <strong style="color:var(--dash-text);font-size:0.82rem;">{{ log.subject|truncatechars:36 }}</strong>
+                            <small style="display:block;margin-top:2px;">{{ log.sent_at|date:"M j, Y · g:i A" }}</small>
+                        </span>
+                        <strong>{{ log.recipient_count }} sent</strong>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>No digests sent yet</strong>
+                <span>Your send history will appear here.</span>
+            </div>
+        {% endif %}
+    </aside>
+
+</section>
+
+<!-- Subscriber list -->
+<section class="dashboard-panel reveal" style="margin-top:1rem;">
+    <div class="dashboard-panel-heading">
+        <div>
+            <h2>Subscribers</h2>
+            <p>{{ total_subscribers }} address{{ total_subscribers|pluralize:"es" }} on file.</p>
+        </div>
+    </div>
+    {% if subscribers %}
+        <div class="dashboard-table newsletter-subscriber-table">
+            <div class="dashboard-table-head">
+                <span>Email</span>
+                <span>Status</span>
+                <span>Joined</span>
+            </div>
+            {% for sub in subscribers %}
+                <div class="dashboard-table-row">
+                    <span><strong>{{ sub.email }}</strong></span>
+                    <span>
+                        {% if sub.is_confirmed %}
+                            <span class="status-pill is-read">Confirmed</span>
+                        {% else %}
+                            <span class="status-pill is-unread">Pending</span>
+                        {% endif %}
+                    </span>
+                    <time datetime="{{ sub.subscribed_at|date:'c' }}">{{ sub.subscribed_at|date:"M j, Y" }}</time>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-empty">
+            <strong>No subscribers yet</strong>
+            <span>Subscribers will appear here after they sign up and confirm their email.</span>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

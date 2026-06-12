@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>500 — Server Error · calebmayaka.com</title>
+    <style>
+        :root {
+            --bg: #000;
+            --surface: #09090b;
+            --border: rgba(255,255,255,0.12);
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --primary: #b695ff;
+            --blue: #3b82f6;
+            --radius: 8px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(139,92,246,0.08), transparent 40%),
+                radial-gradient(circle at 75% 80%, rgba(59,130,246,0.06), transparent 40%),
+                var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+        }
+        .wrap {
+            display: grid;
+            gap: 2rem;
+            width: min(680px, 100%);
+            text-align: center;
+        }
+        .code {
+            font-size: clamp(5rem, 18vw, 10rem);
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(90deg, #f7f2ff 0%, var(--primary) 42%, var(--blue) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        h1 {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        p {
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 48px;
+            border-radius: var(--radius);
+            padding: 0.85rem 1.4rem;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: transform 180ms ease, opacity 180ms ease;
+        }
+        a:hover { transform: translateY(-2px); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            color: #fff;
+            border: none;
+        }
+        .btn-secondary {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+        }
+        small {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <p class="code" aria-hidden="true">500</p>
+        <div>
+            <h1>Something went wrong on our end</h1>
+        </div>
+        <p>
+            The server ran into an unexpected error and couldn't complete your request.
+            This has been noted. Try refreshing the page, or come back in a few minutes.
+        </p>
+        <div class="actions">
+            <a class="btn-primary" href="/">Back to home</a>
+            <a class="btn-secondary" href="/blog/">Browse the blog</a>
+        </div>
+        <hr class="divider">
+        <small>calebmayaka.com &mdash; if this keeps happening, reach out via the contact form on the homepage.</small>
+    </div>
+</body>
+</html>

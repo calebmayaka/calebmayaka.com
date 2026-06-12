@@ -1,0 +1,118 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Content</p>
+        <h1>{{ config.plural }}</h1>
+        <span>{{ rows|length }} item{{ rows|length|pluralize }}</span>
+    </div>
+    <div class="dashboard-heading-actions">
+        <a class="dashboard-action-button" href="{% url 'dev_content' %}">Workspace</a>
+        {% if can_create %}
+            <a class="dashboard-action-button primary" href="{% url 'dev_content_create' content_type %}">New</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="content-workspace reveal">
+    <aside class="content-rail" aria-label="Content sections">
+        {% for group in content_nav_groups %}
+            <div class="content-rail-group">
+                <span>{{ group.label }}</span>
+                {% for item in group.items %}
+                    {% if item.url %}
+                        <a href="{{ item.url }}">
+                            <strong>{{ item.label }}</strong>
+                            <em>{{ item.count }}</em>
+                        </a>
+                    {% else %}
+                        <a class="{% if item.active %}active{% endif %}" href="{% url 'dev_content_list' item.key %}">
+                            <strong>{{ item.label }}</strong>
+                            <em>{{ item.count }}</em>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </aside>
+
+    <div class="content-editor-panel">
+        <div class="content-editor-heading">
+            <div>
+                <h2>{{ config.plural }}</h2>
+                <p>{% if config.description %}{{ config.description }}{% else %}{{ config.group }}{% endif %}</p>
+            </div>
+            {% if can_create %}
+                <a href="{% url 'dev_content_create' content_type %}">Create {{ config.label }}</a>
+            {% endif %}
+        </div>
+
+        {% if rows %}
+            {% if rows|length > 4 %}
+            <div class="content-filter-wrap">
+                <svg class="content-filter-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.3-4.3M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z"></path></svg>
+                <input type="search"
+                       class="content-filter-input"
+                       placeholder="Filter {{ config.plural|lower }}…"
+                       data-filter-target="content-item-list"
+                       aria-label="Filter {{ config.plural }}">
+            </div>
+            {% endif %}
+
+            <div class="content-list" id="content-item-list">
+                {% for row in rows %}
+                    <article class="content-list-row">
+                        <a class="content-list-main" href="{% url 'dev_content_edit' content_type row.item.pk %}">
+                            <strong>{{ row.label|truncatechars:80 }}</strong>
+                            <span>
+                                {% for item in row.secondary %}
+                                    {{ item.value|truncatechars:46 }}{% if not forloop.last %} · {% endif %}
+                                {% empty %}
+                                    {{ config.label }}
+                                {% endfor %}
+                            </span>
+                        </a>
+                        {% if row.badge %}
+                            <span class="content-list-badge">{{ row.badge_label }} {{ row.badge }}</span>
+                        {% endif %}
+                        <div class="content-list-actions">
+                            <a href="{% url 'dev_content_edit' content_type row.item.pk %}">Edit</a>
+                            {% if not config.protected_delete %}
+                                <button type="button"
+                                        class="content-delete-trigger danger"
+                                        data-delete-url="{% url 'dev_content_delete' content_type row.item.pk %}"
+                                        data-item-label="{{ row.label|truncatechars:60|escape }}"
+                                        aria-label="Delete {{ row.label|truncatechars:40 }}">Delete</button>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="dashboard-empty">
+                <strong>{{ config.empty_label }}</strong>
+                <span>No {{ config.plural|lower }} have been added yet.</span>
+                {% if can_create %}
+                    <a class="dashboard-action-button primary" href="{% url 'dev_content_create' content_type %}">Create first {{ config.label }}</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{# Inline delete confirmation dialog #}
+<dialog id="content-delete-dialog" class="content-delete-dialog" aria-labelledby="content-delete-dialog-title">
+    <div class="content-delete-dialog-inner">
+        <strong id="content-delete-dialog-title">Delete this item?</strong>
+        <p id="content-delete-dialog-label">This cannot be undone from the dashboard.</p>
+        <div class="content-delete-dialog-actions">
+            <form id="content-delete-form" method="post" action="">
+                {% csrf_token %}
+                <button type="submit" class="danger">Delete permanently</button>
+            </form>
+            <button type="button" id="content-delete-cancel">Keep item</button>
+        </div>
+    </div>
+</dialog>
+{% endblock %}

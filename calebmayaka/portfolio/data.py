@@ -4,8 +4,10 @@ profile = {
     'role': 'Software Engineer & Solution Architect',
     'headline': 'I build clean digital products with Django, JavaScript, and practical AI.',
     'summary': (
-        'A portfolio starter for Caleb Mayaka: thoughtful interfaces, dependable backends, '
-        'and production-minded systems for teams that need useful software, not noise.'
+        'Caleb Mayaka is a software engineer and technology enthusiast who enjoys exploring all things tech. '
+        'His interests span software development, computer hardware, device repair, DIY projects, video editing, '
+        'graphic design, and artificial intelligence. He believes in continuous learning and enjoys sharing '
+        'knowledge through practical experiences and real-world projects.'
     ),
     'location': 'Nairobi, Kenya',
     'email': 'hello@calebmayaka.com',

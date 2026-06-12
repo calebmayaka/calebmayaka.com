@@ -1,0 +1,60 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Email Operations</p>
+        <h1>SMTP Test</h1>
+        <span>Send a test email using the current Django SMTP configuration.</span>
+    </div>
+    <a class="dashboard-action-button" href="{% url 'dev_health' %}">View Health</a>
+</section>
+
+<section class="dashboard-layout">
+    <article class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>Send Test Email</h2>
+                <p>Admin-only tool. The SMTP password is never displayed.</p>
+            </div>
+        </div>
+        <form class="dashboard-user-form smtp-test-form" method="post" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">{{ form.non_field_errors }}</ul>
+            {% endif %}
+            {% for field in form %}
+                <label>
+                    <span>{{ field.label }}</span>
+                    {{ field }}
+                    {{ field.errors }}
+                </label>
+            {% endfor %}
+            <button type="submit">Send Test</button>
+        </form>
+    </article>
+
+    <aside class="dashboard-panel reveal">
+        <div class="dashboard-panel-heading">
+            <div>
+                <h2>SMTP Configuration</h2>
+                <p>Read-only snapshot from environment settings.</p>
+            </div>
+            <span class="status-pill {% if smtp_config.ready %}is-read{% else %}is-unread{% endif %}">
+                {% if smtp_config.ready %}Ready{% else %}Check{% endif %}
+            </span>
+        </div>
+        <div class="dashboard-config-list">
+            <div><span>Backend</span><strong>{{ smtp_config.backend }}</strong></div>
+            <div><span>Host</span><strong>{{ smtp_config.host }}</strong></div>
+            <div><span>Port</span><strong>{{ smtp_config.port }}</strong></div>
+            <div><span>Username</span><strong>{{ smtp_config.username }}</strong></div>
+            <div><span>Password</span><strong>{{ smtp_config.password }}</strong></div>
+            <div><span>TLS</span><strong>{{ smtp_config.use_tls|yesno:"Enabled,Disabled" }}</strong></div>
+            <div><span>SSL</span><strong>{{ smtp_config.use_ssl|yesno:"Enabled,Disabled" }}</strong></div>
+            <div><span>From</span><strong>{{ smtp_config.default_from }}</strong></div>
+            <div><span>Notify</span><strong>{{ smtp_config.notify_email }}</strong></div>
+        </div>
+    </aside>
+</section>
+{% endblock %}

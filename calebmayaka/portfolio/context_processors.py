@@ -1,3 +1,6 @@
+from django.core.cache import cache
+from types import SimpleNamespace
+
 from .models import SiteProfile, SocialLink
 
 
@@ -17,19 +20,47 @@ GENERIC_SOCIAL_URLS = {
     'https://www.linkedin.com/',
 }
 
+SITE_CHROME_CACHE_KEY = 'portfolio:site_chrome:v1'
+SITE_CHROME_CACHE_TIMEOUT = 300
+
+
+def fallback_profile():
+    return SimpleNamespace(
+        name='Caleb Mayaka',
+        initials='CM',
+        role='',
+        headline='',
+        summary='',
+        location='',
+        email='',
+        whatsapp_url='',
+        availability='',
+        meta_description='',
+    )
+
 
 def get_site_chrome():
+    cached = cache.get(SITE_CHROME_CACHE_KEY)
+    if cached is not None:
+        if cached.get('profile') is None:
+            cached['profile'] = fallback_profile()
+        return cached
+
     social_links = [
         link for link in SocialLink.objects.order_by('order')
         if link.url not in GENERIC_SOCIAL_URLS
     ]
 
-    return {
-        'profile': SiteProfile.objects.first(),
+    profile = SiteProfile.objects.first() or fallback_profile()
+
+    chrome = {
+        'profile': profile,
         'primary_nav_items': PRIMARY_NAV_ITEMS,
         'footer_nav_items': FOOTER_NAV_ITEMS,
         'social_links': social_links,
     }
+    cache.set(SITE_CHROME_CACHE_KEY, chrome, SITE_CHROME_CACHE_TIMEOUT)
+    return chrome
 
 
 def site_chrome(request):

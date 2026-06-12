@@ -1,0 +1,117 @@
+{% extends 'portfolio/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<section class="dashboard-page-heading reveal">
+    <div>
+        <p>Content</p>
+        <h1>Workspace</h1>
+        <span>Portfolio data, grouped by where it appears on the site.</span>
+    </div>
+    <a class="dashboard-action-button" href="/cms/">Blog CMS</a>
+</section>
+
+<section class="content-workspace reveal">
+    <aside class="content-rail" aria-label="Content sections">
+        {% for group in content_nav_groups %}
+            <div class="content-rail-group">
+                <span>{{ group.label }}</span>
+                {% for item in group.items %}
+                    {% if item.url %}
+                        <a href="{{ item.url }}">
+                            <strong>{{ item.label }}</strong>
+                            <em>{{ item.count }}</em>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dev_content_list' item.key %}">
+                            <strong>{{ item.label }}</strong>
+                            <em>{{ item.count }}</em>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </aside>
+
+    <div class="content-editor-panel">
+        <div class="content-editor-heading">
+            <div>
+                <h2>All Sections</h2>
+                <p>{{ content_items|length }} editable content areas</p>
+            </div>
+            <a href="/cms/">Open Wagtail</a>
+        </div>
+
+        <div class="dashboard-kpi-grid content-kpi-grid">
+            <article class="dashboard-kpi">
+                <span class="dashboard-kpi-icon">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16M7 5v14"></path></svg>
+                </span>
+                <div>
+                    <strong>{{ content_items|length }}</strong>
+                    <span>Content Sections</span>
+                </div>
+                <small>All editable from /dev</small>
+            </article>
+            <article class="dashboard-kpi">
+                <span class="dashboard-kpi-icon">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5Z"></path></svg>
+                </span>
+                <div>
+                    <strong>{{ blog_status.published_posts }}</strong>
+                    <span>Published Posts</span>
+                </div>
+                <small>Live on the blog</small>
+            </article>
+            <article class="dashboard-kpi">
+                <span class="dashboard-kpi-icon">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z"></path></svg>
+                </span>
+                <div>
+                    <strong>{{ blog_status.draft_posts }}</strong>
+                    <span>Blog Drafts</span>
+                </div>
+                <small>Unpublished in CMS</small>
+            </article>
+        </div>
+
+        {% regroup content_items by group as grouped_content %}
+        <div class="content-overview-grid">
+            {% for group in grouped_content %}
+                <div class="content-overview-group-head" role="heading" aria-level="3">{{ group.grouper }}</div>
+                {% for item in group.list %}
+                    <article class="content-overview-card">
+                        <div class="content-overview-card-head">
+                            <strong>{{ item.plural }}</strong>
+                            <span class="content-overview-count">{{ item.count }}</span>
+                        </div>
+                        {% if item.description %}
+                            <p>{{ item.description }}</p>
+                        {% endif %}
+                        {% if item.latest_label %}
+                            <span class="content-overview-latest">Latest: {{ item.latest_label|truncatechars:48 }}</span>
+                        {% endif %}
+                        <div class="content-overview-card-foot">
+                            {% if item.can_create %}
+                                <a href="{% url 'dev_content_create' item.key %}">+ New</a>
+                            {% endif %}
+                            <a href="{% url 'dev_content_list' item.key %}" class="content-overview-manage">Manage →</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            {% endfor %}
+
+            <article class="content-overview-card content-blog-card">
+                <div class="content-overview-card-head">
+                    <strong>Blog</strong>
+                    <span class="content-overview-count">{{ blog_status.published_posts }}</span>
+                </div>
+                <p>Blog posts, drafts, and tags — managed in Wagtail CMS.</p>
+                <span class="content-overview-latest">{{ blog_status.draft_posts }} draft{{ blog_status.draft_posts|pluralize }} · Wagtail managed</span>
+                <div class="content-overview-card-foot">
+                    <a href="/cms/" class="content-overview-manage">Open Wagtail →</a>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}
