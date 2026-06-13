@@ -256,6 +256,14 @@
         });
     }
 
+    const updateNavState = () => {
+        if (!siteNav) return;
+        siteNav.classList.toggle('is-scrolled', (window.scrollY || document.documentElement.scrollTop) > 12);
+    };
+
+    updateNavState();
+    window.addEventListener('scroll', updateNavState, { passive: true });
+
     const updateProgress = () => {
         if (!progressLine) return;
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -351,19 +359,44 @@
     }
 
     const revealItems = document.querySelectorAll('.reveal');
+
+    // Stagger siblings: reveals sharing a parent fade in 80ms apart (see --reveal-i in CSS)
+    const staggerGroups = new Map();
+    revealItems.forEach((item) => {
+        const parent = item.parentElement;
+        const index = staggerGroups.get(parent) || 0;
+        item.style.setProperty('--reveal-i', String(Math.min(index, 7)));
+        staggerGroups.set(parent, index + 1);
+    });
+
+    // Once the entrance finishes, drop the reveal classes so component hover
+    // transitions (cards, buttons) are no longer overridden by the reveal one.
+    const finishReveal = (item) => {
+        const staggerIndex = Number(item.style.getPropertyValue('--reveal-i')) || 0;
+        const settleMs = reduceMotion ? 0 : 720 + staggerIndex * 80 + 60;
+        setTimeout(() => {
+            item.classList.remove('reveal', 'is-visible');
+            item.style.removeProperty('--reveal-i');
+        }, settleMs);
+    };
+
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
                     observer.unobserve(entry.target);
+                    finishReveal(entry.target);
                 }
             });
         }, { threshold: 0.12 });
 
         revealItems.forEach((item) => observer.observe(item));
     } else {
-        revealItems.forEach((item) => item.classList.add('is-visible'));
+        revealItems.forEach((item) => {
+            item.classList.add('is-visible');
+            finishReveal(item);
+        });
     }
 
     const focusableSelector = [

@@ -1643,3 +1643,141 @@ html.light .blog-code-block {
 .katex-display {
     margin: 0 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   UI REFINEMENT LAYER — editorial typography & motion polish
+   (companion to the layer at the end of portfolio.css)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Listing: kickers, meta & cards ──────────────────────────── */
+.blog-listing-head p,
+.blog-breadcrumb,
+.blog-eyebrow,
+.blog-featured-kicker,
+.blog-tag-kicker,
+.blog-search-kicker,
+.blog-post-nav-label,
+.blog-toc-heading,
+.blog-sidebar-related-heading {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+}
+
+.blog-card-meta,
+.blog-listing-count {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.blog-card {
+    transition:
+        transform 320ms var(--ease-out),
+        border-color 260ms ease,
+        box-shadow 320ms var(--ease-out);
+}
+
+.blog-card:hover {
+    transform: translateY(-6px);
+}
+
+.blog-card-media-link img,
+.blog-featured-media img {
+    transition: transform 600ms var(--ease-out);
+}
+
+.blog-card:hover .blog-card-media-link img,
+.blog-featured-inner:hover .blog-featured-media img {
+    transform: scale(1.045);
+}
+
+.blog-read-link,
+.blog-featured-cta {
+    font-weight: 650;
+}
+
+.blog-tag-list span,
+.blog-tag-link {
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* ── Article: comfortable measure & link styling ─────────────── */
+.blog-article h1 {
+    line-height: 1.04;
+}
+
+.blog-article-subtitle {
+    font-size: 1.16rem;
+    text-wrap: pretty;
+}
+
+.blog-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.blog-content p {
+    margin-bottom: 1.15rem;
+    text-wrap: pretty;
+}
+
+.blog-content a {
+    transition: color 180ms ease, text-decoration-color 180ms ease;
+    text-decoration-color: color-mix(in srgb, var(--cyan) 45%, transparent);
+}
+
+.blog-content a:hover {
+    text-decoration-color: var(--cyan);
+}
+
+.blog-content h2,
+.blog-content h3 {
+    margin-top: 2.6rem;
+}
+
+.blog-excerpt,
+.blog-stream-quote,
+.blog-content blockquote {
+    border-left-width: 2px;
+    padding-left: 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.blog-content code,
+.blog-code-block code {
+    font-family: var(--font-mono);
+}
+
+.blog-code-head span:first-child {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+/* ── Subscribe & pagination ──────────────────────────────────── */
+.blog-subscribe-row button {
+    color: var(--brand-ink);
+    transition: opacity 160ms ease, transform 220ms var(--ease-snap);
+}
+
+.blog-subscribe-row button:hover {
+    transform: translateY(-1px);
+}
+
+.blog-pagination-btn {
+    font-weight: 600;
+}
+
+.blog-pagination-count {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
