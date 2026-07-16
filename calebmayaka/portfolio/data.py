@@ -36,24 +36,29 @@ stats = [
 
 skills = [
     {
-        'title': 'Backend Engineering',
+        'title': 'Microsoft Dynamics NAV / C/AL',
+        'description': 'ERP customization and development on Microsoft Dynamics NAV with C/AL — codeunits, pages, reports, and business logic tuned to finance and operations workflows.',
+        'tags': ['Dynamics NAV', 'C/AL', 'ERP', 'Reports'],
+    },
+    {
+        'title': 'Python & Django',
         'description': 'Django apps, API design, authentication flows, data models, admin workflows, and deployment-ready structure.',
-        'tags': ['Django', 'Python', 'REST', 'SQLite/Postgres'],
+        'tags': ['Django', 'Python', 'Auth', 'Deployment'],
     },
     {
-        'title': 'Frontend Craft',
-        'description': 'Responsive, accessible interfaces with clean CSS, modern JavaScript, and strong visual hierarchy.',
-        'tags': ['HTML', 'CSS', 'JavaScript', 'UX'],
+        'title': 'Django REST Framework',
+        'description': 'Designing and building REST APIs — serializers, viewsets, permissions, and versioned endpoints for web and mobile clients.',
+        'tags': ['DRF', 'REST', 'Serializers', 'Auth'],
     },
     {
-        'title': 'Product Thinking',
-        'description': 'Turning a rough idea into a usable workflow with thoughtful screens, clear calls to action, and measurable outcomes.',
-        'tags': ['Planning', 'Design Systems', 'Iteration'],
+        'title': 'Virtualization — Proxmox & Citrix',
+        'description': 'Provisioning and managing virtual infrastructure with Proxmox and Citrix — VMs, containers, and virtual desktops for reliable, isolated environments.',
+        'tags': ['Proxmox', 'Citrix', 'VMs', 'Infrastructure'],
     },
     {
-        'title': 'AI-Ready Features',
-        'description': 'Practical AI integrations for search, assistants, content workflows, and internal productivity tools.',
-        'tags': ['LLMs', 'Automation', 'Prompts'],
+        'title': 'Technical Writing',
+        'description': 'Clear documentation, guides, and reference material — turning complex systems into content people can actually follow.',
+        'tags': ['Docs', 'Guides', 'Editing'],
     },
 ]
 
