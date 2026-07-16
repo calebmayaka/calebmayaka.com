@@ -80,17 +80,6 @@
                 <input type="search" name="q" value="{{ search_query|default:'' }}" placeholder="Search inquiries...">
                 <kbd>&#8984; K</kbd>
             </form>
-            <button class="theme-toggle dashboard-icon-button" type="button" aria-label="Switch theme" aria-pressed="false">
-                <svg class="theme-icon theme-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M2 12h2"></path><path d="M20 12h2"></path>
-                    <path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path>
-                    <path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>
-                </svg>
-                <svg class="theme-icon theme-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path d="M20.9 13.4A8.5 8.5 0 1 1 10.6 3.1 6.7 6.7 0 0 0 20.9 13.4Z"></path>
-                </svg>
-            </button>
             <a class="dashboard-icon-button notification-dot" href="{% url 'dev_inquiries' %}?status=unread" aria-label="Unread inquiries">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"></path></svg>
             </a>

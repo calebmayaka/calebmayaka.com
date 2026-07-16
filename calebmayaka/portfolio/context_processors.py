@@ -11,8 +11,6 @@ PRIMARY_NAV_ITEMS = [
 
 FOOTER_NAV_ITEMS = [
     {'label': 'About', 'url_name': 'about', 'url': '', 'active_key': 'about'},
-    {'label': 'Experience', 'url_name': 'experience', 'url': '', 'active_key': 'experience'},
-    {'label': 'Case Studies', 'url_name': 'case_studies', 'url': '', 'active_key': 'case_studies'},
 ]
 
 GENERIC_SOCIAL_URLS = {

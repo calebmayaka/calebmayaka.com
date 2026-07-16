@@ -1,6 +1,27 @@
 (function () {
+    // ── Theme toggle (light / dark) ────────────────────────────────
     const root = document.documentElement;
     const themeToggle = document.querySelector('.theme-toggle');
+    const applyTheme = (t) => {
+        root.classList.remove('dark', 'light');
+        root.classList.add(t);
+        root.style.colorScheme = t;
+        if (themeToggle) themeToggle.setAttribute('aria-pressed', String(t === 'light'));
+    };
+    let currentTheme = 'light';
+    try {
+        const stored = localStorage.getItem('portfolio-theme');
+        if (stored === 'light' || stored === 'dark') currentTheme = stored;
+    } catch (e) { /* private mode */ }
+    applyTheme(currentTheme);
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            currentTheme = root.classList.contains('light') ? 'dark' : 'light';
+            applyTheme(currentTheme);
+            try { localStorage.setItem('portfolio-theme', currentTheme); } catch (e) { /* ignore */ }
+        });
+    }
+
     const siteNav = document.querySelector('.site-nav');
     const navToggle = document.querySelector('.nav-toggle');
     const navLinks = document.querySelector('.nav-links');
@@ -10,205 +31,22 @@
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 
-    const getStoredTheme = () => {
-        try {
-            return localStorage.getItem('portfolio-theme');
-        } catch (error) {
-            return null;
-        }
-    };
-
-    const storeTheme = (theme) => {
-        try {
-            localStorage.setItem('portfolio-theme', theme);
-        } catch (error) {
-            // Storage can fail in private contexts; the toggle should still work for this page.
-        }
-    };
-
-    const THEMES = ['dark', 'light', 'ironman'];
-
-    // ── Ironman particle state ─────────────────────────────────────
-    let imParticleRaf = null;
-    let imSparkRaf    = null;
-    let imParticleCanvas = null;
-
-    const initIronmanParticles = () => {
-        if (reduceMotion) return;
-
-        // ── Ambient full-page particle canvas ──────────────────────
-        if (!imParticleCanvas) {
-            imParticleCanvas = document.createElement('canvas');
-            imParticleCanvas.id = 'im-particles';
-            imParticleCanvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
-            document.body.prepend(imParticleCanvas);
-        }
-        const pctx = imParticleCanvas.getContext('2d');
-        const COLORS = ['47,214,238', '75,140,255', '200,232,255'];
-        let pw, ph, pdpr, pparticles;
-
-        const pResize = () => {
-            pdpr = Math.min(window.devicePixelRatio || 1, 2);
-            pw = imParticleCanvas.width  = innerWidth  * pdpr;
-            ph = imParticleCanvas.height = innerHeight * pdpr;
-            imParticleCanvas.style.width  = innerWidth  + 'px';
-            imParticleCanvas.style.height = innerHeight + 'px';
-            const count = Math.min(90, Math.floor((innerWidth * innerHeight) / 22000));
-            pparticles = Array.from({ length: count }, () => ({
-                x: Math.random() * pw, y: Math.random() * ph,
-                r: (Math.random() * 1.6 + 0.4) * pdpr,
-                vx: (Math.random() - 0.5) * 0.18 * pdpr,
-                vy: (Math.random() - 0.5) * 0.18 * pdpr - 0.04 * pdpr,
-                a: Math.random() * 0.5 + 0.12,
-                tw: Math.random() * Math.PI * 2,
-                tws: Math.random() * 0.02 + 0.005,
-                c: COLORS[(Math.random() * COLORS.length) | 0],
-            }));
+    // ── Blueprint hero: mouse parallax (grid + schematic) ──────────
+    const bpHero = document.getElementById('bp-root');
+    if (bpHero && !reduceMotion && hasFinePointer) {
+        let bpRaf = null;
+        const onMove = (event) => {
+            const x = event.clientX / window.innerWidth - 0.5;
+            const y = event.clientY / window.innerHeight - 0.5;
+            if (bpRaf) cancelAnimationFrame(bpRaf);
+            bpRaf = requestAnimationFrame(() => {
+                bpHero.style.setProperty('--gx', (-x * 10).toFixed(1) + 'px');
+                bpHero.style.setProperty('--gy', (-y * 10).toFixed(1) + 'px');
+                bpHero.style.setProperty('--sx', (x * 30).toFixed(1) + 'px');
+                bpHero.style.setProperty('--sy', (y * 30).toFixed(1) + 'px');
+            });
         };
-
-        const pTick = () => {
-            pctx.clearRect(0, 0, pw, ph);
-            for (const p of pparticles) {
-                p.x += p.vx; p.y += p.vy; p.tw += p.tws;
-                if (p.x < -10) p.x = pw + 10;
-                if (p.x > pw + 10) p.x = -10;
-                if (p.y < -10) p.y = ph + 10;
-                if (p.y > ph + 10) p.y = -10;
-                const alpha = p.a * (0.55 + 0.45 * Math.sin(p.tw));
-                pctx.beginPath();
-                pctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                pctx.fillStyle = `rgba(${p.c},${alpha})`;
-                pctx.shadowBlur = 8 * pdpr;
-                pctx.shadowColor = `rgba(${p.c},${alpha})`;
-                pctx.fill();
-            }
-            pctx.shadowBlur = 0;
-            imParticleRaf = requestAnimationFrame(pTick);
-        };
-
-        pResize();
-        window._imPResize = pResize;
-        window.addEventListener('resize', pResize);
-        pTick();
-
-        // ── Hero sparks canvas ──────────────────────────────────────
-        const sparkCanvas = document.querySelector('.im-hero-sparks');
-        const heroEl = document.querySelector('.hero-scene');
-        if (sparkCanvas && heroEl) {
-            const sctx = sparkCanvas.getContext('2d');
-            let sw, sh, sdpr, sparks;
-            const SPARK_COLORS = ['255,150,70', '255,196,120', '255,228,170', '120,210,255', '47,214,238'];
-
-            const spawnSpark = (seed) => {
-                const cx = (0.42 + Math.random() * 0.46) * sw;
-                const hot = Math.random() < 0.4;
-                return {
-                    x: cx + (Math.random() - 0.5) * 0.18 * sw,
-                    y: seed ? Math.random() * sh : sh + Math.random() * 50 * sdpr,
-                    r: (hot ? Math.random() * 0.7 + 0.3 : Math.random() * 1.2 + 0.5) * sdpr,
-                    vy: -(Math.random() * 0.5 + 0.25) * sdpr,
-                    sway: Math.random() * Math.PI * 2, swaySp: Math.random() * 0.03 + 0.01,
-                    swayAmp: (Math.random() * 0.5 + 0.2) * sdpr,
-                    life: 0, ttl: Math.random() * 320 + 200,
-                    a: hot ? Math.random() * 0.45 + 0.55 : Math.random() * 0.45 + 0.25,
-                    c: SPARK_COLORS[(Math.random() * SPARK_COLORS.length) | 0],
-                };
-            };
-
-            const sResize = () => {
-                sdpr = Math.min(window.devicePixelRatio || 1, 2);
-                sw = sparkCanvas.width  = heroEl.clientWidth  * sdpr;
-                sh = sparkCanvas.height = heroEl.clientHeight * sdpr;
-                sparkCanvas.style.width  = heroEl.clientWidth  + 'px';
-                sparkCanvas.style.height = heroEl.clientHeight + 'px';
-                const n = Math.min(140, Math.floor(heroEl.clientWidth / 11));
-                sparks = Array.from({ length: n }, () => spawnSpark(true));
-            };
-
-            const sTick = () => {
-                sctx.clearRect(0, 0, sw, sh);
-                if (window.scrollY < heroEl.clientHeight * 1.05) {
-                    for (const e of sparks) {
-                        e.life++; e.y += e.vy; e.sway += e.swaySp;
-                        e.x += Math.cos(e.sway) * e.swayAmp; e.vy -= 0.0015 * sdpr;
-                        if (e.y < -20 || e.life > e.ttl) Object.assign(e, spawnSpark(false));
-                        const fadeIn  = Math.min(1, e.life / 40);
-                        const fadeOut = Math.min(1, (e.ttl - e.life) / 70);
-                        const flick   = 0.55 + 0.45 * Math.sin(e.life * 0.45);
-                        const alpha   = e.a * fadeIn * fadeOut * flick;
-                        sctx.beginPath();
-                        sctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
-                        sctx.fillStyle = `rgba(${e.c},${alpha})`;
-                        sctx.shadowBlur = 12 * sdpr;
-                        sctx.shadowColor = `rgba(${e.c},${alpha})`;
-                        sctx.fill();
-                    }
-                }
-                sctx.shadowBlur = 0;
-                imSparkRaf = requestAnimationFrame(sTick);
-            };
-
-            sResize();
-            window._imSResize = sResize;
-            window.addEventListener('resize', sResize);
-            sTick();
-        }
-
-        // ── Figure parallax (scroll + pointer) ─────────────────────
-        const figInner = document.querySelector('.im-figure-inner');
-        if (figInner && hasFinePointer) {
-            let imRaf;
-            window._imPointerMove = (ev) => {
-                if (window.scrollY > window.innerHeight * 0.6) return;
-                cancelAnimationFrame(imRaf);
-                imRaf = requestAnimationFrame(() => {
-                    const dx = (ev.clientX / window.innerWidth  - 0.5) * 16;
-                    const dy = (ev.clientY / window.innerHeight - 0.5) * 12;
-                    figInner.style.transform = `translate(${dx}px, ${dy}px)`;
-                });
-            };
-            window.addEventListener('pointermove', window._imPointerMove);
-        }
-    };
-
-    const destroyIronmanParticles = () => {
-        if (imParticleRaf) { cancelAnimationFrame(imParticleRaf); imParticleRaf = null; }
-        if (imSparkRaf)    { cancelAnimationFrame(imSparkRaf);    imSparkRaf    = null; }
-        if (imParticleCanvas) {
-            imParticleCanvas.remove();
-            imParticleCanvas = null;
-        }
-        if (window._imPResize) { window.removeEventListener('resize', window._imPResize); window._imPResize = null; }
-        if (window._imSResize) { window.removeEventListener('resize', window._imSResize); window._imSResize = null; }
-        if (window._imPointerMove) { window.removeEventListener('pointermove', window._imPointerMove); window._imPointerMove = null; }
-        const figInner = document.querySelector('.im-figure-inner');
-        if (figInner) figInner.style.transform = '';
-    };
-
-    const setTheme = (theme) => {
-        THEMES.forEach((t) => root.classList.remove(t));
-        root.classList.add(theme);
-        root.style.colorScheme = theme === 'light' ? 'light' : 'dark';
-
-        if (themeToggle) {
-            const labels = { dark: 'Switch to light mode', light: 'Switch to arc mode', ironman: 'Switch to dark mode' };
-            themeToggle.setAttribute('aria-pressed', String(theme === 'light'));
-            themeToggle.setAttribute('aria-label', labels[theme] || 'Toggle theme');
-        }
-
-        if (theme === 'ironman') initIronmanParticles();
-        else destroyIronmanParticles();
-    };
-
-    setTheme(getStoredTheme() || 'ironman');
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            const current = THEMES.find((t) => root.classList.contains(t)) || 'dark';
-            const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
-            setTheme(next);
-            storeTheme(next);
-        });
+        window.addEventListener('mousemove', onMove, { passive: true });
     }
 
     const timeGreeting = document.querySelector('[data-time-greeting]');
@@ -283,15 +121,6 @@
 
     updateProgress();
 
-    // Ironman hero figure scroll parallax
-    window.addEventListener('scroll', () => {
-        if (!root.classList.contains('ironman') || reduceMotion) return;
-        const figInner = document.querySelector('.im-figure-inner');
-        if (figInner && window.scrollY < window.innerHeight) {
-            figInner.style.transform = `translateY(${window.scrollY * 0.12}px) scale(${1 + window.scrollY * 0.00006})`;
-        }
-    }, { passive: true });
-
     window.addEventListener('scroll', updateProgress, { passive: true });
 
     if (heroScene && !reduceMotion && hasFinePointer) {
@@ -300,10 +129,13 @@
             if (frame) cancelAnimationFrame(frame);
             frame = requestAnimationFrame(() => {
                 const rect = heroScene.getBoundingClientRect();
-                const x = ((event.clientX - rect.left) / rect.width - 0.5) * 24;
-                const y = ((event.clientY - rect.top) / rect.height - 0.5) * 24;
-                heroScene.style.setProperty('--hero-shift-x', `${x.toFixed(2)}px`);
-                heroScene.style.setProperty('--hero-shift-y', `${y.toFixed(2)}px`);
+                const nx = (event.clientX - rect.left) / rect.width - 0.5;
+                const ny = (event.clientY - rect.top) / rect.height - 0.5;
+                heroScene.style.setProperty('--hero-shift-x', `${(nx * 24).toFixed(2)}px`);
+                heroScene.style.setProperty('--hero-shift-y', `${(ny * 24).toFixed(2)}px`);
+                // Unitless tilt for the 3D statement: lean toward the cursor.
+                heroScene.style.setProperty('--hero-tilt-x', (ny * -9).toFixed(2));
+                heroScene.style.setProperty('--hero-tilt-y', (nx * 12).toFixed(2));
             });
         };
 
@@ -311,6 +143,8 @@
         heroScene.addEventListener('pointerleave', () => {
             heroScene.style.setProperty('--hero-shift-x', '0px');
             heroScene.style.setProperty('--hero-shift-y', '0px');
+            heroScene.style.setProperty('--hero-tilt-x', '0');
+            heroScene.style.setProperty('--hero-tilt-y', '0');
         });
     }
 

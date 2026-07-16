@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -166,6 +167,12 @@ if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
     db_name = Path(DATABASES['default']['NAME'])
     if not db_name.is_absolute():
         DATABASES['default']['NAME'] = BASE_DIR / db_name
+    # WAL lets readers proceed during writes; without it every visit-tracking
+    # write locks the whole DB and the admin stalls behind public traffic.
+    DATABASES['default']['OPTIONS'] = {
+        'timeout': 20,
+        'init_command': 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;',
+    }
 
 
 # Password validation

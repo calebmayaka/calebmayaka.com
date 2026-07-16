@@ -16,342 +16,139 @@
 {% endblock %}
 
 {% block content %}
-<section class="hero hero-scene">
-    <div class="hero-math-bg" aria-hidden="true">
-        <img src="{% static 'portfolio/img/math.webp' %}" width="1920" height="1280" alt="" fetchpriority="high" decoding="async">
-    </div>
-    <!-- Ironman mode: hero figure + sparks (hidden in dark/light) -->
-    <div class="im-hero-figure" aria-hidden="true">
-        <div class="im-figure-inner">
-            <img src="{% static 'portfolio/img/hero-figure.jpg' %}" alt="" decoding="async">
-        </div>
-    </div>
-    <canvas class="im-hero-sparks" aria-hidden="true"></canvas>
+<div class="v2-main">
 
-    <!-- Ironman mode: hero content (replaces .hero-center in ironman) -->
-    <div class="im-hero-content">
-        <h1 class="im-hero-h1">Engineering For The Future</h1>
-        <div class="hero-actions">
-            <a class="btn btn-primary hero-cta-primary" href="/blog/">Read the Blog</a>
-            <a class="btn btn-secondary hero-cta-secondary" href="#inquiry">Get in Touch</a>
-            <div class="hero-socials" aria-label="Social links">
-                <a class="hero-social" href="https://github.com/calebmayaka" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.27-1.7-1.27-1.7-1.05-.71.08-.7.08-.7 1.16.09 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.64 1.6.24 2.77.12 3.06.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .5Z"/>
-                    </svg>
-                </a>
-                <a class="hero-social" href="https://x.com/ombogomayaka" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M18.244 2H21l-6.52 7.45L22 22h-6.78l-4.78-6.27L4.94 22H2.18l6.97-7.96L2 2h6.95l4.32 5.71L18.244 2Zm-1.18 18.27h1.55L7.04 3.63H5.4L17.064 20.27Z"/>
-                    </svg>
-                </a>
-            </div>
+    <!-- HERO + SOCIAL RAIL -->
+    <section class="v2-hero v2-pad">
+        <div class="v2-hero-copy reveal">
+            <p class="v2-eyebrow">{{ profile.role|default:'Software engineer & solution architect' }}</p>
+            <h1>Software that ships.</h1>
+            <p class="v2-lead">I design, build, and deploy the software businesses actually run on &mdash; from Django backends to Windows Server pipelines and self-hosted infrastructure.</p>
+            <a class="v2-cta" href="#contact">Contact me <span class="v2-arrow">&rarr;</span></a>
         </div>
-        <a class="im-scroll-ind" href="{% if blog_posts %}#latest-posts{% else %}#code-showcase{% endif %}" aria-label="Scroll down">
-            <span class="im-mouse"></span>
-            <span>Scroll</span>
-        </a>
-    </div>
 
-    <div class="hero-center reveal">
-        <h1 class="hero-handle-h1">@calebmayaka</h1>
-        <p class="hero-bio">{{ profile.headline }}</p>
-        <div class="hero-actions">
-            <a class="btn btn-primary hero-cta-primary" href="/blog/">
-                Read the Blog
-            </a>
-            <a class="btn btn-secondary hero-cta-secondary" href="#inquiry">
-                Get in Touch
-            </a>
-            <div class="hero-socials" aria-label="Social links">
-                <a class="hero-social" href="https://github.com/calebmayaka" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.27-1.7-1.27-1.7-1.05-.71.08-.7.08-.7 1.16.09 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.64 1.6.24 2.77.12 3.06.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.17v3.22c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .5Z"/>
-                    </svg>
-                </a>
-                <a class="hero-social" href="https://x.com/ombogomayaka" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M18.244 2H21l-6.52 7.45L22 22h-6.78l-4.78-6.27L4.94 22H2.18l6.97-7.96L2 2h6.95l4.32 5.71L18.244 2Zm-1.18 18.27h1.55L7.04 3.63H5.4L17.064 20.27Z"/>
-                    </svg>
-                </a>
-                {% if profile.whatsapp_url %}
-                <a class="hero-social" href="{{ profile.whatsapp_url }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347Z"/>
-                        <path fill="currentColor" d="M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.062 12.062 0 0 0 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896 0-3.176-1.24-6.165-3.49-8.413M12.05 21.785h-.004a9.87 9.87 0 0 1-5.03-1.372l-.36-.214-3.741.975 1-3.638-.235-.374a9.86 9.86 0 0 1-1.516-5.27c.001-5.45 4.448-9.884 9.889-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.892 6.994c-.003 5.45-4.45 9.885-9.881 9.885"/>
-                    </svg>
-                </a>
+        <div class="v2-rail" aria-label="Social links">
+            <span class="v2-rail-label">Say hello</span>
+            {% for link in social_links %}
+            <a href="{{ link.url }}" title="{{ link.label }}"{% if not link.url|slice:":7" == "mailto:" %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{{ link.label }}">
+                {% with l=link.label|lower %}
+                {% if 'github' in l %}
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5a11.5 11.5 0 0 0 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+                {% elif 'twitter' in l or 'x /' in l or l == 'x' %}
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.2 2h3.3l-7.2 8.3L22.8 22h-6.6l-5.2-6.8L4.9 22H1.6l7.7-8.8L1.2 2h6.8l4.7 6.2L18.2 2zm-1.2 18h1.8L7.1 3.9H5.2L17 20z"/></svg>
+                {% elif 'linkedin' in l %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.31h4.52V23H.24zM8.34 8.31h4.33v2h.06c.6-1.14 2.08-2.34 4.28-2.34 4.58 0 5.42 3.01 5.42 6.92V23h-4.51v-7.13c0-1.7-.03-3.89-2.37-3.89-2.37 0-2.73 1.85-2.73 3.76V23H8.34z"/></svg>
+                {% elif 'whatsapp' in l %}
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.1-.3.2-.6 0-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2-.1-.3 0-.5.1-.6l.4-.5q.2-.3.3-.5.1-.2 0-.4 0-.2-.7-1.8c-.2-.6-.5-.5-.7-.5h-.5q-.3 0-.8.4c-.3.2-1 1-1 2.5s1.1 2.9 1.2 3 2.1 3.2 5.1 4.5c1.8.8 2.5.8 3.4.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4z"/><path d="M20.5 3.4A11.9 11.9 0 0 0 12 0 12 12 0 0 0 1.6 17.8L0 24l6.3-1.7A12 12 0 0 0 12 23.8 12 12 0 0 0 20.5 3.4zM12 21.8a9.9 9.9 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.9 9.9 0 1 1 12 21.8z"/></svg>
+                {% elif 'mail' in l or 'email' in l %}
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg>
+                {% else %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7.07 0l3.18-3.18a5 5 0 1 0-7.07-7.07l-1.6 1.59"/><path d="M14 10a5 5 0 0 0-7.07 0L3.75 13.18a5 5 0 1 0 7.07 7.07l1.59-1.59"/></svg>
                 {% endif %}
-            </div>
+                {% endwith %}
+            </a>
+            {% endfor %}
+            <span class="v2-rail-line" aria-hidden="true"></span>
         </div>
-        <a class="scroll-cue" href="{% if blog_posts %}#latest-posts{% else %}#code-showcase{% endif %}" aria-label="Scroll to first section">
-            <span>scroll</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 5v14M5 13l7 7 7-7"/>
-            </svg>
-        </a>
-    </div>
-</section>
+    </section>
 
-{% if blog_posts %}
-<section class="section-shell latest-posts-shell" id="latest-posts">
-    <div class="section-heading reveal">
-        <p class="eyebrow">Latest writing</p>
-        <h2>Notes from the workbench</h2>
-        <p>Practical essays, build logs, and ideas from the workbench.</p>
-    </div>
-    <div class="blog-feed-grid">
-        {% for post in blog_posts|slice:":3" %}
-            <article class="blog-feed-card reveal">
-                <a href="{% pageurl post %}">
-                    {% if post.cover_image %}
-                        {% image post.cover_image fill-380x220 as post_thumb_small %}
-                        {% image post.cover_image fill-760x440 as post_thumb %}
-                        {% image post.cover_image fill-1140x660 as post_thumb_large %}
-                        <div class="blog-feed-media">
-                            <img
-                                src="{{ post_thumb.url }}"
-                                srcset="{{ post_thumb_small.url }} 380w, {{ post_thumb.url }} 760w, {{ post_thumb_large.url }} 1140w"
-                                sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 360px"
-                                width="{{ post_thumb.width }}"
-                                height="{{ post_thumb.height }}"
-                                alt="{{ post.title }}"
-                                loading="lazy"
-                                decoding="async">
-                        </div>
-                    {% else %}
-                        <div class="blog-feed-media blog-feed-media-fallback" aria-hidden="true">
-                            <span>Blog</span>
-                        </div>
-                    {% endif %}
-                    <div class="blog-feed-copy">
-                        <div class="blog-feed-meta">
-                            <span>{{ post.date|date:"M j, Y" }}</span>
-                            <span>{{ post.estimated_read_minutes }} min read</span>
-                            {% if post.view_count %}<span>{{ post.view_count }} read{{ post.view_count|pluralize }}</span>{% endif %}
-                        </div>
-                        <h3>{{ post.title }}</h3>
-                        <p>{{ post.excerpt|default:post.search_description|truncatechars:160 }}</p>
-                        <span class="blog-feed-link">Read article</span>
-                    </div>
+    <!-- LATEST WRITING -->
+    {% if blog_posts %}
+    <section class="v2-section v2-pad" id="latest-posts">
+        <div class="v2-section-head reveal">
+            <h2>Latest writing</h2>
+            <a class="v2-mono-link" href="/blog/">All posts &rarr;</a>
+        </div>
+        <div class="v2-writing-grid">
+            {% with feat=blog_posts.0 %}
+            <a class="v2-feat reveal" href="{% pageurl feat %}">
+                <span class="v2-feat-meta">
+                    <span class="v2-pill">New</span>
+                    <span class="v2-mono-meta">{{ feat.date|date:"M j, Y" }} &middot; {{ feat.estimated_read_minutes }} min{% if feat.view_count %} &middot; {{ feat.view_count }} read{{ feat.view_count|pluralize }}{% endif %}</span>
+                </span>
+                <span class="v2-feat-title">{{ feat.title }}</span>
+                {% if feat.subtitle or feat.excerpt %}
+                <span class="v2-feat-excerpt">{{ feat.subtitle|default:feat.excerpt|truncatechars:180 }}</span>
+                {% endif %}
+                <span class="v2-read-link">Read the post</span>
+            </a>
+            {% endwith %}
+            <div class="v2-post-list reveal">
+                {% for post in blog_posts|slice:"1:4" %}
+                <a class="v2-post-row" href="{% pageurl post %}">
+                    <span class="v2-mono-meta">{{ post.date|date:"M j" }} &middot; {{ post.estimated_read_minutes }} min</span>
+                    <span class="v2-post-row-title">{{ post.title }}</span>
                 </a>
-            </article>
-        {% endfor %}
-    </div>
-    <div class="section-cta reveal">
-        <a class="btn btn-secondary" href="/blog/">View all articles &rarr;</a>
-    </div>
-</section>
-{% endif %}
-
-<section class="code-showcase section-shell" id="code-showcase">
-    <div class="code-showcase-heading reveal">
-        <p class="eyebrow">Proof of work</p>
-        <h2>Code <span>Showcase</span></h2>
-        <p>Small excerpts that reflect how this portfolio is put together.</p>
-    </div>
-    <div class="code-showcase-grid">
-        <div class="snippet-list" role="tablist" aria-label="Code examples">
-            <button class="snippet-card active reveal" type="button" role="tab" id="snippet-tab-django" aria-controls="code-panel" data-snippet-id="django" data-title="Django Inquiry Workflow" data-description="A compact view pattern for rate-limited forms, clear feedback, and editable portfolio content." data-tags="Django,Forms,Rate limit,Messages" aria-selected="true">
-                <div class="snippet-icon py-icon">Py</div>
-                <div>
-                    <h3>Django Inquiry Workflow</h3>
-                    <p>Rate-limited form handling with a clean redirect path and user feedback.</p>
-                </div>
-            </button>
-            <button class="snippet-card reveal" type="button" role="tab" id="snippet-tab-ui" aria-controls="code-panel" data-snippet-id="ui" data-title="Accessible UI Interactions" data-description="Small JavaScript helpers for theme state, keyboard support, and modal behavior." data-tags="JavaScript,A11y,Theme,Modals" aria-selected="false">
-                <div class="snippet-icon js-icon">JS</div>
-                <div>
-                    <h3>Accessible UI Interactions</h3>
-                    <p>Interface behavior kept lightweight, readable, and keyboard-friendly.</p>
-                </div>
-            </button>
-            <button class="snippet-card reveal" type="button" role="tab" id="snippet-tab-template" aria-controls="code-panel" data-snippet-id="template" data-title="Content-Driven Project Cards" data-description="Reusable template markup that lets portfolio content change without redesigning the page." data-tags="Templates,Cards,Content,Responsive" aria-selected="false">
-                <div class="snippet-icon ts-icon">UI</div>
-                <div>
-                    <h3>Content-Driven Project Cards</h3>
-                    <p>Reusable card structure for projects, case studies, and evolving content.</p>
-                </div>
-            </button>
-        </div>
-        <article class="code-panel reveal" id="code-panel" role="tabpanel" aria-labelledby="snippet-tab-django" aria-live="polite">
-            <header class="code-panel-header">
-                <div>
-                    <h3 id="code-panel-title">Django Inquiry Workflow</h3>
-                    <p id="code-panel-description">A compact view pattern for rate-limited forms, clear feedback, and editable portfolio content.</p>
-                </div>
-                <button class="copy-code" type="button" aria-label="Copy code snippet">
-                    <span></span><span></span>
-                </button>
-            </header>
-            <div class="code-tags" id="code-panel-tags">
-                <span>Django</span>
-                <span>Forms</span>
-                <span>Rate limit</span>
-                <span>Messages</span>
+                {% endfor %}
             </div>
-            <pre class="showcase-code"><code id="code-panel-code"><span class="line">1</span> <span class="code-blue">@ratelimit</span>(key=<span class="code-yellow">"ip"</span>, rate=<span class="code-yellow">"3/h"</span>, method=<span class="code-yellow">"POST"</span>, block=<span class="code-blue">False</span>)
-<span class="line">2</span> <span class="code-blue">def</span> <span class="code-green">home</span>(request):
-<span class="line">3</span>     form = <span class="code-green">InquiryForm</span>(request.POST <span class="code-blue">or</span> <span class="code-blue">None</span>)
-<span class="line">4</span>     <span class="code-blue">if</span> request.method == <span class="code-yellow">"POST"</span> <span class="code-blue">and</span> form.is_valid():
-<span class="line">5</span>         <span class="code-blue">if</span> getattr(request, <span class="code-yellow">"limited"</span>, <span class="code-blue">False</span>):
-<span class="line">6</span>             messages.error(request, <span class="code-yellow">"Please wait before trying again."</span>)
-<span class="line">7</span>             <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)
-<span class="line">8</span>         form.save()
-<span class="line">9</span>         messages.success(request, <span class="code-yellow">"Your inquiry has been sent."</span>)
-<span class="line">10</span>        <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)</code></pre>
-        </article>
-    </div>
-
-    <template id="snippet-django-code"><span class="line">1</span> <span class="code-blue">@ratelimit</span>(key=<span class="code-yellow">"ip"</span>, rate=<span class="code-yellow">"3/h"</span>, method=<span class="code-yellow">"POST"</span>, block=<span class="code-blue">False</span>)
-<span class="line">2</span> <span class="code-blue">def</span> <span class="code-green">home</span>(request):
-<span class="line">3</span>     form = <span class="code-green">InquiryForm</span>(request.POST <span class="code-blue">or</span> <span class="code-blue">None</span>)
-<span class="line">4</span>     <span class="code-blue">if</span> request.method == <span class="code-yellow">"POST"</span> <span class="code-blue">and</span> form.is_valid():
-<span class="line">5</span>         <span class="code-blue">if</span> getattr(request, <span class="code-yellow">"limited"</span>, <span class="code-blue">False</span>):
-<span class="line">6</span>             messages.error(request, <span class="code-yellow">"Please wait before trying again."</span>)
-<span class="line">7</span>             <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)
-<span class="line">8</span>         form.save()
-<span class="line">9</span>         messages.success(request, <span class="code-yellow">"Your inquiry has been sent."</span>)
-<span class="line">10</span>        <span class="code-blue">return</span> redirect(<span class="code-yellow">"home"</span>)</template>
-
-    <template id="snippet-ui-code"><span class="line">1</span> <span class="code-blue">const</span> setTheme = (theme) =&gt; {
-<span class="line">2</span>   <span class="code-blue">const</span> isLight = theme === <span class="code-yellow">"light"</span>;
-<span class="line">3</span>   root.classList.toggle(<span class="code-yellow">"light"</span>, isLight);
-<span class="line">4</span>   root.classList.toggle(<span class="code-yellow">"dark"</span>, !isLight);
-<span class="line">5</span>   themeToggle.setAttribute(<span class="code-yellow">"aria-pressed"</span>, String(isLight));
-<span class="line">6</span> };
-
-<span class="line">8</span> document.querySelectorAll(<span class="code-yellow">".modal-open"</span>).forEach((button) =&gt; {
-<span class="line">9</span>   button.addEventListener(<span class="code-yellow">"click"</span>, () =&gt; {
-<span class="line">10</span>    openModal(document.getElementById(button.dataset.modalTarget), button);
-<span class="line">11</span>  });
-<span class="line">12</span> });</template>
-
-    <template id="snippet-template-code"><span class="line">1</span> &lt;article class=<span class="code-yellow">"project-card reveal"</span>&gt;
-<span class="line">2</span>   &lt;div class=<span class="code-yellow">"project-visual"</span> aria-hidden=<span class="code-yellow">"true"</span>&gt;
-<span class="line">3</span>     &lt;div class=<span class="code-yellow">"project-window"</span>&gt;&lt;/div&gt;
-<span class="line">4</span>   &lt;/div&gt;
-<span class="line">5</span>   &lt;div class=<span class="code-yellow">"project-body"</span>&gt;
-<span class="line">6</span>     &lt;p class=<span class="code-yellow">"eyebrow"</span>&gt;Project category&lt;/p&gt;
-<span class="line">7</span>     &lt;h2&gt;Project title&lt;/h2&gt;
-<span class="line">8</span>     &lt;p&gt;A concise outcome-focused summary.&lt;/p&gt;
-<span class="line">9</span>   &lt;/div&gt;
-<span class="line">10</span> &lt;/article&gt;</template>
-</section>
-
-<section class="bento-showcase section-shell">
-    <div class="bento-grid">
-        <div class="bento-column">
-            <article class="bento-card reveal">
-                <div class="bento-inner">
-                    <span class="bento-icon target-icon" aria-hidden="true"></span>
-                    <h2>Client-First Approach</h2>
-                    <p>Building trust through transparent communication and clear next steps.</p>
-                </div>
-            </article>
-            <article class="bento-card reveal">
-                <div class="bento-inner">
-                    <span class="bento-icon globe-icon" aria-hidden="true"></span>
-                    <h2>Flexible Collaboration</h2>
-                    <p>Comfortable working across time zones, teams, and product stages.</p>
-                </div>
-            </article>
         </div>
+    </section>
+    {% endif %}
 
-        <article class="bento-card tech-bento reveal">
-            <div class="bento-inner">
-                <span class="bento-icon code-icon" aria-hidden="true"></span>
-                <h2>Modern Tech Stack</h2>
-                <p>Tools for maintainable interfaces, dependable backends, and practical automation.</p>
-                <div class="tech-logo-grid">
-                    <span><strong class="python-logo">Py</strong><em>Python</em></span>
-                    <span><strong class="next-logo">D</strong><em>Django</em></span>
-                    <span><strong class="js-logo">JS</strong><em>JavaScript</em></span>
-                    <span><strong class="ts-logo">UI</strong><em>HTML/CSS</em></span>
-                    <span><strong class="fast-logo">API</strong><em>REST APIs</em></span>
-                    <span><strong class="node-logo">DB</strong><em>Data models</em></span>
-                    <span><strong class="framer-logo">AI</strong><em>AI workflows</em></span>
-                    <span><strong class="react-logo">UX</strong><em>Product UX</em></span>
-                </div>
+    <!-- SELECTED WORK -->
+    {% if projects %}
+    <section class="v2-section v2-pad" id="work">
+        <div class="v2-section-head reveal">
+            <h2>Selected work</h2>
+            <span class="v2-mono-note">2024&ndash;{% now "Y" %}</span>
+        </div>
+        <div class="v2-work-list">
+            {% for project in projects %}
+            <a class="v2-work-row reveal" href="{% if project.link and project.link != '#' %}{{ project.link }}{% else %}#contact{% endif %}">
+                <span class="v2-work-num">{{ forloop.counter|stringformat:"02d" }}</span>
+                <span class="v2-work-title">{{ project.title }}</span>
+                <span class="v2-work-desc">{{ project.description|truncatechars:140 }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- STACK -->
+    <section class="v2-section v2-pad" id="stack">
+        <div class="v2-section-head reveal">
+            <h2>Stack</h2>
+        </div>
+        <div class="v2-stack-grid reveal">
+            <div class="v2-stack-row"><span class="v2-stack-label">Languages</span><span>Python, Rust, SQL, JavaScript</span></div>
+            <div class="v2-stack-row"><span class="v2-stack-label">Backend</span><span>Django, PostgreSQL</span></div>
+            <div class="v2-stack-row"><span class="v2-stack-label">Infra</span><span>Docker, Linux, Windows Server, Proxmox, Citrix</span></div>
+            <div class="v2-stack-row"><span class="v2-stack-label">Cloud</span><span>AWS, Azure, Cloudflare</span></div>
+            <div class="v2-stack-row"><span class="v2-stack-label">Creative</span><span>Photoshop, Premiere Pro, After Effects</span></div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="v2-section v2-pad" id="contact">
+        <div class="v2-section-head reveal">
+            <h2>Contact</h2>
+            {% if profile.email %}<a class="v2-mono-link" href="mailto:{{ profile.email }}">{{ profile.email }}</a>{% endif %}
+        </div>
+        <p class="v2-contact-intro reveal">Tell me what you need built. Share your email, the type of inquiry, and the details &mdash; I&rsquo;ll review it and respond with the clearest next step.</p>
+        <form class="v2-form reveal" action="{% url 'home' %}#contact" method="post" id="inquiry">
+            {% csrf_token %}
+            <div style="display:none!important;position:absolute;left:-9999px;" aria-hidden="true">
+                <label for="{{ inquiry_form.website.id_for_label }}">Website</label>
+                {{ inquiry_form.website }}
             </div>
-        </article>
+            <div class="form-field">
+                <label for="{{ inquiry_form.email.id_for_label }}">{{ inquiry_form.email.label }}</label>
+                {{ inquiry_form.email }}
+                {{ inquiry_form.email.errors }}
+            </div>
+            <div class="form-field">
+                <label for="{{ inquiry_form.inquiry_type.id_for_label }}">{{ inquiry_form.inquiry_type.label }}</label>
+                {{ inquiry_form.inquiry_type }}
+                {{ inquiry_form.inquiry_type.errors }}
+            </div>
+            <div class="form-field form-field-wide">
+                <label for="{{ inquiry_form.message.id_for_label }}">{{ inquiry_form.message.label }}</label>
+                {{ inquiry_form.message }}
+                {{ inquiry_form.message.errors }}
+            </div>
+            <button class="v2-cta" type="submit">Send inquiry <span class="v2-arrow">&rarr;</span></button>
+        </form>
+    </section>
 
-        <div class="bento-column wide">
-            <article class="bento-card reveal">
-                <div class="bento-inner">
-                    <span class="bento-icon bolt-icon" aria-hidden="true"></span>
-                    <h2>AI-Ready Features</h2>
-                    <p>Automation, content workflows, and LLM integrations shaped around real tasks.</p>
-                </div>
-            </article>
-            <article class="bento-card reveal">
-                <div class="bento-inner">
-                    <span class="bento-icon briefcase-icon" aria-hidden="true"></span>
-                    <h2>Ready to Collaborate</h2>
-                    <p>Start with a focused first version and keep improving from there.</p>
-                </div>
-            </article>
-        </div>
-    </div>
-</section>
-
-<section class="section-shell">
-    <div class="section-heading reveal">
-        <p class="eyebrow">Capabilities</p>
-        <h2>Focused services for useful web products</h2>
-        <p>Designing careful interfaces around dependable Django systems and practical product workflows.</p>
-    </div>
-    <div class="card-grid">
-        {% for skill in skills %}
-            <article class="feature-card reveal">
-                <span class="card-number">{{ forloop.counter|stringformat:"02d" }}</span>
-                <h3>{{ skill.title }}</h3>
-                <p>{{ skill.description }}</p>
-                <div class="tag-list">
-                    {% for tag in skill.tags %}
-                        <span>{{ tag }}</span>
-                    {% endfor %}
-                </div>
-            </article>
-        {% endfor %}
-    </div>
-</section>
-
-<section class="inquiry-section section-shell" id="inquiry">
-    <div class="section-heading reveal">
-        <p class="eyebrow">Inquiry</p>
-        <h2>Tell me what you need built</h2>
-        <p>Share your email, inquiry type, and the details. I'll review it and respond with the clearest next step.</p>
-    </div>
-    <form class="inquiry-form reveal" action="{% url 'home' %}#inquiry" method="post">
-        {% csrf_token %}
-        <div style="display:none!important;position:absolute;left:-9999px;" aria-hidden="true">
-            <label for="{{ inquiry_form.website.id_for_label }}">Website</label>
-            {{ inquiry_form.website }}
-        </div>
-        <div class="form-field">
-            <label for="{{ inquiry_form.email.id_for_label }}">{{ inquiry_form.email.label }}</label>
-            {{ inquiry_form.email }}
-            {{ inquiry_form.email.errors }}
-        </div>
-        <div class="form-field">
-            <label for="{{ inquiry_form.inquiry_type.id_for_label }}">{{ inquiry_form.inquiry_type.label }}</label>
-            {{ inquiry_form.inquiry_type }}
-            {{ inquiry_form.inquiry_type.errors }}
-        </div>
-        <div class="form-field form-field-wide">
-            <label for="{{ inquiry_form.message.id_for_label }}">{{ inquiry_form.message.label }}</label>
-            {{ inquiry_form.message }}
-            {{ inquiry_form.message.errors }}
-        </div>
-        <button class="btn btn-primary" type="submit">Send Inquiry</button>
-    </form>
-</section>
-
-<section class="cta-band section-shell reveal">
-    <h2>Ready to build something useful?</h2>
-    <p>Start with a small, clear first version and let the work sharpen from there.</p>
-    <a class="btn btn-primary" href="#inquiry">Let's Collaborate</a>
-</section>
-
+</div>
 {% endblock %}

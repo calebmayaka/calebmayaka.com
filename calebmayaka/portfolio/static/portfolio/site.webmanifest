@@ -4,9 +4,14 @@
   "description": "Software developer — Django, Python, AI workflows and product UX.",
   "start_url": "/",
   "display": "browser",
-  "background_color": "#000000",
-  "theme_color": "#b695ff",
+  "background_color": "#FAF6EF",
+  "theme_color": "#FAF6EF",
   "icons": [
+    {
+      "src": "/static/portfolio/img/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
     {
       "src": "/static/portfolio/img/apple-touch-icon.png",
       "sizes": "180x180",

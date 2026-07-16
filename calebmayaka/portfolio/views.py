@@ -649,7 +649,7 @@ def home(request):
         'page_title': f"{_profile.name} | {_profile.role}" if _profile else '',
         'stats': Stat.objects.order_by('order'),
         'skills': Skill.objects.order_by('order'),
-        'projects': Project.objects.order_by('order')[:3],
+        'projects': Project.objects.order_by('order')[:4],
         'blog_posts': (
             BlogPostPage.objects.live()
             .public()
@@ -672,34 +672,6 @@ def about(request):
         'stats': Stat.objects.order_by('order'),
     }
     return render(request, 'portfolio/about.html', context)
-
-
-def experience(request):
-    context = {
-        **base_context('experience'),
-        'page_title': f"Experience | {_get_profile_name()}",
-        'experience': Experience.objects.order_by('order'),
-        'tech_stack': list(TechStack.objects.order_by('order').values_list('name', flat=True)),
-    }
-    return render(request, 'portfolio/experience.html', context)
-
-
-def projects(request):
-    context = {
-        **base_context('projects'),
-        'page_title': f"Projects | {_get_profile_name()}",
-        'projects': Project.objects.order_by('order'),
-    }
-    return render(request, 'portfolio/projects.html', context)
-
-
-def case_studies(request):
-    context = {
-        **base_context('case_studies'),
-        'page_title': f"Case Studies | {_get_profile_name()}",
-        'case_studies': CaseStudy.objects.order_by('order'),
-    }
-    return render(request, 'portfolio/case_studies.html', context)
 
 
 @ratelimit(key=rate_limit_client_ip, rate='5/m', method='POST', block=False)
@@ -726,13 +698,17 @@ def dashboard_login(request):
     if request.method == 'POST' and form.is_valid():
         user = form.get_user()
         dashboard_profile = get_dashboard_profile(user)
-        if not user.is_active:
-            messages.error(request, 'Your account is inactive.')
-        elif not dashboard_profile or dashboard_profile.role not in {DashboardUserProfile.ADMIN, DashboardUserProfile.MANAGER}:
-            messages.error(request, 'Your account is not authorized for dashboard access.')
-        else:
+        authorized = (
+            user.is_active
+            and dashboard_profile
+            and dashboard_profile.role in {DashboardUserProfile.ADMIN, DashboardUserProfile.MANAGER}
+        )
+        if authorized:
             login(request, user)
             return redirect(next_url)
+        # Generic message: don't reveal whether the account exists, is inactive,
+        # or simply lacks dashboard access (avoids user enumeration).
+        messages.error(request, 'Those credentials are not authorized for dashboard access.')
 
     context = {
         **base_context('dashboard'),

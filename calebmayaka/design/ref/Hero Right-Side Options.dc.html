@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  @keyframes rs-pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+  @keyframes rs-spin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+
+<div style="width: max-content; min-width: 100%; min-height: 100vh; box-sizing: border-box; padding: 56px; background: #e7e5df; font-family: 'Space Grotesk', sans-serif;">
+  <div style="display: flex; gap: 56px; align-items: flex-start;">
+
+    <!-- ===================== FRAME A — STATUS / NOW ===================== -->
+    <div style="flex: none; width: 1340px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: .18em; color: #18181b; background: #cfcdc4; padding: 4px 10px; border-radius: 4px;">A</span>
+        <span style="font-size: 15px; font-weight: 600; color: #44403c;">System / Now card &mdash; live status, calm &amp; real</span>
+      </div>
+      <div style="position: relative; height: 800px; background: #09090b; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,.22); overflow: hidden; padding: 44px 52px;">
+        <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px); background-size: 56px 56px;"></div>
+        <div style="position: absolute; inset: 0; background: radial-gradient(70% 60% at 78% 40%, rgba(14,165,233,.12), transparent 60%);"></div>
+
+        <nav style="position: relative; display: flex; align-items: center; justify-content: space-between; height: 48px;">
+          <span style="font-size: 18px; font-weight: 600; color: #fafafa; letter-spacing: -.01em;">calebmayaka</span>
+          <div style="display: flex; gap: 26px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #71717a;"><span style="color:#fafafa;">ABOUT</span><span>PROJECTS</span><span>BLOG</span><span>CONTACT</span></div>
+        </nav>
+
+        <div style="position: relative; display: grid; grid-template-columns: 1fr 430px; gap: 56px; align-items: center; height: calc(100% - 48px);">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .14em; color: #71717a; margin-bottom: 18px;">SOFTWARE ENGINEER &amp; SOLUTION ARCHITECT</div>
+            <h1 style="margin: 0; font-size: 60px; line-height: 1.0; font-weight: 600; letter-spacing: -.035em; color: #fafafa;">Engineering<br>for the <span style="color:#38bdf8;">future</span>.</h1>
+            <p style="margin: 28px 0 0; font-size: 18px; line-height: 1.6; color: #a1a1aa; max-width: 440px;">Building clean, reliable, production-grade systems &amp; applications with Django and practical AI.</p>
+            <div style="display:flex; gap:14px; margin-top:36px;">
+              <span style="background:#fafafa; color:#0b0510; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px 24px; border-radius:999px;">GET IN TOUCH</span>
+              <span style="border:1px solid rgba(255,255,255,.18); color:#fafafa; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px 24px; border-radius:999px;">VIEW RESUME</span>
+            </div>
+          </div>
+
+          <!-- STATUS CARD -->
+          <div style="border:1px solid rgba(255,255,255,.1); border-radius:16px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); backdrop-filter:blur(8px); padding:26px 28px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:#71717a;">SYSTEM STATUS</span>
+              <span style="display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#34d399;"><span style="width:7px;height:7px;border-radius:50%;background:#34d399;animation:rs-pulse 2.2s ease-in-out infinite;"></span>ONLINE</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0;">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.07);"><span style="font-size:13px; color:#71717a;">Availability</span><span style="font-size:13px; color:#e4e4e7; font-weight:500;">Open to freelance</span></div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.07);"><span style="font-size:13px; color:#71717a;">Now building</span><span style="font-size:13px; color:#e4e4e7; font-weight:500; text-align:right;">Client Portal Starter<br><span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#38bdf8;">Django SaaS</span></span></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.07);"><span style="font-size:13px; color:#71717a;">Location</span><span style="font-size:13px; color:#e4e4e7; font-weight:500;">Nairobi, Kenya</span></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;"><span style="font-size:13px; color:#71717a;">Local time</span><span style="font-family:'JetBrains Mono',monospace; font-size:14px; color:#38bdf8; font-weight:500;">{{ clock }} EAT</span></div>
+            </div>
+            <div style="display:flex; gap:0; margin-top:22px; padding-top:20px; border-top:1px solid rgba(255,255,255,.08);">
+              <div style="flex:1;"><div style="font-size:22px; font-weight:600; color:#fafafa;">6+</div><div style="font-size:11px; color:#71717a; margin-top:3px;">Builds</div></div>
+              <div style="flex:1;"><div style="font-size:22px; font-weight:600; color:#fafafa;">12</div><div style="font-size:11px; color:#71717a; margin-top:3px;">Stacks</div></div>
+              <div style="flex:1;"><div style="font-size:22px; font-weight:600; color:#fafafa;">5y</div><div style="font-size:11px; color:#71717a; margin-top:3px;">Shipping</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FRAME B — FEATURED PROJECT ===================== -->
+    <div style="flex: none; width: 1340px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: .18em; color: #18181b; background: #cfcdc4; padding: 4px 10px; border-radius: 4px;">B</span>
+        <span style="font-size: 15px; font-weight: 600; color: #44403c;">Featured project card &mdash; best for converting visitors</span>
+      </div>
+      <div style="position: relative; height: 800px; background: #09090b; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,.22); overflow: hidden; padding: 44px 52px;">
+        <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px); background-size: 56px 56px;"></div>
+        <div style="position: absolute; inset: 0; background: radial-gradient(70% 60% at 78% 40%, rgba(14,165,233,.12), transparent 60%);"></div>
+
+        <nav style="position: relative; display: flex; align-items: center; justify-content: space-between; height: 48px;">
+          <span style="font-size: 18px; font-weight: 600; color: #fafafa; letter-spacing: -.01em;">calebmayaka</span>
+          <div style="display: flex; gap: 26px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #71717a;"><span style="color:#fafafa;">ABOUT</span><span>PROJECTS</span><span>BLOG</span><span>CONTACT</span></div>
+        </nav>
+
+        <div style="position: relative; display: grid; grid-template-columns: 1fr 430px; gap: 56px; align-items: center; height: calc(100% - 48px);">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .14em; color: #71717a; margin-bottom: 18px;">SOFTWARE ENGINEER &amp; SOLUTION ARCHITECT</div>
+            <h1 style="margin: 0; font-size: 60px; line-height: 1.0; font-weight: 600; letter-spacing: -.035em; color: #fafafa;">Engineering<br>for the <span style="color:#38bdf8;">future</span>.</h1>
+            <p style="margin: 28px 0 0; font-size: 18px; line-height: 1.6; color: #a1a1aa; max-width: 440px;">Building clean, reliable, production-grade systems &amp; applications with Django and practical AI.</p>
+            <div style="display:flex; gap:14px; margin-top:36px;">
+              <span style="background:#fafafa; color:#0b0510; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px 24px; border-radius:999px;">GET IN TOUCH</span>
+              <span style="border:1px solid rgba(255,255,255,.18); color:#fafafa; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px 24px; border-radius:999px;">VIEW RESUME</span>
+            </div>
+          </div>
+
+          <!-- PROJECT CARD -->
+          <div style="border:1px solid rgba(255,255,255,.1); border-radius:16px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); backdrop-filter:blur(8px); padding:20px; overflow:hidden;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding:0 4px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:#71717a;">FEATURED PROJECT</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#38bdf8;">01 / 06</span>
+            </div>
+            <!-- thumbnail -->
+            <div style="position:relative; height:200px; border-radius:11px; background:linear-gradient(135deg, #0e2233, #0a121c); border:1px solid rgba(255,255,255,.08); overflow:hidden; display:flex; align-items:center; justify-content:center;">
+              <div style="position:absolute; top:12px; left:12px; display:flex; gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:#ef4444;"></span><span style="width:9px;height:9px;border-radius:50%;background:#eab308;"></span><span style="width:9px;height:9px;border-radius:50%;background:#22c55e;"></span></div>
+              <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(56,189,248,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.06) 1px,transparent 1px); background-size:28px 28px;"></div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#38bdf8; letter-spacing:.1em;">// drop screenshot</span>
+            </div>
+            <div style="padding:18px 6px 4px;">
+              <div style="font-size:19px; font-weight:600; color:#fafafa;">Client Portal Starter</div>
+              <p style="margin:8px 0 0; font-size:13px; line-height:1.55; color:#a1a1aa;">A multi-tenant Django SaaS boilerplate with auth, billing and an editable CMS.</p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
+                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#7dd3fc; border:1px solid rgba(56,189,248,.25); background:rgba(56,189,248,.06); padding:4px 10px; border-radius:6px;">Django</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#7dd3fc; border:1px solid rgba(56,189,248,.25); background:rgba(56,189,248,.06); padding:4px 10px; border-radius:6px;">PostgreSQL</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#7dd3fc; border:1px solid rgba(56,189,248,.25); background:rgba(56,189,248,.06); padding:4px 10px; border-radius:6px;">REST</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,.08);">
+                <span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#71717a;">★ 128 &nbsp;·&nbsp; 240 commits</span>
+                <span style="font-size:13px; font-weight:600; color:#38bdf8;">View project &#8594;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FRAME C — LATEST WRITING ===================== -->
+    <div style="flex: none; width: 1340px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: .18em; color: #18181b; background: #cfcdc4; padding: 4px 10px; border-radius: 4px;">C</span>
+        <span style="font-size: 15px; font-weight: 600; color: #44403c;">Latest writing &mdash; featured post + recent list</span>
+      </div>
+      <div style="position: relative; height: 800px; background: #09090b; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,.22); overflow: hidden; padding: 44px 52px;">
+        <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px); background-size: 56px 56px;"></div>
+        <div style="position: absolute; inset: 0; background: radial-gradient(70% 60% at 78% 40%, rgba(14,165,233,.12), transparent 60%);"></div>
+
+        <nav style="position: relative; display: flex; align-items: center; justify-content: space-between; height: 48px;">
+          <span style="font-size: 18px; font-weight: 600; color: #fafafa; letter-spacing: -.01em;">calebmayaka</span>
+          <div style="display: flex; gap: 26px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #71717a;"><span style="color:#fafafa;">ABOUT</span><span>PROJECTS</span><span>BLOG</span><span>CONTACT</span></div>
+        </nav>
+
+        <div style="position: relative; display: grid; grid-template-columns: 1fr 430px; gap: 56px; align-items: center; height: calc(100% - 48px);">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: .14em; color: #71717a; margin-bottom: 18px;">SOFTWARE ENGINEER &amp; SOLUTION ARCHITECT</div>
+            <h1 style="margin: 0; font-size: 60px; line-height: 1.0; font-weight: 600; letter-spacing: -.035em; color: #fafafa;">Engineering<br>for the <span style="color:#38bdf8;">future</span>.</h1>
+            <p style="margin: 28px 0 0; font-size: 18px; line-height: 1.6; color: #a1a1aa; max-width: 440px;">Building clean, reliable, production-grade systems &amp; applications with Django and practical AI.</p>
+            <div style="display:flex; gap:14px; margin-top:36px;">
+              <span style="background:#fafafa; color:#0b0510; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px 24px; border-radius:999px;">GET IN TOUCH</span>
+              <span style="border:1px solid rgba(255,255,255,.18); color:#fafafa; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.06em; padding:14px 24px; border-radius:999px;">VIEW RESUME</span>
+            </div>
+          </div>
+
+          <!-- BLOG CARD -->
+          <div style="border:1px solid rgba(255,255,255,.1); border-radius:16px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); backdrop-filter:blur(8px); padding:26px 28px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:#71717a;">LATEST WRITING</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#38bdf8;">12 posts</span>
+            </div>
+            <!-- featured post -->
+            <div style="border:1px solid rgba(56,189,248,.2); background:rgba(56,189,248,.05); border-radius:12px; padding:18px;">
+              <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; color:#38bdf8; margin-bottom:10px;">NEW</div>
+              <div style="font-size:17px; font-weight:600; color:#fafafa; line-height:1.3;">Activate Windows &amp; Office for free using MAS</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#71717a; margin-top:12px;">May 29, 2026 &nbsp;·&nbsp; 6 min &nbsp;·&nbsp; 43 reads</div>
+            </div>
+            <!-- recent list -->
+            <div style="display:flex; flex-direction:column; margin-top:8px;">
+              <div style="display:flex; gap:14px; align-items:baseline; padding:15px 2px; border-bottom:1px solid rgba(255,255,255,.07);"><span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#52525b; flex:none; width:48px;">May 12</span><span style="font-size:14px; color:#d4d4d8; line-height:1.35;">Structuring a scalable Django settings module</span></div>
+              <div style="display:flex; gap:14px; align-items:baseline; padding:15px 2px; border-bottom:1px solid rgba(255,255,255,.07);"><span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#52525b; flex:none; width:48px;">Apr 28</span><span style="font-size:14px; color:#d4d4d8; line-height:1.35;">Practical AI features without the hype</span></div>
+              <div style="display:flex; gap:14px; align-items:baseline; padding:15px 2px;"><span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#52525b; flex:none; width:48px;">Apr 09</span><span style="font-size:14px; color:#d4d4d8; line-height:1.35;">Deploying Django on a $5 VPS, the right way</span></div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,.08);">
+              <span style="font-size:13px; font-weight:600; color:#38bdf8;">Read the blog &#8594;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { clock: '' };
+  componentDidMount() { this.tick(); this._t = setInterval(() => this.tick(), 1000); }
+  componentWillUnmount() { clearInterval(this._t); }
+  tick() {
+    let s;
+    try {
+      s = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date());
+    } catch (e) {
+      s = new Date().toLocaleTimeString();
+    }
+    this.setState({ clock: s });
+  }
+  renderVals() { return { clock: this.state.clock }; }
+}
+</script>
+</body>
+</html>

@@ -58,18 +58,11 @@ skills = [
 ]
 
 tech_stack = [
-    'Python',
-    'Django',
-    'JavaScript',
-    'HTML',
-    'CSS',
-    'PostgreSQL',
-    'Git',
-    'REST APIs',
-    'Tailwind-inspired CSS',
-    'Deployment',
-    'AI Workflows',
-    'Product Design',
+    'Microsoft Dynamics NAV / C/AL',
+    'Python & Django',
+    'Django REST Framework',
+    'Virtualization — Proxmox & Citrix',
+    'Technical Writing',
 ]
 
 projects = [

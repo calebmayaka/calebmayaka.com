@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #FAF6EF; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { opacity: 0.72; }
+  </style>
+</helmet>
+
+<div ref="{{rootRef}}" data-screen-label="Landing" style="--bg: #FAF6EF; --ink: #1C1917; --muted: #57534E; --soft: #8A7F72; --hair: #D6CDBF; min-height: 100vh; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', sans-serif; transition: background 0.25s, color 0.25s;">
+
+  <!-- NAV -->
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 28px 64px; border-bottom: 1px solid var(--ink);">
+    <a href="#" style="font: italic 500 22px/1 'Newsreader', serif;">Caleb Mayaka</a>
+    <div style="display: flex; gap: 36px; font-size: 15px; align-items: center;">
+      <a href="#" style="border-bottom: 1px solid var(--ink); padding-bottom: 2px;">Home</a>
+      <a href="#">Blog</a>
+      <a href="#">Contact</a>
+      <button onClick="{{toggleTheme}}" style="font: 400 12px/1 'IBM Plex Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; background: none; border: 1px solid var(--hair); color: var(--soft); padding: 8px 14px; cursor: pointer; border-radius: 999px;">{{themeLabel}}</button>
+    </div>
+  </div>
+
+  <!-- HERO + SOCIAL RAIL -->
+  <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 48px;">
+  <div style="order: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 96px 64px 88px 0;">
+    <span style="font: 500 11px/1 'IBM Plex Mono', monospace; letter-spacing: 0.22em; text-transform: uppercase; color: var(--soft); writing-mode: vertical-rl;">Say hello</span>
+    <a href="https://github.com/calebmayaka" title="GitHub" style="color: var(--soft); display: flex;" style-hover="color: var(--ink); opacity: 1;">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0.3a12 12 0 0 0-3.8 23.38c0.6 0.12 0.83-0.26 0.83-0.57L9 21.07c-3.34 0.72-4.04-1.61-4.04-1.61-0.55-1.39-1.34-1.76-1.34-1.76-1.08-0.74 0.09-0.73 0.09-0.73 1.2 0.09 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49 1 0.1-0.78 0.42-1.31 0.76-1.61-2.66-0.3-5.47-1.33-5.47-5.93 0-1.31 0.47-2.38 1.24-3.22-0.14-0.3-0.54-1.52 0.1-3.18 0 0 1.01-0.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23 0.65 1.66 0.24 2.88 0.12 3.18 0.77 0.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92 0.43 0.37 0.81 1.1 0.81 2.22l-0.01 3.29c0 0.31 0.2 0.69 0.82 0.57A12 12 0 0 0 12 0.3z"></path></svg>
+    </a>
+    <a href="https://x.com/calebmayaka" title="X / Twitter" style="color: var(--soft); display: flex;" style-hover="color: var(--ink); opacity: 1;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"></path></svg>
+    </a>
+    <a href="https://wa.me/" title="WhatsApp" style="color: var(--soft); display: flex;" style-hover="color: var(--ink); opacity: 1;">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-0.3-0.15-1.76-0.87-2.03-0.97-0.27-0.1-0.47-0.15-0.67 0.15-0.2 0.3-0.77 0.97-0.94 1.17-0.17 0.2-0.35 0.22-0.65 0.07-0.3-0.15-1.25-0.46-2.39-1.47a8.96 8.96 0 0 1-1.65-2.05c-0.17-0.3-0.02-0.46 0.13-0.61 0.13-0.13 0.3-0.35 0.45-0.52 0.15-0.17 0.2-0.3 0.3-0.5 0.1-0.2 0.05-0.37-0.02-0.52-0.07-0.15-0.67-1.62-0.92-2.22-0.24-0.58-0.49-0.5-0.67-0.51l-0.57-0.01c-0.2 0-0.52 0.07-0.8 0.37-0.27 0.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.89 1.22 3.09 0.15 0.2 2.11 3.22 5.1 4.51 0.71 0.31 1.27 0.49 1.7 0.63 0.72 0.23 1.37 0.2 1.88 0.12 0.57-0.09 1.76-0.72 2.01-1.42 0.25-0.7 0.25-1.29 0.17-1.42-0.07-0.12-0.27-0.2-0.57-0.35zM12.05 21.79h-0.01a9.87 9.87 0 0 1-5.03-1.38l-0.36-0.21-3.74 0.98 1-3.65-0.24-0.37a9.86 9.86 0 1 1 8.38 4.63zM12.05 0.5A11.5 11.5 0 0 0 2.1 17.74L0.5 23.5l5.9-1.55a11.47 11.47 0 0 0 5.64 1.48h0.01a11.5 11.5 0 0 0 0-23z"></path></svg>
+    </a>
+    <a href="mailto:hello@calebmayaka.dev" title="Email" style="color: var(--soft); display: flex;" style-hover="color: var(--ink); opacity: 1;">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"></rect><path d="M3 6l9 7 9-7"></path></svg>
+    </a>
+    <span style="width: 1px; height: 72px; background: var(--soft);"></span>
+  </div>
+
+  <!-- HERO -->
+  <div style="order: 1; flex: 1; padding: 96px 64px 88px;">
+    <div style="font: 500 14px/1 'IBM Plex Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); margin-bottom: 28px;">Software engineer &amp; solution architect</div>
+    <h1 style="font: 400 84px/1.05 'Newsreader', serif; letter-spacing: -0.015em; margin: 0; max-width: 980px; text-wrap: pretty;">Software that ships.</h1>
+    <p style="font-size: 20px; line-height: 1.6; color: var(--muted); max-width: 560px; margin: 36px 0 0;">I design, build, and deploy the software businesses actually run on — from Django backends to Windows Server pipelines and self-hosted infrastructure.</p>
+    <a href="mailto:hello@calebmayaka.dev" style="display: inline-flex; align-items: center; gap: 10px; margin-top: 40px; padding: 14px 28px; background: var(--ink); color: var(--bg); font-size: 15px; font-weight: 500; border-radius: 999px;">Contact me <span style="font-family: 'IBM Plex Mono', monospace;">→</span></a>
+  </div>
+  </div>
+
+  <!-- LATEST WRITING -->
+  <div style="padding: 0 64px 96px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--ink); padding-bottom: 14px;">
+      <h2 style="font: italic 400 32px/1 'Newsreader', serif; margin: 0;">Latest writing</h2>
+      <a href="#" style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">All posts →</a>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.25fr 1fr; gap: 72px; padding-top: 40px;">
+      <a href="#" style="display: grid; gap: 20px; align-content: start;">
+        <div style="display: flex; gap: 16px; align-items: baseline;">
+          <span style="font: 500 11px/1 'IBM Plex Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--ink); padding: 5px 10px; border-radius: 999px;">New</span>
+          <span style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">Jul 10, 2026 · 5 min · 27 reads</span>
+        </div>
+        <span style="font: 400 42px/1.15 'Newsreader', serif; letter-spacing: -0.01em; text-wrap: pretty;">The Unprecedented Rate of AI Development — and What the Next Few Years Could Look Like</span>
+        <span style="font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 520px;">Where model capability is actually headed, and what that means for the people who build and run software for a living.</span>
+        <span style="font-size: 15px; border-bottom: 1px solid var(--ink); padding-bottom: 2px; justify-self: start;">Read the post</span>
+      </a>
+      <div style="display: grid; align-content: start;">
+        <a href="#" style="display: grid; gap: 8px; padding: 0 0 22px; border-bottom: 1px solid var(--hair);">
+          <span style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">Jun 21 · 4 min</span>
+          <span style="font: 400 22px/1.3 'Newsreader', serif;">GLM-5.2 and the Open-Weight Coding Surge</span>
+        </a>
+        <a href="#" style="display: grid; gap: 8px; padding: 22px 0; border-bottom: 1px solid var(--hair);">
+          <span style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">May 29 · 3 min</span>
+          <span style="font: 400 22px/1.3 'Newsreader', serif;">Activate Windows &amp; Office for Free Using MAS</span>
+        </a>
+        <a href="#" style="display: grid; gap: 8px; padding: 22px 0;">
+          <span style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">May 26 · 6 min</span>
+          <span style="font: 400 22px/1.3 'Newsreader', serif;">Deployment on Windows Server with Waitress, IIS and Cloudflare Tunnel</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECTED WORK -->
+  <div style="padding: 0 64px 96px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--ink); padding-bottom: 14px;">
+      <h2 style="font: italic 400 32px/1 'Newsreader', serif; margin: 0;">Selected work</h2>
+      <span style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">2024–2026</span>
+    </div>
+    <div style="display: grid;">
+      <a href="#" style="display: grid; grid-template-columns: 64px 1fr 380px; gap: 32px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--hair);">
+        <span style="font: 400 15px/1 'IBM Plex Mono', monospace; color: var(--soft);">01</span>
+        <span style="font: 400 28px/1.2 'Newsreader', serif;">Windows Server deployment pipeline</span>
+        <span style="font-size: 15px; line-height: 1.5; color: var(--muted);">Production Django deployment with Waitress, IIS and Cloudflare Tunnel — zero exposed ports.</span>
+      </a>
+      <a href="#" style="display: grid; grid-template-columns: 64px 1fr 380px; gap: 32px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--hair);">
+        <span style="font: 400 15px/1 'IBM Plex Mono', monospace; color: var(--soft);">02</span>
+        <span style="font: 400 28px/1.2 'Newsreader', serif;">Self-hosted Proxmox infrastructure</span>
+        <span style="font-size: 15px; line-height: 1.5; color: var(--muted);">A virtualized homelab running internal services, backups, and CI — managed like production.</span>
+      </a>
+      <a href="#" style="display: grid; grid-template-columns: 64px 1fr 380px; gap: 32px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--hair);">
+        <span style="font: 400 15px/1 'IBM Plex Mono', monospace; color: var(--soft);">03</span>
+        <span style="font: 400 28px/1.2 'Newsreader', serif;">Internal tooling &amp; automation</span>
+        <span style="font-size: 15px; line-height: 1.5; color: var(--muted);">Python services and scripts that replaced manual workflows for day-to-day operations.</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- STACK -->
+  <div style="padding: 0 64px 96px;">
+    <div style="border-bottom: 1px solid var(--ink); padding-bottom: 14px; margin-bottom: 26px;">
+      <h2 style="font: italic 400 32px/1 'Newsreader', serif; margin: 0;">Stack</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px 64px; font-size: 16px; line-height: 1.6;">
+      <div style="display: flex; gap: 24px;"><span style="font: 500 12px/2 'IBM Plex Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); flex: 0 0 110px;">Languages</span><span>Python, Rust, SQL</span></div>
+      <div style="display: flex; gap: 24px;"><span style="font: 500 12px/2 'IBM Plex Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); flex: 0 0 110px;">Backend</span><span>Django, PostgreSQL</span></div>
+      <div style="display: flex; gap: 24px;"><span style="font: 500 12px/2 'IBM Plex Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); flex: 0 0 110px;">Infra</span><span>Docker, Linux, Windows Server, Proxmox, Citrix</span></div>
+      <div style="display: flex; gap: 24px;"><span style="font: 500 12px/2 'IBM Plex Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); flex: 0 0 110px;">Cloud</span><span>AWS, Azure, Cloudflare</span></div>
+      <div style="display: flex; gap: 24px;"><span style="font: 500 12px/2 'IBM Plex Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); flex: 0 0 110px;">Creative</span><span>Photoshop, Premiere Pro, After Effects</span></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="border-top: 1px solid var(--ink); padding: 36px 64px; display: flex; justify-content: space-between; align-items: baseline;">
+    <div style="display: flex; gap: 32px; font-size: 15px;">
+      <a href="#" style="border-bottom: 1px solid var(--hair);">GitHub</a>
+      <a href="#" style="border-bottom: 1px solid var(--hair);">X / Twitter</a>
+      <a href="#" style="border-bottom: 1px solid var(--hair);">WhatsApp</a>
+      <a href="#" style="border-bottom: 1px solid var(--hair);">Email</a>
+    </div>
+    <div style="font: 400 13px/1 'IBM Plex Mono', monospace; color: var(--soft);">© 2026 Caleb Mayaka</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;light&quot;, &quot;dark&quot;], &quot;default&quot;: &quot;light&quot;, &quot;tsType&quot;: &quot;'light' | 'dark'&quot;}}">
+class Component extends DCLogic {
+  state = { theme: null };
+  rootRef = React.createRef();
+
+  currentTheme() {
+    return this.state.theme ?? this.props.theme ?? localStorage.getItem('cm-theme') ?? 'light';
+  }
+
+  applyTheme() {
+    const t = this.currentTheme();
+    const vars = t === 'dark'
+      ? { '--bg': '#181512', '--ink': '#EDE7DC', '--muted': '#B5AB9C', '--soft': '#8F8578', '--hair': '#3A342C' }
+      : { '--bg': '#FAF6EF', '--ink': '#1C1917', '--muted': '#57534E', '--soft': '#8A7F72', '--hair': '#D6CDBF' };
+    const el = this.rootRef.current;
+    if (el) {
+      for (const k in vars) el.style.setProperty(k, vars[k]);
+      document.body.style.background = vars['--bg'];
+    }
+  }
+
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+
+  renderVals() {
+    const t = this.currentTheme();
+    return {
+      rootRef: this.rootRef,
+      themeLabel: t === 'dark' ? 'Light' : 'Dark',
+      toggleTheme: () => {
+        const next = t === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('cm-theme', next);
+        this.setState({ theme: next });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
