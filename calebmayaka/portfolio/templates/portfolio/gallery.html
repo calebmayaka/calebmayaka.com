@@ -1,0 +1,58 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "name": "Gallery | {{ profile.name|default:'Caleb Mayaka'|escapejs }}",
+    "url": "{{ public_site_url }}/gallery/",
+    "about": {
+        "@type": "Person",
+        "name": "{{ profile.name|default:'Caleb Mayaka'|escapejs }}"
+    },
+    "image": [
+        {% for p in gallery_photos %}{
+            "@type": "ImageObject",
+            "contentUrl": "{{ public_site_url }}{% static 'portfolio/img/gallery/'|add:p.slug|add:'.jpg' %}",
+            "name": "{{ p.alt|escapejs }}",
+            "caption": "{{ p.caption|escapejs }}",
+            "width": {{ p.width }},
+            "height": {{ p.height }},
+            "creator": {"@type": "Person", "name": "{{ profile.name|default:'Caleb Mayaka'|escapejs }}"}
+        }{% if not forloop.last %},{% endif %}{% endfor %}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero section-shell reveal">
+    <p class="eyebrow">Gallery</p>
+    <h1>A few photos</h1>
+    <p>Moments from work and around Nairobi and Kenya — {{ profile.name|default:'Caleb Mayaka' }}.</p>
+</section>
+
+<section class="section-shell">
+    <div class="gallery-grid">
+        {% for p in gallery_photos %}
+            <figure class="gallery-item reveal">
+                <picture>
+                    <source
+                        srcset="{% static 'portfolio/img/gallery/'|add:p.slug|add:'.webp' %}"
+                        type="image/webp">
+                    <img
+                        src="{% static 'portfolio/img/gallery/'|add:p.slug|add:'.jpg' %}"
+                        alt="{{ p.alt }}"
+                        width="{{ p.width }}"
+                        height="{{ p.height }}"
+                        loading="lazy"
+                        decoding="async">
+                </picture>
+                <figcaption>{{ p.caption }}</figcaption>
+            </figure>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

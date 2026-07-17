@@ -60,6 +60,7 @@ from .models import (
     TechStack,
     Testimonial,
 )
+from . import data
 
 
 def _get_profile_name():
@@ -674,6 +675,30 @@ def about(request):
     return render(request, 'portfolio/about.html', context)
 
 
+def gallery(request):
+    context = {
+        **base_context('gallery'),
+        'page_title': f"Gallery | {_get_profile_name()}",
+        'meta_description': (
+            'Photos of Caleb Mayaka — software engineer and IT professional '
+            'in Nairobi, Kenya.'
+        ),
+        'canonical_url': f'{_site_url()}/gallery/',
+        'gallery_photos': data.gallery_photos,
+    }
+    return render(request, 'portfolio/gallery.html', context)
+
+
+def image_sitemap(request):
+    context = {'gallery_photos': data.gallery_photos}
+    return render(
+        request,
+        'portfolio/image_sitemap.xml',
+        context,
+        content_type='application/xml',
+    )
+
+
 @ratelimit(key=rate_limit_client_ip, rate='5/m', method='POST', block=False)
 def dashboard_login(request):
     next_url = request.GET.get('next') or request.POST.get('next') or reverse('dev')
@@ -1267,6 +1292,7 @@ def robots_txt(request):
         'User-agent: *',
         'Allow: /',
         'Sitemap: https://calebmayaka.com/sitemap.xml',
+        'Sitemap: https://calebmayaka.com/image-sitemap.xml',
     ]
     return HttpResponse('\n'.join(lines), content_type='text/plain')
 

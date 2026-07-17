@@ -6,8 +6,10 @@ from . import views
 
 urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('image-sitemap.xml', views.image_sitemap, name='image_sitemap'),
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
+    path('gallery/', views.gallery, name='gallery'),
     path('experience/', RedirectView.as_view(pattern_name='home', permanent=True)),
     path('case-studies/', RedirectView.as_view(pattern_name='home', permanent=True)),
     path('dev/login/', views.dashboard_login, name='dashboard_login'),

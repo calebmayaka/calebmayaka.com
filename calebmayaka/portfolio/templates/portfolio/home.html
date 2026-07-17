@@ -9,6 +9,7 @@
     "name": "{{ profile.name|escapejs }}",
     "jobTitle": "{{ profile.role|escapejs }}",
     "url": "{{ request.scheme }}://{{ request.get_host }}/",
+    "image": "{{ public_site_url }}{% static 'portfolio/img/gallery/caleb-mayaka-data-center.jpg' %}",
     "email": "{{ profile.email|escapejs }}"{% if social_links %},
     "sameAs": [{% for link in social_links %}"{{ link.url|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]{% endif %}
 }

@@ -62,6 +62,42 @@ skills = [
     },
 ]
 
+# Gallery photos — single source of truth for the /gallery/ page and the image
+# sitemap. Files live under portfolio/static/portfolio/img/gallery/ as
+# <slug>.webp / <slug>.jpg (+ <slug>-thumb.*). All are 1200x1600 portraits.
+gallery_photos = [
+    {
+        'slug': 'caleb-mayaka-data-center',
+        'alt': 'Caleb Mayaka in a data center, laptop in hand beside a server rack',
+        'caption': 'On-site in the data center — server and network infrastructure.',
+        'width': 1200, 'height': 1600,
+    },
+    {
+        'slug': 'caleb-mayaka-nairobi-01',
+        'alt': 'Caleb Mayaka, software engineer, standing outdoors in Nairobi',
+        'caption': 'Nairobi, Kenya.',
+        'width': 1200, 'height': 1600,
+    },
+    {
+        'slug': 'caleb-mayaka-nairobi-02',
+        'alt': 'Caleb Mayaka, side profile portrait outdoors in Nairobi',
+        'caption': 'Nairobi, Kenya.',
+        'width': 1200, 'height': 1600,
+    },
+    {
+        'slug': 'caleb-mayaka-poolside',
+        'alt': 'Caleb Mayaka, portrait by a poolside',
+        'caption': 'A day out.',
+        'width': 1200, 'height': 1600,
+    },
+    {
+        'slug': 'caleb-mayaka-outdoor-portrait',
+        'alt': 'Caleb Mayaka, casual outdoor portrait in the countryside',
+        'caption': 'Countryside, western Kenya.',
+        'width': 1200, 'height': 1600,
+    },
+]
+
 tech_stack = [
     'Microsoft Dynamics NAV / C/AL',
     'Python & Django',

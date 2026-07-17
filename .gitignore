@@ -23,6 +23,9 @@ db.sqlite3-journal
 staticfiles/
 media/
 
+# Raw source photos (optimized copies live in portfolio/static/portfolio/img/gallery/)
+calebmayaka/photos/
+
 # Test and coverage output
 .coverage
 .coverage.*
