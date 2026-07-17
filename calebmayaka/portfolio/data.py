@@ -68,32 +68,32 @@ skills = [
 gallery_photos = [
     {
         'slug': 'caleb-mayaka-data-center',
-        'alt': 'Caleb Mayaka in a data center, laptop in hand beside a server rack',
-        'caption': 'On-site in the data center — server and network infrastructure.',
+        'alt': 'Caleb Mayaka, IT professional, working on a laptop in a data center beside a server rack',
+        'caption': 'In the data center — servers, networking, and virtualization.',
         'width': 1200, 'height': 1600,
     },
     {
         'slug': 'caleb-mayaka-nairobi-01',
-        'alt': 'Caleb Mayaka, software engineer, standing outdoors in Nairobi',
+        'alt': 'Caleb Mayaka, software engineer, at a park in Nairobi, Kenya',
         'caption': 'Nairobi, Kenya.',
         'width': 1200, 'height': 1600,
     },
     {
         'slug': 'caleb-mayaka-nairobi-02',
-        'alt': 'Caleb Mayaka, side profile portrait outdoors in Nairobi',
+        'alt': 'Caleb Mayaka, side-profile portrait at a park in Nairobi, Kenya',
         'caption': 'Nairobi, Kenya.',
         'width': 1200, 'height': 1600,
     },
     {
         'slug': 'caleb-mayaka-poolside',
-        'alt': 'Caleb Mayaka, portrait by a poolside',
-        'caption': 'A day out.',
+        'alt': 'Caleb Mayaka, portrait by a poolside in Kenya',
+        'caption': 'Poolside.',
         'width': 1200, 'height': 1600,
     },
     {
         'slug': 'caleb-mayaka-outdoor-portrait',
-        'alt': 'Caleb Mayaka, casual outdoor portrait in the countryside',
-        'caption': 'Countryside, western Kenya.',
+        'alt': 'Caleb Mayaka, casual outdoor portrait in rural Kenya',
+        'caption': 'Rural Kenya.',
         'width': 1200, 'height': 1600,
     },
 ]
