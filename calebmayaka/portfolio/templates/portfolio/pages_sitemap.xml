@@ -2,7 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>{{ public_site_url }}/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>{{ public_site_url }}/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>{{ public_site_url }}/gallery/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
 {% for p in gallery_photos %}    <image:image>
       <image:loc>{{ public_site_url }}{% static 'portfolio/img/gallery/'|add:p.slug|add:'.jpg' %}</image:loc>
       <image:caption>{{ p.alt|escape }}</image:caption>

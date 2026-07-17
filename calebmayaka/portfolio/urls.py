@@ -6,7 +6,9 @@ from . import views
 
 urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
-    path('image-sitemap.xml', views.image_sitemap, name='image_sitemap'),
+    path('pages-sitemap.xml', views.pages_sitemap, name='pages_sitemap'),
+    # Back-compat alias (this file previously lived at /image-sitemap.xml)
+    path('image-sitemap.xml', views.pages_sitemap, name='image_sitemap'),
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
     path('gallery/', views.gallery, name='gallery'),

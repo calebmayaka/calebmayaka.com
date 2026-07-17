@@ -689,11 +689,13 @@ def gallery(request):
     return render(request, 'portfolio/gallery.html', context)
 
 
-def image_sitemap(request):
+def pages_sitemap(request):
+    """Sitemap for the non-Wagtail pages (home, about, gallery + gallery
+    images). The blog lives in Wagtail's own /sitemap.xml."""
     context = {'gallery_photos': data.gallery_photos}
     return render(
         request,
-        'portfolio/image_sitemap.xml',
+        'portfolio/pages_sitemap.xml',
         context,
         content_type='application/xml',
     )
@@ -1292,7 +1294,7 @@ def robots_txt(request):
         'User-agent: *',
         'Allow: /',
         'Sitemap: https://calebmayaka.com/sitemap.xml',
-        'Sitemap: https://calebmayaka.com/image-sitemap.xml',
+        'Sitemap: https://calebmayaka.com/pages-sitemap.xml',
     ]
     return HttpResponse('\n'.join(lines), content_type='text/plain')
 
