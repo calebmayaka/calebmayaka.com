@@ -322,6 +322,13 @@ h1, h2, h3 {
     margin: 2.2rem 0 0;
 }
 
+.v2-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2.5rem;
+}
+
 .v2-cta {
     display: inline-flex;
     align-items: center;
@@ -334,10 +341,25 @@ h1, h2, h3 {
     font-weight: 500;
     border-radius: 999px;
     text-decoration: none;
-    transition: opacity 160ms ease;
+    border: 1px solid var(--text);
+    transition: opacity 160ms ease, background 160ms ease, color 160ms ease;
 }
 
 .v2-cta:hover { opacity: 0.85; }
+
+.v2-hero-actions .v2-cta { margin-top: 0; }
+
+.v2-cta-ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border-strong);
+}
+
+.v2-cta-ghost:hover {
+    opacity: 1;
+    background: var(--text);
+    color: var(--background);
+}
 
 .v2-cta .v2-arrow {
     font-family: var(--font-mono);
