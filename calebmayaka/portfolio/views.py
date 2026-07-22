@@ -650,7 +650,7 @@ def home(request):
         'page_title': f"{_profile.name} | {_profile.role}" if _profile else '',
         'stats': Stat.objects.order_by('order'),
         'skills': Skill.objects.order_by('order'),
-        'projects': Project.objects.order_by('order')[:4],
+        'projects': Project.objects.order_by('order')[:8],
         'blog_posts': (
             BlogPostPage.objects.live()
             .public()
