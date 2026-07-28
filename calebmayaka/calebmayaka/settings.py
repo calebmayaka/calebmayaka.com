@@ -241,7 +241,7 @@ if not DEBUG:
     }
 WAGTAIL_SITE_NAME = 'calebmayaka.com blog'
 WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'https://calebmayaka.com/cms')
-PUBLIC_SITE_URL = os.environ.get('PUBLIC_SITE_URL', 'https://www.calebmayaka.com').rstrip('/')
+PUBLIC_SITE_URL = os.environ.get('PUBLIC_SITE_URL', 'https://calebmayaka.com').rstrip('/')
 
 # Blog analytics. GEOIP_PATH should point to a directory containing
 # GeoLite2-City.mmdb on the server.
