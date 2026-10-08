@@ -2,13 +2,20 @@
     // ── Theme toggle (light / dark) ────────────────────────────────
     const root = document.documentElement;
     const themeToggle = document.querySelector('.theme-toggle');
+    const themeLabel = themeToggle && themeToggle.querySelector('[data-theme-label]');
     const applyTheme = (t) => {
         root.classList.remove('dark', 'light');
         root.classList.add(t);
         root.style.colorScheme = t;
-        if (themeToggle) themeToggle.setAttribute('aria-pressed', String(t === 'light'));
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-pressed', String(themeLabel ? t === 'dark' : t === 'light'));
+            if (themeLabel) {
+                themeLabel.textContent = t === 'dark' ? 'Dark' : 'Light';
+                themeToggle.setAttribute('aria-label', 'Switch to ' + (t === 'dark' ? 'light' : 'dark') + ' theme');
+            }
+        }
     };
-    let currentTheme = 'light';
+    let currentTheme = 'dark';
     try {
         const stored = localStorage.getItem('portfolio-theme') || localStorage.getItem('cm-theme');
         if (stored === 'light' || stored === 'dark') currentTheme = stored;

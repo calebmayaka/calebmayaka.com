@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark" style="color-scheme: dark;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,17 +20,17 @@
     <script>
         (function () {
             try {
-                var t = localStorage.getItem('portfolio-theme');
-                if (t !== 'light' && t !== 'dark') t = 'light';
+                var t = localStorage.getItem('portfolio-theme') || localStorage.getItem('cm-theme');
+                if (t !== 'light' && t !== 'dark') t = 'dark';
+                document.documentElement.classList.remove('dark', 'light');
                 document.documentElement.classList.add(t);
                 document.documentElement.style.colorScheme = t;
-            } catch (e) { document.documentElement.classList.add('light'); }
+            } catch (e) { document.documentElement.classList.add('dark'); }
         })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="preload" href="{% static 'portfolio/fonts/inter-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <link rel="alternate" type="application/rss+xml" href="/blog/feed/" title="calebmayaka.com Blog">
     <meta name="twitter:site" content="@calebmayaka">
@@ -44,36 +44,32 @@
     <link rel="stylesheet" href="{% static 'portfolio/css/portfolio.css' %}">
     <link rel="stylesheet" href="{% static 'blogcms/css/blog.css' %}?v=20260612">
     <link rel="stylesheet" href="{% static 'portfolio/css/v2.css' %}">
+    <link rel="stylesheet" href="{% static 'blogcms/css/reading.css' %}">
     {% block extra_styles %}{% endblock %}
 </head>
-<body class="page-blog blog-page">
+<body class="page-blog blog-page blog-v3">
     <a class="skip-link" href="#main">Skip to content</a>
-    <nav class="site-nav" aria-label="Primary navigation">
-        <div class="nav-inner">
-            <a class="brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
-                <span>{{ profile.name|default:'Caleb Mayaka' }}</span>
-            </a>
-            <div class="nav-links" id="primary-menu">
-                {% with current_active=active|default:'blog' %}
-                    {% for item in primary_nav_items %}
-                        <a class="{% if item.active_key == current_active %}active{% endif %}" href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">
-                            {% if item.active_key == current_active %}<span class="active-dot"></span>{% endif %}
-                            {{ item.label }}
-                        </a>
-                    {% endfor %}
-                {% endwith %}
-            </div>
-            <div class="nav-controls">
-                <button class="theme-toggle" type="button" aria-label="Toggle light and dark theme" aria-pressed="false">
-                    <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
-                    <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg>
-                </button>
-                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu" aria-label="Open menu">
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
+    <header class="reading-header">
+        <a class="reading-brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
+            <span class="reading-monogram" aria-hidden="true">{{ profile.initials|default:'CM' }}</span>
+            <span class="reading-brand-copy">
+                <strong>{{ profile.name|default:'Caleb Mayaka' }}</strong>
+                <span>software engineer</span>
+            </span>
+        </a>
+        <nav class="reading-tabs" aria-label="Primary navigation">
+            <a href="/#work">Work</a>
+            <a class="is-active" href="/blog/" aria-current="true">Writing</a>
+            <a href="/#stack">Stack</a>
+            <a href="/#about">About</a>
+            <a href="/#contact">Contact</a>
+        </nav>
+        <div class="reading-header-controls">
+            <button class="theme-toggle reading-theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="true">
+                <span class="reading-theme-dot" aria-hidden="true"></span><span data-theme-label>Dark</span>
+            </button>
         </div>
-    </nav>
+    </header>
 
     <div class="progress-line" aria-hidden="true"></div>
 
@@ -81,36 +77,16 @@
         {% block blog_content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <section>
-                <a class="footer-brand brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
-                    <span>{{ profile.name|default:'Caleb Mayaka' }}</span>
-                </a>
-            </section>
-            <nav class="footer-links" aria-label="Portfolio links">
-                <h2>Explore</h2>
-                {% for item in footer_nav_items %}
-                    <a href="{% if item.url_name %}{% url item.url_name %}{% else %}{{ item.url }}{% endif %}">{{ item.label }}</a>
-                {% endfor %}
-                <a href="/blog/">Blog</a>
-            </nav>
-            <nav class="footer-links" aria-label="Contact links">
-                <h2>Connect</h2>
-                {% if social_links %}
-                    {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
-                    {% endfor %}
-                {% elif profile.email %}
-                    <a href="mailto:{{ profile.email }}">Email</a>
+    <footer class="reading-footer">
+        <div class="reading-footer-links">
+            {% if profile.email %}<a href="mailto:{{ profile.email }}">{{ profile.email }}</a>{% endif %}
+            {% for link in social_links %}
+                {% if 'mailto:' not in link.url %}
+                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if link.label == 'X / Twitter' %}X{% else %}{{ link.label }}{% endif %}</a>
                 {% endif %}
-                <a href="/#inquiry">Start a Project</a>
-            </nav>
+            {% endfor %}
         </div>
-        <div class="footer-bottom">
-            <span>&copy; {% now "Y" %} {{ profile.name|default:'Caleb Mayaka' }}</span>
-            <span>{{ profile.location }}</span>
-        </div>
+        <a class="reading-project-link" href="/#contact">Start a project &rarr;</a>
     </footer>
 
     <script src="{% static 'portfolio/js/portfolio.js' %}" defer></script>

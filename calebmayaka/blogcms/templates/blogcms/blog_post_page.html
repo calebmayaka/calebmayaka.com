@@ -87,9 +87,9 @@
             <nav class="blog-breadcrumb" aria-label="Breadcrumb">
                 <a href="/">Home</a>
                 <span aria-hidden="true">/</span>
-                <a href="{{ page.get_parent.url }}">Blog</a>
+                <a href="{{ page.get_parent.url }}">Writing</a>
                 <span aria-hidden="true">/</span>
-                <span aria-current="page">{{ page.title }}</span>
+                <span aria-current="page">article</span>
             </nav>
             <h1>{{ page.title }}</h1>
             {% if page.subtitle %}
@@ -99,7 +99,7 @@
                 <div class="blog-author-avatar">{{ page.display_author|slice:":1"|upper }}</div>
                 <div>
                     <strong>{{ page.display_author }}</strong>
-                    <p>Posted: {{ page.date|date:"M j, Y" }} &bull; {{ page.estimated_read_minutes }} min read{% if page.view_count %} &bull; {{ page.view_count }} read{{ page.view_count|pluralize }}{% endif %}</p>
+                    <p><time datetime="{{ page.date|date:'Y-m-d' }}">{{ page.date|date:"M j, Y" }}</time> &middot; {{ page.estimated_read_minutes }} min read{% if page.view_count %} &middot; {{ page.view_count }} read{{ page.view_count|pluralize }}{% endif %}</p>
                 </div>
             </div>
             {% if page.tags.all %}
@@ -311,7 +311,7 @@
                 data-reactions-enabled="1"
                 data-emit-metadata="0"
                 data-input-position="top"
-                data-theme="preferred_color_scheme"
+                data-theme="dark"
                 data-lang="en"
                 crossorigin="anonymous"
                 async>

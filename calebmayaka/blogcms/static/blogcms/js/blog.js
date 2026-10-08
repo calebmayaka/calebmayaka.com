@@ -100,18 +100,38 @@
 (function () {
   var root = document.documentElement;
   var prevTheme = root.classList.contains('light') ? 'light' : 'dark';
+  var clientScript = document.querySelector('script[src="https://giscus.app/client.js"]');
+  if (clientScript) clientScript.dataset.theme = prevTheme;
+
+  function syncFrameTheme() {
+    var frame = document.querySelector('.giscus-frame');
+    if (!frame) return;
+    frame.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: root.classList.contains('light') ? 'light' : 'dark' } } },
+      'https://giscus.app'
+    );
+  }
+
+  function watchFrame() {
+    var frame = document.querySelector('.giscus-frame');
+    if (!frame) return false;
+    frame.addEventListener('load', syncFrameTheme);
+    syncFrameTheme();
+    return true;
+  }
+
+  if (clientScript && !watchFrame()) {
+    var frameObserver = new MutationObserver(function () {
+      if (watchFrame()) frameObserver.disconnect();
+    });
+    frameObserver.observe(document.body, { childList: true, subtree: true });
+  }
 
   var mo = new MutationObserver(function () {
     var theme = root.classList.contains('light') ? 'light' : 'dark';
     if (theme === prevTheme) return;
     prevTheme = theme;
-    var frame = document.querySelector('.giscus-frame');
-    if (frame) {
-      frame.contentWindow.postMessage(
-        { giscus: { setConfig: { theme: theme } } },
-        'https://giscus.app'
-      );
-    }
+    syncFrameTheme();
   });
   mo.observe(root, { attributes: true, attributeFilter: ['class'] });
 })();
