@@ -106,6 +106,15 @@ tech_stack = [
     'Technical Writing',
 ]
 
+homepage_stack = [
+    {'name': 'Languages', 'items': 'Python, Rust, SQL, JavaScript'},
+    {'name': 'Backend', 'items': 'Django, Django REST Framework, PostgreSQL'},
+    {'name': 'ERP', 'items': 'Microsoft Dynamics NAV, C/AL'},
+    {'name': 'Infrastructure', 'items': 'Docker, Linux, Windows Server, Proxmox, Citrix'},
+    {'name': 'Cloud', 'items': 'AWS, Azure, Cloudflare'},
+    {'name': 'Creative', 'items': 'Photoshop, Premiere Pro, After Effects'},
+]
+
 projects = [
     {
         'id': 'client-portal',

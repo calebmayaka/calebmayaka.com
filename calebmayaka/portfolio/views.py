@@ -631,35 +631,43 @@ def month_starts(month_count=7):
 @ratelimit(key='ip', rate='3/h', method='POST', block=False)
 def home(request):
     was_limited = getattr(request, 'limited', False)
-    inquiry_form = InquiryForm(request.POST or None)
+    inquiry_form = InquiryForm(request.POST if request.method == 'POST' else None)
     if request.method == 'POST':
         if was_limited:
             messages.error(request, 'Too many submissions. Please wait an hour before trying again.')
-            return redirect('home')
+            return redirect(f"{reverse('home')}#contact")
         if inquiry_form.is_valid():
             if inquiry_form.cleaned_data.get('website'):
                 messages.success(request, 'Your inquiry has been sent successfully.')
-                return redirect('home')
+                return redirect(f"{reverse('home')}#contact")
             inquiry_form.save()
             messages.success(request, 'Your inquiry has been sent successfully.')
-            return redirect('home')
+            return redirect(f"{reverse('home')}#contact")
 
     _profile = get_site_chrome().get('profile')
+    bio_lead, bio_separator, bio_details = (_profile.summary or '').partition('. ')
     context = {
         **base_context('home'),
         'page_title': f"{_profile.name} | {_profile.role}" if _profile else '',
+        'meta_description': _profile.meta_description,
         'stats': Stat.objects.order_by('order'),
         'skills': Skill.objects.order_by('order'),
-        'projects': Project.objects.order_by('order')[:8],
+        'projects': list(Project.objects.order_by('order', 'pk')[:7]),
         'blog_posts': (
             BlogPostPage.objects.live()
             .public()
-            .order_by('-date', '-first_published_at')
+            .select_related('cover_image')
+            .order_by('-date', '-first_published_at')[:5]
         ),
         'experience': Experience.objects.order_by('order'),
         'testimonials': Testimonial.objects.order_by('order'),
         'tech_stack': list(TechStack.objects.order_by('order').values_list('name', flat=True)),
         'inquiry_form': inquiry_form,
+        'home_active_tab': 'contact' if request.method == 'POST' or len(messages.get_messages(request)) else 'work',
+        'home_social_links': [link for link in get_site_chrome()['social_links'] if not link.url.startswith('mailto:')],
+        'stack_categories': data.homepage_stack,
+        'bio_lead': bio_lead + ('.' if bio_separator else ''),
+        'bio_details': bio_details,
     }
     return render(request, 'portfolio/home.html', context)
 

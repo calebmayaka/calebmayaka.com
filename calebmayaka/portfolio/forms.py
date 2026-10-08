@@ -84,9 +84,9 @@ class InquiryForm(forms.ModelForm):
         model = Inquiry
         fields = ['email', 'inquiry_type', 'message']
         widgets = {
-            'email': forms.EmailInput(attrs={'id': 'inquiry-email'}),
+            'email': forms.EmailInput(attrs={'id': 'inquiry-email', 'autocomplete': 'email'}),
             'inquiry_type': forms.Select(attrs={'id': 'inquiry-type'}),
-            'message': forms.Textarea(attrs={'id': 'inquiry-message', 'rows': 7}),
+            'message': forms.Textarea(attrs={'id': 'inquiry-message', 'rows': 5}),
         }
         labels = {
             'email': 'Email',

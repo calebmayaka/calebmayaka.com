@@ -1,5 +1,15 @@
 {% extends 'portfolio/base.html' %}
-{% load wagtailcore_tags wagtailimages_tags static %}
+{% load wagtailcore_tags static %}
+
+{% block body_class %}home-v2{% endblock %}
+{% block fonts %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+{% endblock %}
+{% block extra_styles %}<link rel="stylesheet" href="{% static 'portfolio/css/home.css' %}">{% endblock %}
+{% block extra_scripts %}<script src="{% static 'portfolio/js/home.js' %}" defer></script>{% endblock %}
+{% block site_navigation %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block notifications %}{% endblock %}
 
 {% block head_extra %}
 <script type="application/ld+json">
@@ -17,142 +27,163 @@
 {% endblock %}
 
 {% block content %}
-<div class="v2-main">
-
-    <!-- HERO + SOCIAL RAIL -->
-    <section class="v2-hero v2-pad">
-        <div class="v2-hero-copy reveal">
-            <p class="v2-eyebrow">{{ profile.role|default:'Software engineer & solution architect' }}</p>
-            <h1>Software that ships.</h1>
-            <p class="v2-lead">I design, build, and deploy the software businesses actually run on &mdash; from Django backends to Windows Server pipelines and self-hosted infrastructure.</p>
-            <div class="v2-hero-actions">
-                <a class="v2-cta" href="#contact">Contact me <span class="v2-arrow">&rarr;</span></a>
-                <a class="v2-cta v2-cta-ghost" href="#work">View work <span class="v2-arrow">&darr;</span></a>
+<div class="home-shell" data-home-shell data-initial-tab="{{ home_active_tab }}" data-active-tab="{{ home_active_tab }}">
+    <header class="home-header">
+        <a class="home-brand" href="{% url 'home' %}" aria-label="{{ profile.name }} home">
+            <span class="home-monogram" aria-hidden="true">{{ profile.initials|default:'CM' }}</span>
+            <div class="home-brand-copy">
+                <h1>{{ profile.name|default:'Caleb Mayaka' }}</h1>
+                <span class="home-brand-role">software engineer</span>
             </div>
+        </a>
+        <nav class="home-tabs" aria-label="Homepage sections" data-home-tabs>
+            <a id="tab-work" class="home-tab" href="#work" data-home-tab="work">Work</a>
+            <a id="tab-writing" class="home-tab" href="#writing" data-home-tab="writing">Writing</a>
+            <a id="tab-stack" class="home-tab" href="#stack" data-home-tab="stack">Stack</a>
+            <a id="tab-about" class="home-tab" href="#about" data-home-tab="about">About</a>
+            <a id="tab-contact" class="home-tab" href="#contact" data-home-tab="contact">Contact</a>
+        </nav>
+        <div class="home-header-controls">
+            <button class="home-theme-toggle" type="button" data-home-theme aria-label="Switch to dark theme" aria-pressed="false">
+                <span class="home-theme-dot" aria-hidden="true"></span><span data-home-theme-label>Light</span>
+            </button>
         </div>
+    </header>
 
-        <div class="v2-rail" aria-label="Social links">
-            <span class="v2-rail-label">Say hello</span>
-            {% for link in social_links %}
-            <a href="{{ link.url }}" title="{{ link.label }}"{% if not link.url|slice:":7" == "mailto:" %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{{ link.label }}">
-                {% with l=link.label|lower %}
-                {% if 'github' in l %}
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5a11.5 11.5 0 0 0 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
-                {% elif 'twitter' in l or 'x /' in l or l == 'x' %}
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.2 2h3.3l-7.2 8.3L22.8 22h-6.6l-5.2-6.8L4.9 22H1.6l7.7-8.8L1.2 2h6.8l4.7 6.2L18.2 2zm-1.2 18h1.8L7.1 3.9H5.2L17 20z"/></svg>
-                {% elif 'linkedin' in l %}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.31h4.52V23H.24zM8.34 8.31h4.33v2h.06c.6-1.14 2.08-2.34 4.28-2.34 4.58 0 5.42 3.01 5.42 6.92V23h-4.51v-7.13c0-1.7-.03-3.89-2.37-3.89-2.37 0-2.73 1.85-2.73 3.76V23H8.34z"/></svg>
-                {% elif 'whatsapp' in l %}
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.1-.3.2-.6 0-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2-.1-.3 0-.5.1-.6l.4-.5q.2-.3.3-.5.1-.2 0-.4 0-.2-.7-1.8c-.2-.6-.5-.5-.7-.5h-.5q-.3 0-.8.4c-.3.2-1 1-1 2.5s1.1 2.9 1.2 3 2.1 3.2 5.1 4.5c1.8.8 2.5.8 3.4.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4z"/><path d="M20.5 3.4A11.9 11.9 0 0 0 12 0 12 12 0 0 0 1.6 17.8L0 24l6.3-1.7A12 12 0 0 0 12 23.8 12 12 0 0 0 20.5 3.4zM12 21.8a9.9 9.9 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.9 9.9 0 1 1 12 21.8z"/></svg>
-                {% elif 'mail' in l or 'email' in l %}
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg>
+    <div class="home-body">
+        <aside class="home-sidebar" data-home-sidebar aria-label="Latest article and contact details">
+            <div class="home-sidebar-caption home-mono">
+                <span class="home-accent">~/calebmayaka</span>
+                <a href="#writing" data-home-link="writing">all writing →</a>
+            </div>
+            {% with latest=blog_posts.0 %}
+            {% if latest %}
+            <a class="home-latest" href="{% pageurl latest %}">
+                {% include 'portfolio/home_article_image.html' with post=latest image_class='home-latest-image' %}
+                <span class="home-mono home-accent">latest article · {{ latest.date|date:'M j, Y' }} · {{ latest.estimated_read_minutes }} min</span>
+                <h2 class="home-latest-title">{{ latest.title }}</h2>
+                <span class="home-latest-excerpt">{{ latest.subtitle|default:latest.excerpt|default:latest.search_description }}</span>
+                <span class="home-read-link">Read the article →</span>
+            </a>
+            {% else %}
+            <div class="home-latest home-empty">
+                <span class="home-mono home-accent">latest article</span>
+                <h2 class="home-latest-title">Writing &amp; practical notes.</h2>
+                <p class="home-latest-excerpt">Articles will appear here as they are published.</p>
+                <a class="home-read-link" href="/blog/">Explore the blog →</a>
+            </div>
+            {% endif %}
+            {% endwith %}
+            <div class="home-sidebar-bottom">
+                <a class="home-button" href="#contact" data-home-link="contact">Start a project →</a>
+                <div class="home-info home-mono">
+                    {% if profile.email %}
+                    <div class="home-info-row"><span>email</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></div>
+                    {% endif %}
+                    {% if home_social_links %}
+                    <div class="home-info-row"><span>elsewhere</span><span class="home-socials">{% include 'portfolio/home_social_links.html' %}</span></div>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+
+        <div class="home-panels">
+            <section id="work" class="home-panel" data-home-panel="work" aria-labelledby="tab-work">
+                <div class="home-panel-caption home-mono"><h2>selected work / 2024–{% now 'Y' %}</h2><span>{{ projects|length }} project{{ projects|length|pluralize }}</span></div>
+                <div class="home-work-grid">
+                    {% for project in projects %}
+                    <a class="home-work-tile" href="{% if project.link and project.link != '#' %}{{ project.link }}{% else %}#contact{% endif %}"{% if not project.link or project.link == '#' %} data-home-link="contact"{% endif %}>
+                        <span class="home-tile-meta home-mono"><span>{{ forloop.counter|stringformat:'02d' }} · {{ project.category }}</span><span class="home-accent" aria-hidden="true">↗</span></span>
+                        <h3 class="home-tile-title">{{ project.title }}</h3>
+                        <span class="home-tile-description">{{ project.description }}</span>
+                    </a>
+                    {% endfor %}
+                    <a class="home-work-tile home-next-project" href="#contact" data-home-link="contact">
+                        <span class="home-mono">{{ projects|length|add:'1'|stringformat:'02d' }} · next</span>
+                        <span>Your project →</span>
+                    </a>
+                </div>
+            </section>
+
+            <section id="writing" class="home-panel" data-home-panel="writing" aria-labelledby="tab-writing">
+                <div class="home-panel-caption home-mono"><h2>latest writing</h2><a class="home-accent" href="/blog/">all posts →</a></div>
+                {% with latest=blog_posts.0 %}
+                {% if latest %}
+                <a class="home-featured" href="{% pageurl latest %}">
+                    {% include 'portfolio/home_article_image.html' with post=latest image_class='home-featured-image' %}
+                    <div class="home-featured-copy">
+                        <span class="home-mono home-accent">new · {{ latest.date|date:'M j, Y' }} · {{ latest.estimated_read_minutes }} min</span>
+                        <h3 class="home-featured-title">{{ latest.title }}</h3>
+                        <span class="home-featured-excerpt">{{ latest.subtitle|default:latest.excerpt|default:latest.search_description }}</span>
+                    </div>
+                </a>
+                <div class="home-post-list">
+                    {% for post in blog_posts|slice:'1:' %}
+                    <a class="home-post-row" href="{% pageurl post %}">
+                        <span class="home-mono">{{ post.date|date:'M j, Y' }}</span>
+                        <h3>{{ post.title }}</h3>
+                        <span class="home-mono home-post-time">{{ post.estimated_read_minutes }} min</span>
+                    </a>
+                    {% endfor %}
+                </div>
                 {% else %}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7.07 0l3.18-3.18a5 5 0 1 0-7.07-7.07l-1.6 1.59"/><path d="M14 10a5 5 0 0 0-7.07 0L3.75 13.18a5 5 0 1 0 7.07 7.07l1.59-1.59"/></svg>
+                <p class="home-empty">Articles will appear here as they are published.</p>
                 {% endif %}
                 {% endwith %}
-            </a>
-            {% endfor %}
-            <span class="v2-rail-line" aria-hidden="true"></span>
-        </div>
-    </section>
+            </section>
 
-    <!-- LATEST WRITING -->
-    {% if blog_posts %}
-    <section class="v2-section v2-pad" id="latest-posts">
-        <div class="v2-section-head reveal">
-            <h2>Latest writing</h2>
-            <a class="v2-mono-link" href="/blog/">All posts &rarr;</a>
-        </div>
-        <div class="v2-writing-grid">
-            {% with feat=blog_posts.0 %}
-            <a class="v2-feat reveal" href="{% pageurl feat %}">
-                <span class="v2-feat-meta">
-                    <span class="v2-pill">New</span>
-                    <span class="v2-mono-meta">{{ feat.date|date:"M j, Y" }} &middot; {{ feat.estimated_read_minutes }} min{% if feat.view_count %} &middot; {{ feat.view_count }} read{{ feat.view_count|pluralize }}{% endif %}</span>
-                </span>
-                <span class="v2-feat-title">{{ feat.title }}</span>
-                {% if feat.subtitle or feat.excerpt %}
-                <span class="v2-feat-excerpt">{{ feat.subtitle|default:feat.excerpt|truncatechars:180 }}</span>
-                {% endif %}
-                <span class="v2-read-link">Read the post</span>
-            </a>
-            {% endwith %}
-            <div class="v2-post-list reveal">
-                {% for post in blog_posts|slice:"1:4" %}
-                <a class="v2-post-row" href="{% pageurl post %}">
-                    <span class="v2-mono-meta">{{ post.date|date:"M j" }} &middot; {{ post.estimated_read_minutes }} min</span>
-                    <span class="v2-post-row-title">{{ post.title }}</span>
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
+            <section id="stack" class="home-panel" data-home-panel="stack" aria-labelledby="tab-stack">
+                <div class="home-panel-caption home-mono"><h2>stack</h2></div>
+                <div class="home-stack-grid">
+                    {% for category in stack_categories %}
+                    <div class="home-stack-cell"><h3 class="home-mono home-accent">{{ category.name }}</h3><p>{{ category.items }}</p></div>
+                    {% endfor %}
+                </div>
+            </section>
 
-    <!-- SELECTED WORK -->
-    {% if projects %}
-    <section class="v2-section v2-pad" id="work">
-        <div class="v2-section-head reveal">
-            <h2>Selected work</h2>
-            <span class="v2-mono-note">2024&ndash;{% now "Y" %}</span>
-        </div>
-        <div class="v2-work-list">
-            {% for project in projects %}
-            <a class="v2-work-row reveal" href="{% if project.link and project.link != '#' %}{{ project.link }}{% else %}#contact{% endif %}">
-                <span class="v2-work-num">{{ forloop.counter|stringformat:"02d" }}</span>
-                <span class="v2-work-title">{{ project.title }}</span>
-                <span class="v2-work-desc">{{ project.description|truncatechars:140 }}</span>
-            </a>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
+            <section id="about" class="home-panel" data-home-panel="about" aria-labelledby="tab-about">
+                <div class="home-panel-caption home-mono"><h2>about</h2></div>
+                <div class="home-about-grid">
+                    <div class="home-bio">
+                        <h3>{{ profile.name|default:'Caleb Mayaka' }}</h3>
+                        {% if bio_lead %}<p class="home-bio-lead">{{ bio_lead }}</p>{% endif %}
+                        {% if bio_details %}<p class="home-bio-details">{{ bio_details }}</p>{% endif %}
+                    </div>
+                    <div class="home-skills">
+                        {% for skill in skills %}
+                        <div class="home-skill"><span class="home-mono home-accent">{{ forloop.counter|stringformat:'02d' }}</span><div><h3>{{ skill.title }}</h3><p>{{ skill.description }}</p></div></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
 
-    <!-- STACK -->
-    <section class="v2-section v2-pad" id="stack">
-        <div class="v2-section-head reveal">
-            <h2>Stack</h2>
+            <section id="contact" class="home-panel" data-home-panel="contact" aria-labelledby="tab-contact">
+                <div class="home-panel-caption home-mono"><h2>contact / new inquiry</h2></div>
+                <div class="home-contact-content">
+                    <h3>Tell me what you need built.</h3>
+                    <p>Share your email, the type of inquiry and the details. I’ll reply with the clearest next step.</p>
+                    {% if messages %}
+                    <div class="home-notifications" role="status" aria-live="polite">
+                        {% for message in messages %}<p class="home-notification {{ message.tags }}">{{ message }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+                    <form class="home-form inquiry-form" action="{% url 'home' %}#contact" method="post" id="inquiry">
+                        {% csrf_token %}
+                        <div hidden aria-hidden="true">{{ inquiry_form.website }}</div>
+                        {{ inquiry_form.non_field_errors }}
+                        <div class="form-field"><label for="{{ inquiry_form.email.id_for_label }}">email</label>{{ inquiry_form.email }}{{ inquiry_form.email.errors }}</div>
+                        <div class="form-field"><label for="{{ inquiry_form.inquiry_type.id_for_label }}">inquiry type</label>{{ inquiry_form.inquiry_type }}{{ inquiry_form.inquiry_type.errors }}</div>
+                        <div class="form-field"><label for="{{ inquiry_form.message.id_for_label }}">details</label>{{ inquiry_form.message }}{{ inquiry_form.message.errors }}</div>
+                        <button class="home-button home-submit" type="submit">Send inquiry →</button>
+                    </form>
+                </div>
+            </section>
         </div>
-        <div class="v2-stack-grid reveal">
-            <div class="v2-stack-row"><span class="v2-stack-label">Languages</span><span>Python, Rust, SQL, JavaScript</span></div>
-            <div class="v2-stack-row"><span class="v2-stack-label">Backend</span><span>Django, PostgreSQL</span></div>
-            <div class="v2-stack-row"><span class="v2-stack-label">Infra</span><span>Docker, Linux, Windows Server, Proxmox, Citrix</span></div>
-            <div class="v2-stack-row"><span class="v2-stack-label">Cloud</span><span>AWS, Azure, Cloudflare</span></div>
-            <div class="v2-stack-row"><span class="v2-stack-label">Creative</span><span>Photoshop, Premiere Pro, After Effects</span></div>
-        </div>
-    </section>
+    </div>
 
-    <!-- CONTACT -->
-    <section class="v2-section v2-pad" id="contact">
-        <div class="v2-section-head reveal">
-            <h2>Contact</h2>
-            {% if profile.email %}<a class="v2-mono-link" href="mailto:{{ profile.email }}">{{ profile.email }}</a>{% endif %}
-        </div>
-        <p class="v2-contact-intro reveal">Tell me what you need built. Share your email, the type of inquiry, and the details &mdash; I&rsquo;ll review it and respond with the clearest next step.</p>
-        <form class="v2-form reveal" action="{% url 'home' %}#contact" method="post" id="inquiry">
-            {% csrf_token %}
-            <div style="display:none!important;position:absolute;left:-9999px;" aria-hidden="true">
-                <label for="{{ inquiry_form.website.id_for_label }}">Website</label>
-                {{ inquiry_form.website }}
-            </div>
-            <div class="form-field">
-                <label for="{{ inquiry_form.email.id_for_label }}">{{ inquiry_form.email.label }}</label>
-                {{ inquiry_form.email }}
-                {{ inquiry_form.email.errors }}
-            </div>
-            <div class="form-field">
-                <label for="{{ inquiry_form.inquiry_type.id_for_label }}">{{ inquiry_form.inquiry_type.label }}</label>
-                {{ inquiry_form.inquiry_type }}
-                {{ inquiry_form.inquiry_type.errors }}
-            </div>
-            <div class="form-field form-field-wide">
-                <label for="{{ inquiry_form.message.id_for_label }}">{{ inquiry_form.message.label }}</label>
-                {{ inquiry_form.message }}
-                {{ inquiry_form.message.errors }}
-            </div>
-            <button class="v2-cta" type="submit">Send inquiry <span class="v2-arrow">&rarr;</span></button>
-        </form>
-    </section>
-
+    <footer class="home-contact-strip home-mono" data-home-strip>
+        <div class="home-strip-links">{% if profile.email %}<a href="mailto:{{ profile.email }}">{{ profile.email }}</a>{% endif %}{% include 'portfolio/home_social_links.html' %}</div>
+        <a class="home-button" href="#contact" data-home-link="contact">Start a project →</a>
+    </footer>
 </div>
 {% endblock %}

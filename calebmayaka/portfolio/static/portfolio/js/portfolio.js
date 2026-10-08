@@ -10,7 +10,7 @@
     };
     let currentTheme = 'light';
     try {
-        const stored = localStorage.getItem('portfolio-theme');
+        const stored = localStorage.getItem('portfolio-theme') || localStorage.getItem('cm-theme');
         if (stored === 'light' || stored === 'dark') currentTheme = stored;
     } catch (e) { /* private mode */ }
     applyTheme(currentTheme);
@@ -18,7 +18,10 @@
         themeToggle.addEventListener('click', () => {
             currentTheme = root.classList.contains('light') ? 'dark' : 'light';
             applyTheme(currentTheme);
-            try { localStorage.setItem('portfolio-theme', currentTheme); } catch (e) { /* ignore */ }
+            try {
+                localStorage.setItem('portfolio-theme', currentTheme);
+                localStorage.setItem('cm-theme', currentTheme);
+            } catch (e) { /* ignore */ }
         });
     }
 

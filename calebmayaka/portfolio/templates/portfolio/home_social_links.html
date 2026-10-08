@@ -1,0 +1,1 @@
+{% for link in home_social_links %}<a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if link.label == 'X / Twitter' %}X{% else %}{{ link.label }}{% endif %}</a>{% endfor %}
