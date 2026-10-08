@@ -111,6 +111,11 @@
             {% endif %}
         </header>
 
+        <details class="blog-mobile-toc" data-mobile-toc hidden>
+            <summary>On this page <span data-toc-count></span></summary>
+            <nav data-mobile-toc-links aria-label="Article contents"></nav>
+        </details>
+
         {% if page.cover_image %}
             {% image page.cover_image fill-480x360 format-webp as hero_mobile %}
             {% image page.cover_image fill-720x540 format-webp as hero_mobile_2x %}

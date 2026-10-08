@@ -30,6 +30,16 @@
   toc.appendChild(label);
   toc.appendChild(list);
 
+  var mobileToc = document.querySelector('[data-mobile-toc]');
+  if (mobileToc) {
+    mobileToc.querySelector('[data-mobile-toc-links]').appendChild(list.cloneNode(true));
+    mobileToc.querySelector('[data-toc-count]').textContent = headings.length + ' sections';
+    mobileToc.hidden = false;
+    mobileToc.addEventListener('click', function (event) {
+      if (event.target.closest('a')) mobileToc.open = false;
+    });
+  }
+
   if ('IntersectionObserver' in window) {
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {

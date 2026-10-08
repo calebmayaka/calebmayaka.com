@@ -77,6 +77,9 @@
             <div class="home-sidebar-bottom">
                 <a class="home-button" href="#contact" data-home-link="contact">Start a project →</a>
                 <div class="home-info home-mono">
+                    {% if profile.location or profile.availability %}
+                    <div class="home-presence">{% if profile.location %}<span>{{ profile.location }}</span>{% endif %}{% if profile.availability %}<span>{{ profile.availability }}</span>{% endif %}</div>
+                    {% endif %}
                     {% if profile.email %}
                     <div class="home-info-row"><span>email</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></div>
                     {% endif %}
@@ -90,17 +93,22 @@
         <div class="home-panels">
             <section id="work" class="home-panel" data-home-panel="work" aria-labelledby="tab-work">
                 <div class="home-panel-caption home-mono"><h2>selected work / 2024–{% now 'Y' %}</h2><span>{{ projects|length }} project{{ projects|length|pluralize }}</span></div>
+                <h3 class="home-work-headline">Software I build and run.</h3>
                 <div class="home-work-grid">
                     {% for project in projects %}
-                    <a class="home-work-tile" href="{% if project.link and project.link != '#' %}{{ project.link }}{% else %}#contact{% endif %}"{% if not project.link or project.link == '#' %} data-home-link="contact"{% endif %}>
+                    <a class="home-work-tile{% if forloop.first %} is-featured{% endif %}" href="{% if project.link and project.link != '#' %}{{ project.link }}{% else %}#contact{% endif %}"{% if not project.link or project.link == '#' %} data-home-link="contact"{% endif %}>
                         <span class="home-tile-meta home-mono"><span>{{ forloop.counter|stringformat:'02d' }} · {{ project.category }}</span><span class="home-accent" aria-hidden="true">↗</span></span>
-                        <h3 class="home-tile-title">{{ project.title }}</h3>
-                        <span class="home-tile-description">{{ project.description }}</span>
+                        <div class="home-tile-copy">
+                            <h3 class="home-tile-title">{{ project.title }}</h3>
+                            <span class="home-tile-description">{{ project.description }}</span>
+                            {% if project.tags %}<span class="home-tile-tags">{% for tag in project.tags|slice:':3' %}<span>{{ tag }}</span>{% endfor %}</span>{% endif %}
+                        </div>
+                        <span class="home-tile-footer home-mono">{% if project.status %}<span class="home-tile-status">{{ project.status }}</span>{% endif %}<span class="home-tile-action">{% if project.link and project.link != '#' %}Visit project ↗{% else %}Discuss project →{% endif %}</span></span>
                     </a>
                     {% endfor %}
                     <a class="home-work-tile home-next-project" href="#contact" data-home-link="contact">
                         <span class="home-mono">{{ projects|length|add:'1'|stringformat:'02d' }} · next</span>
-                        <span>Your project →</span>
+                        <div class="home-next-copy"><span>Your project →</span><p>Have something in mind? Let’s build it.</p></div>
                     </a>
                 </div>
             </section>

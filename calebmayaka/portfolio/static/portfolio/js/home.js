@@ -17,6 +17,27 @@
         return validTabs.includes(hash) ? hash : null;
     };
     let active = shell.dataset.initialTab === 'contact' ? 'contact' : (tabFromHash() || 'work');
+    let scrollQueued = false;
+
+    function updateScrolledTab() {
+        scrollQueued = false;
+        if (desktop.matches) return;
+        const offset = shell.querySelector('.home-header').getBoundingClientRect().bottom + 48;
+        let current = 'work';
+        panels.forEach((panel) => {
+            if (panel.getBoundingClientRect().top <= offset) current = panel.dataset.homePanel;
+        });
+        if (current !== active) {
+            active = current;
+            render();
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        if (desktop.matches || scrollQueued) return;
+        scrollQueued = true;
+        requestAnimationFrame(updateScrolledTab);
+    }, { passive: true });
 
     function render() {
         document.body.classList.toggle('home-desktop', desktop.matches);
