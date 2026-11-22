@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="dark" style="color-scheme: dark;">
+<html lang="en" class="light" style="color-scheme: light;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,16 +21,16 @@
         (function () {
             try {
                 var t = localStorage.getItem('portfolio-theme') || localStorage.getItem('cm-theme');
-                if (t !== 'light' && t !== 'dark') t = 'dark';
+                if (t !== 'light' && t !== 'dark') t = 'light';
                 document.documentElement.classList.remove('dark', 'light');
                 document.documentElement.classList.add(t);
                 document.documentElement.style.colorScheme = t;
-            } catch (e) { document.documentElement.classList.add('dark'); }
+            } catch (e) { document.documentElement.classList.add('light'); }
         })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <link rel="alternate" type="application/rss+xml" href="/blog/feed/" title="calebmayaka.com Blog">
     <meta name="twitter:site" content="@calebmayaka">
@@ -51,22 +51,19 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="reading-header">
         <a class="reading-brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
-            <span class="reading-monogram" aria-hidden="true">{{ profile.initials|default:'CM' }}</span>
             <span class="reading-brand-copy">
                 <strong>{{ profile.name|default:'Caleb Mayaka' }}</strong>
                 <span>software engineer</span>
             </span>
         </a>
         <nav class="reading-tabs" aria-label="Primary navigation">
-            <a href="/#work">Work</a>
             <a class="is-active" href="/blog/" aria-current="true">Writing</a>
-            <a href="/#stack">Stack</a>
             <a href="/#about">About</a>
             <a href="/#contact">Contact</a>
         </nav>
         <div class="reading-header-controls">
-            <button class="theme-toggle reading-theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="true">
-                <span class="reading-theme-dot" aria-hidden="true"></span><span data-theme-label>Dark</span>
+            <button class="theme-toggle reading-theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+                <span class="reading-theme-dot" aria-hidden="true"></span><span data-theme-label>Light</span>
             </button>
         </div>
     </header>

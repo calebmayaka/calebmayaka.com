@@ -2,9 +2,6 @@
 {% load wagtailcore_tags static %}
 
 {% block body_class %}home-v2{% endblock %}
-{% block fonts %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-{% endblock %}
 {% block extra_styles %}<link rel="stylesheet" href="{% static 'portfolio/css/home.css' %}">{% endblock %}
 {% block extra_scripts %}<script src="{% static 'portfolio/js/home.js' %}" defer></script>{% endblock %}
 {% block site_navigation %}{% endblock %}
@@ -30,55 +27,40 @@
 <div class="home-shell" data-home-shell data-initial-tab="{{ home_active_tab }}" data-active-tab="{{ home_active_tab }}">
     <header class="home-header">
         <a class="home-brand" href="{% url 'home' %}" aria-label="{{ profile.name }} home">
-            <span class="home-monogram" aria-hidden="true">{{ profile.initials|default:'CM' }}</span>
             <div class="home-brand-copy">
                 <h1>{{ profile.name|default:'Caleb Mayaka' }}</h1>
                 <span class="home-brand-role">software engineer</span>
             </div>
         </a>
         <nav class="home-tabs" aria-label="Homepage sections" data-home-tabs>
-            <a id="tab-work" class="home-tab" href="#work" data-home-tab="work">Work</a>
             <a id="tab-writing" class="home-tab" href="#writing" data-home-tab="writing">Writing</a>
-            <a id="tab-stack" class="home-tab" href="#stack" data-home-tab="stack">Stack</a>
             <a id="tab-about" class="home-tab" href="#about" data-home-tab="about">About</a>
             <a id="tab-contact" class="home-tab" href="#contact" data-home-tab="contact">Contact</a>
         </nav>
         <div class="home-header-controls">
-            <button class="home-theme-toggle" type="button" data-home-theme aria-label="Switch to light theme" aria-pressed="true">
-                <span class="home-theme-dot" aria-hidden="true"></span><span data-home-theme-label>Dark</span>
+            <button class="home-theme-toggle" type="button" data-home-theme aria-label="Switch to dark theme" aria-pressed="false">
+                <span class="home-theme-dot" aria-hidden="true"></span><span data-home-theme-label>Light</span>
             </button>
         </div>
     </header>
 
     <div class="home-body">
-        <aside class="home-sidebar" data-home-sidebar aria-label="Latest article and contact details">
+        <aside class="home-sidebar" data-home-sidebar aria-label="Introduction and contact details">
             <div class="home-sidebar-caption home-mono">
-                <span class="home-accent">~/calebmayaka</span>
-                <a href="#writing" data-home-link="writing">all writing →</a>
+                <span>{{ profile.location|default:'Nairobi, Kenya' }}</span>
+                <a href="#about" data-home-link="about">About me ↗</a>
             </div>
-            {% with latest=blog_posts.0 %}
-            {% if latest %}
-            <a class="home-latest" href="{% pageurl latest %}">
-                {% include 'portfolio/home_article_image.html' with post=latest image_class='home-latest-image' %}
-                <span class="home-mono home-accent">latest article · {{ latest.date|date:'M j, Y' }} · {{ latest.estimated_read_minutes }} min</span>
-                <h2 class="home-latest-title">{{ latest.title }}</h2>
-                <span class="home-latest-excerpt">{{ latest.subtitle|default:latest.excerpt|default:latest.search_description }}</span>
-                <span class="home-read-link">Read the article →</span>
-            </a>
-            {% else %}
-            <div class="home-latest home-empty">
-                <span class="home-mono home-accent">latest article</span>
-                <h2 class="home-latest-title">Writing &amp; practical notes.</h2>
-                <p class="home-latest-excerpt">Articles will appear here as they are published.</p>
-                <a class="home-read-link" href="/blog/">Explore the blog →</a>
+            <div class="home-intro">
+                <span class="home-mono home-eyebrow">Software &amp; curiosity</span>
+                <h2>Building.</h2>
+                <p>I’m a software engineer and technology enthusiast, sharing practical notes from the things I build and learn.</p>
+                <a class="home-read-link" href="#about" data-home-link="about">Explore my toolkit →</a>
             </div>
-            {% endif %}
-            {% endwith %}
             <div class="home-sidebar-bottom">
                 <a class="home-button" href="#contact" data-home-link="contact">Start a project →</a>
                 <div class="home-info home-mono">
-                    {% if profile.location or profile.availability %}
-                    <div class="home-presence">{% if profile.location %}<span>{{ profile.location }}</span>{% endif %}{% if profile.availability %}<span>{{ profile.availability }}</span>{% endif %}</div>
+                    {% if profile.availability %}
+                    <div class="home-presence"><span>{{ profile.availability }}</span></div>
                     {% endif %}
                     {% if profile.email %}
                     <div class="home-info-row"><span>email</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></div>
@@ -91,38 +73,17 @@
         </aside>
 
         <div class="home-panels">
-            <section id="work" class="home-panel" data-home-panel="work" aria-labelledby="tab-work">
-                <div class="home-panel-caption home-mono"><h2>selected work / 2024–{% now 'Y' %}</h2><span>{{ projects|length }} project{{ projects|length|pluralize }}</span></div>
-                <h3 class="home-work-headline">Software I build and run.</h3>
-                <div class="home-work-grid">
-                    {% for project in projects %}
-                    <a class="home-work-tile{% if forloop.first %} is-featured{% endif %}" href="{% if project.link and project.link != '#' %}{{ project.link }}{% else %}#contact{% endif %}"{% if not project.link or project.link == '#' %} data-home-link="contact"{% endif %}>
-                        <span class="home-tile-meta home-mono"><span>{{ forloop.counter|stringformat:'02d' }} · {{ project.category }}</span><span class="home-accent" aria-hidden="true">↗</span></span>
-                        <div class="home-tile-copy">
-                            <h3 class="home-tile-title">{{ project.title }}</h3>
-                            <span class="home-tile-description">{{ project.description }}</span>
-                            {% if project.tags %}<span class="home-tile-tags">{% for tag in project.tags|slice:':3' %}<span>{{ tag }}</span>{% endfor %}</span>{% endif %}
-                        </div>
-                        <span class="home-tile-footer home-mono">{% if project.status %}<span class="home-tile-status">{{ project.status }}</span>{% endif %}<span class="home-tile-action">{% if project.link and project.link != '#' %}Visit project ↗{% else %}Discuss project →{% endif %}</span></span>
-                    </a>
-                    {% endfor %}
-                    <a class="home-work-tile home-next-project" href="#contact" data-home-link="contact">
-                        <span class="home-mono">{{ projects|length|add:'1'|stringformat:'02d' }} · next</span>
-                        <div class="home-next-copy"><span>Your project →</span><p>Have something in mind? Let’s build it.</p></div>
-                    </a>
-                </div>
-            </section>
-
             <section id="writing" class="home-panel" data-home-panel="writing" aria-labelledby="tab-writing">
-                <div class="home-panel-caption home-mono"><h2>latest writing</h2><a class="home-accent" href="/blog/">all posts →</a></div>
+                <div class="home-panel-caption home-mono"><h2><span>01 /</span> Writing</h2><a href="/blog/">All posts ↗</a></div>
                 {% with latest=blog_posts.0 %}
                 {% if latest %}
                 <a class="home-featured" href="{% pageurl latest %}">
                     {% include 'portfolio/home_article_image.html' with post=latest image_class='home-featured-image' %}
                     <div class="home-featured-copy">
-                        <span class="home-mono home-accent">new · {{ latest.date|date:'M j, Y' }} · {{ latest.estimated_read_minutes }} min</span>
+                        <span class="home-mono home-article-meta">Latest article <span aria-hidden="true">·</span> {{ latest.date|date:'M j, Y' }} <span aria-hidden="true">·</span> {{ latest.estimated_read_minutes }} min</span>
                         <h3 class="home-featured-title">{{ latest.title }}</h3>
                         <span class="home-featured-excerpt">{{ latest.subtitle|default:latest.excerpt|default:latest.search_description }}</span>
+                        <span class="home-read-link">Read the article <span aria-hidden="true">↗</span></span>
                     </div>
                 </a>
                 <div class="home-post-list">
@@ -140,19 +101,16 @@
                 {% endwith %}
             </section>
 
-            <section id="stack" class="home-panel" data-home-panel="stack" aria-labelledby="tab-stack">
-                <div class="home-panel-caption home-mono"><h2>stack</h2></div>
-                <div class="home-stack-grid">
-                    {% for category in stack_categories %}
-                    <div class="home-stack-cell"><h3 class="home-mono home-accent">{{ category.name }}</h3><p>{{ category.items }}</p></div>
-                    {% endfor %}
-                </div>
-            </section>
-
             <section id="about" class="home-panel" data-home-panel="about" aria-labelledby="tab-about">
-                <div class="home-panel-caption home-mono"><h2>about</h2></div>
+                <div class="home-panel-caption home-mono"><h2><span>02 /</span> About</h2><a href="{% url 'gallery' %}">View gallery ↗</a></div>
                 <div class="home-about-grid">
                     <div class="home-bio">
+                        <a class="home-portrait" href="{% url 'gallery' %}" aria-label="View photos of {{ profile.name }}">
+                            <picture>
+                                <source srcset="{% static 'portfolio/img/gallery/caleb-mayaka-nairobi-01-thumb.webp' %}" type="image/webp">
+                                <img src="{% static 'portfolio/img/gallery/caleb-mayaka-nairobi-01-thumb.jpg' %}" alt="Caleb Mayaka at a park in Nairobi" width="240" height="320" loading="lazy" decoding="async">
+                            </picture>
+                        </a>
                         <h3>{{ profile.name|default:'Caleb Mayaka' }}</h3>
                         {% if bio_lead %}<p class="home-bio-lead">{{ bio_lead }}</p>{% endif %}
                         {% if bio_details %}<p class="home-bio-details">{{ bio_details }}</p>{% endif %}
@@ -161,12 +119,22 @@
                         {% for skill in skills %}
                         <div class="home-skill"><span class="home-mono home-accent">{{ forloop.counter|stringformat:'02d' }}</span><div><h3>{{ skill.title }}</h3><p>{{ skill.description }}</p></div></div>
                         {% endfor %}
+                        {% if stack_categories %}
+                        <div class="home-toolkit">
+                            <h3 class="home-mono">Also in my toolkit</h3>
+                            <dl class="home-toolkit-grid">
+                                {% for category in stack_categories %}
+                                <div><dt class="home-mono">{{ category.name }}</dt><dd>{{ category.items }}</dd></div>
+                                {% endfor %}
+                            </dl>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </section>
 
             <section id="contact" class="home-panel" data-home-panel="contact" aria-labelledby="tab-contact">
-                <div class="home-panel-caption home-mono"><h2>contact / new inquiry</h2></div>
+                <div class="home-panel-caption home-mono"><h2><span>03 /</span> Contact</h2><span>Let’s talk</span></div>
                 <div class="home-contact-content">
                     <h3>Tell me what you need built.</h3>
                     <p>Share your email, the type of inquiry and the details. I’ll reply with the clearest next step.</p>
@@ -179,9 +147,9 @@
                         {% csrf_token %}
                         <div hidden aria-hidden="true">{{ inquiry_form.website }}</div>
                         {{ inquiry_form.non_field_errors }}
-                        <div class="form-field"><label for="{{ inquiry_form.email.id_for_label }}">email</label>{{ inquiry_form.email }}{{ inquiry_form.email.errors }}</div>
-                        <div class="form-field"><label for="{{ inquiry_form.inquiry_type.id_for_label }}">inquiry type</label>{{ inquiry_form.inquiry_type }}{{ inquiry_form.inquiry_type.errors }}</div>
-                        <div class="form-field"><label for="{{ inquiry_form.message.id_for_label }}">details</label>{{ inquiry_form.message }}{{ inquiry_form.message.errors }}</div>
+                        <div class="form-field"><label for="{{ inquiry_form.email.id_for_label }}">Your email</label>{{ inquiry_form.email }}{{ inquiry_form.email.errors }}</div>
+                        <div class="form-field"><label for="{{ inquiry_form.inquiry_type.id_for_label }}">What can I help with?</label>{{ inquiry_form.inquiry_type }}{{ inquiry_form.inquiry_type.errors }}</div>
+                        <div class="form-field home-form-message"><label for="{{ inquiry_form.message.id_for_label }}">A little about your idea</label>{{ inquiry_form.message }}{{ inquiry_form.message.errors }}</div>
                         <button class="home-button home-submit" type="submit">Send inquiry →</button>
                     </form>
                 </div>

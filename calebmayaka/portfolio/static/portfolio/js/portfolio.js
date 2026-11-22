@@ -15,7 +15,7 @@
             }
         }
     };
-    let currentTheme = 'dark';
+    let currentTheme = 'light';
     try {
         const stored = localStorage.getItem('portfolio-theme') || localStorage.getItem('cm-theme');
         if (stored === 'light' || stored === 'dark') currentTheme = stored;

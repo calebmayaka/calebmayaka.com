@@ -79,6 +79,7 @@ class BlogPageContextTests(TestCase):
         html = response.content.decode()
         self.assertIn('Only Post', html)
         self.assertNotIn('Articles are being prepared', html)
+        self.assertNotIn('/#work', html)
 
     def test_noindex_post_is_excluded_from_sitemap(self):
         post = self.make_post('Private Draft', 'private-draft', date(2026, 5, 3))

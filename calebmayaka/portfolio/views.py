@@ -1,4 +1,5 @@
 import logging
+import re
 from functools import wraps
 from urllib.parse import urlencode
 
@@ -646,13 +647,24 @@ def home(request):
 
     _profile = get_site_chrome().get('profile')
     bio_lead, bio_separator, bio_details = (_profile.summary or '').partition('. ')
+    skills = list(Skill.objects.order_by('order'))
+    skill_priority = {'python & django': 0, 'django rest framework': 1}
+    skills.sort(key=lambda skill: skill_priority.get(skill.title.casefold(), 2))
+    expertise_text = ' '.join(f'{skill.title} {skill.description}' for skill in skills)
+    stack_categories = []
+    for category in data.homepage_stack:
+        remaining = [
+            item for item in category['items'].split(', ')
+            if not re.search(r'(?<!\w)' + re.escape(item) + r'(?!\w)', expertise_text, re.IGNORECASE)
+        ]
+        if remaining:
+            stack_categories.append({'name': category['name'], 'items': ', '.join(remaining)})
     context = {
         **base_context('home'),
         'page_title': f"{_profile.name} | {_profile.role}" if _profile else '',
         'meta_description': _profile.meta_description,
         'stats': Stat.objects.order_by('order'),
-        'skills': Skill.objects.order_by('order'),
-        'projects': list(Project.objects.order_by('order', 'pk')[:7]),
+        'skills': skills,
         'blog_posts': (
             BlogPostPage.objects.live()
             .public()
@@ -663,9 +675,9 @@ def home(request):
         'testimonials': Testimonial.objects.order_by('order'),
         'tech_stack': list(TechStack.objects.order_by('order').values_list('name', flat=True)),
         'inquiry_form': inquiry_form,
-        'home_active_tab': 'contact' if request.method == 'POST' or len(messages.get_messages(request)) else 'work',
+        'home_active_tab': 'contact' if request.method == 'POST' or len(messages.get_messages(request)) else 'writing',
         'home_social_links': [link for link in get_site_chrome()['social_links'] if not link.url.startswith('mailto:')],
-        'stack_categories': data.homepage_stack,
+        'stack_categories': stack_categories,
         'bio_lead': bio_lead + ('.' if bio_separator else ''),
         'bio_details': bio_details,
     }

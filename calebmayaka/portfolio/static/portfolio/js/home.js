@@ -8,22 +8,24 @@
     const panels = Array.from(shell.querySelectorAll('[data-home-panel]'));
     const sidebar = shell.querySelector('[data-home-sidebar]');
     const strip = shell.querySelector('[data-home-strip]');
-    const desktop = window.matchMedia('(min-width: 900px) and (min-height: 720px)');
+    const desktop = window.matchMedia('(min-width: 900px) and (min-height: 680px)');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const validTabs = tabs.map((tab) => tab.dataset.homeTab);
     const tabFromHash = () => {
         const hash = window.location.hash.slice(1).toLowerCase();
         if (hash === 'inquiry') return 'contact';
+        if (hash === 'stack') return 'about';
         return validTabs.includes(hash) ? hash : null;
     };
-    let active = shell.dataset.initialTab === 'contact' ? 'contact' : (tabFromHash() || 'work');
+    const defaultTab = validTabs.includes(shell.dataset.initialTab) ? shell.dataset.initialTab : validTabs[0];
+    let active = defaultTab === 'contact' ? 'contact' : (tabFromHash() || defaultTab);
     let scrollQueued = false;
 
     function updateScrolledTab() {
         scrollQueued = false;
         if (desktop.matches) return;
         const offset = shell.querySelector('.home-header').getBoundingClientRect().bottom + 48;
-        let current = 'work';
+        let current = validTabs[0];
         panels.forEach((panel) => {
             if (panel.getBoundingClientRect().top <= offset) current = panel.dataset.homePanel;
         });
@@ -68,8 +70,8 @@
             panel.setAttribute('role', desktop.matches ? 'tabpanel' : 'region');
             panel.tabIndex = desktop.matches ? 0 : -1;
         });
-        sidebar.hidden = desktop.matches && active !== 'work';
-        strip.hidden = desktop.matches && active === 'work';
+        sidebar.hidden = desktop.matches && active !== 'writing';
+        strip.hidden = desktop.matches && active === 'writing';
     }
 
     function scrollToPanel(name) {
@@ -118,15 +120,20 @@
         });
     });
     window.addEventListener('hashchange', () => {
+        if (window.location.hash.toLowerCase() === '#stack') {
+            window.history.replaceState(null, '', '#about');
+        }
         if (window.location.hash.toLowerCase() === '#inquiry') {
             window.history.replaceState(null, '', '#contact');
         }
-        selectTab(tabFromHash() || 'work', false, false);
+        selectTab(tabFromHash() || defaultTab, false, false);
     });
     desktop.addEventListener('change', render);
 
     if (shell.dataset.initialTab === 'contact' || window.location.hash === '#inquiry') {
         window.history.replaceState(null, '', '#contact');
+    } else if (window.location.hash.toLowerCase() === '#stack') {
+        window.history.replaceState(null, '', '#about');
     }
     render();
     if (!desktop.matches && (tabFromHash() || shell.dataset.initialTab === 'contact')) {
