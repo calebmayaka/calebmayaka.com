@@ -60,7 +60,6 @@
 }
 .blog-v3 .reading-brand-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .blog-v3 .reading-brand-copy strong { font: italic 500 23px/1.15 var(--font-display); letter-spacing: -.025em; }
-.blog-v3 .reading-brand-copy > span { color: var(--mut); font: 400 10px/1.4 var(--font-mono); letter-spacing: .035em; }
 .blog-v3 .reading-tabs {
     display: flex;
     gap: 8px;
@@ -252,7 +251,6 @@
 
 @media (min-width: 900px) and (max-width: 1100px) {
     .blog-v3 .reading-monogram { display: none; }
-    .blog-v3 .reading-brand-copy > span { font-size: 9px; }
     .blog-v3 .blog-article-layout { grid-template-columns: minmax(0, 1fr) 220px; }
     .blog-v3 .blog-sidebar { padding: 20px; }
     .blog-v3 .blog-article { padding: 28px; }
