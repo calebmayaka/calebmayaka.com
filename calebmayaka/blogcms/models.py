@@ -101,6 +101,7 @@ BLOG_RICH_TEXT_FEATURES = [
     'h3',
     'bold',
     'italic',
+    'code',
     'ol',
     'ul',
     'hr',
@@ -112,7 +113,7 @@ BLOG_RICH_TEXT_FEATURES = [
 
 class BlogImageBlock(blocks.StructBlock):
     image = ImageChooserBlock()
-    alt_text = blocks.CharBlock(required=False, max_length=160)
+    alt_text = blocks.CharBlock(required=False, max_length=300)
     caption = blocks.CharBlock(required=False, max_length=220)
 
     class Meta:
