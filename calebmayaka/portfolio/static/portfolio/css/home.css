@@ -22,7 +22,6 @@
 .home-v2 .home-monogram { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; font: 500 12px/1 var(--font-mono); }
 .home-v2 .home-brand-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .home-v2 .home-brand h1 { font-size: 23px; font-weight: 500; font-style: italic; line-height: 1.15; letter-spacing: -.025em; }
-.home-v2 .home-brand-role { color: var(--muted); font: 400 10px/1.4 var(--font-mono); letter-spacing: .035em; }
 .home-v2 .home-tabs { display: flex; grid-column: 1 / -1; grid-row: 2; gap: 8px; width: 100%; max-width: 100%; margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
 .home-v2 .home-tabs::-webkit-scrollbar { display: none; }
 .home-v2 .home-tab { position: relative; display: flex; flex: 1; align-items: center; justify-content: center; min-width: 0; min-height: 46px; padding: 0 10px; color: var(--muted); font: 500 14px/1.2 var(--font-body); }
@@ -171,7 +170,6 @@
 @media (min-width: 900px) and (max-width: 1100px) {
     .home-v2.home-desktop .home-shell[data-active-tab="writing"] .home-body { grid-template-columns: 260px minmax(0, 1fr); gap: 28px; }
     .home-v2.home-desktop .home-sidebar { padding-right: 24px; }
-    .home-v2 .home-brand-role { font-size: 9px; }
     .home-v2 .home-monogram { display: none; }
 }
 @media (max-width: 599px) {

@@ -46,7 +46,8 @@ class HomepageTests(TestCase):
         response = self.client.get(reverse('home'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Building.')
+        self.assertNotContains(response, 'Building.')
+        self.assertNotContains(response, 'home-brand-role')
         self.assertContains(response, 'Articles will appear here as they are published.')
         self.assertEqual(response.context['home_active_tab'], 'writing')
 
