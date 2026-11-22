@@ -37,6 +37,9 @@
 .home-v2 .home-sidebar { display: flex; flex-direction: column; gap: 24px; min-width: 0; padding: 28px 0 32px; border-bottom: 1px solid var(--border); }
 .home-v2 .home-sidebar-caption { display: flex; align-items: center; justify-content: flex-end; gap: 16px; color: var(--muted); }
 .home-v2 .home-sidebar-caption a { white-space: nowrap; }
+/* Phones and tablets: the About tab sits right above, so the extra link is redundant. */
+.home-v2:not(.home-desktop) .home-sidebar-caption { display: none; }
+.home-v2:not(.home-desktop) .home-panel { padding-top: 24px; }
 .home-v2 .home-sidebar-caption a:hover { color: var(--text); }
 .home-v2 .home-intro { display: flex; flex-direction: column; gap: 20px; padding: 8px 0; }
 .home-v2 .home-intro p { max-width: 34ch; color: var(--muted); font-size: 15px; line-height: 1.7; text-wrap: pretty; }
@@ -173,7 +176,7 @@
 @media (max-width: 599px) {
     .home-v2 .home-brand h1 { font-size: 21px; }
     .home-v2 .home-monogram { display: none; }
-    .home-v2 .home-sidebar { gap: 20px; padding-top: 24px; }
+    .home-v2 .home-sidebar { gap: 18px; padding: 18px 0 24px; }
     .home-v2 .home-intro { gap: 16px; padding: 0; }
     .home-v2 .home-intro p { max-width: 40ch; font-size: 14px; }
     .home-v2 .home-intro > .home-read-link { display: none; }
