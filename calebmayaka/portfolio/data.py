@@ -90,12 +90,6 @@ gallery_photos = [
         'caption': 'Poolside.',
         'width': 1200, 'height': 1600,
     },
-    {
-        'slug': 'caleb-mayaka-outdoor-portrait',
-        'alt': 'Caleb Mayaka, casual outdoor portrait in rural Kenya',
-        'caption': 'Rural Kenya.',
-        'width': 1200, 'height': 1600,
-    },
 ]
 
 tech_stack = [
