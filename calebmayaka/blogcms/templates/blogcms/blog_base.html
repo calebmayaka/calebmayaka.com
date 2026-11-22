@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="{% static 'blogcms/css/reading.css' %}">
     {% block extra_styles %}{% endblock %}
 </head>
-<body class="page-blog blog-page blog-v3">
+<body class="page-blog blog-page blog-v3{% block body_class %}{% endblock %}">
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="reading-header">
         <a class="reading-brand" href="/" aria-label="{{ profile.name|default:'Caleb Mayaka' }} home">
@@ -55,11 +55,13 @@
                 <strong>{{ profile.name|default:'Caleb Mayaka' }}</strong>
             </span>
         </a>
+        {% block reading_tabs %}
         <nav class="reading-tabs" aria-label="Primary navigation">
             <a class="is-active" href="/blog/" aria-current="true">Writing</a>
             <a href="/#about">About</a>
             <a href="/#contact">Contact</a>
         </nav>
+        {% endblock %}
         <div class="reading-header-controls">
             <button class="theme-toggle reading-theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
                 <span class="reading-theme-dot" aria-hidden="true"></span><span data-theme-label>Light</span>

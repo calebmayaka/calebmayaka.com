@@ -80,6 +80,9 @@
     {% endif %}
 {% endblock %}
 
+{% block body_class %} is-reading{% endblock %}
+{% block reading_tabs %}{% endblock %}
+
 {% block blog_content %}
 <div class="blog-layout blog-article-layout">
     <article class="blog-article">
@@ -88,27 +91,20 @@
                 <a href="/">Home</a>
                 <span aria-hidden="true">/</span>
                 <a href="{{ page.get_parent.url }}">Writing</a>
-                <span aria-hidden="true">/</span>
-                <span aria-current="page">article</span>
             </nav>
             <h1>{{ page.title }}</h1>
             {% if page.subtitle %}
                 <p class="blog-article-subtitle">{{ page.subtitle }}</p>
             {% endif %}
-            <div class="blog-article-meta">
-                <div class="blog-author-avatar">{{ page.display_author|slice:":1"|upper }}</div>
-                <div>
-                    <strong>{{ page.display_author }}</strong>
-                    <p><time datetime="{{ page.date|date:'Y-m-d' }}">{{ page.date|date:"M j, Y" }}</time> &middot; {{ page.estimated_read_minutes }} min read{% if page.view_count %} &middot; {{ page.view_count }} read{{ page.view_count|pluralize }}{% endif %}</p>
-                </div>
-            </div>
-            {% if page.tags.all %}
-                <div class="blog-tag-list blog-article-tags" aria-label="Article tags">
-                    {% for tag in page.tags.all %}
-                        <a href="{% url 'blog_tag' tag.slug %}" class="blog-tag-link">{{ tag.name }}</a>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            <p class="blog-article-byline">
+                <strong>{{ page.display_author }}</strong>
+                <span aria-hidden="true">&middot;</span>
+                <time datetime="{{ page.date|date:'Y-m-d' }}">{{ page.date|date:"M j, Y" }}</time>
+                <span aria-hidden="true">&middot;</span>
+                <span>{{ page.estimated_read_minutes }} min read</span>
+                {% if page.view_count %}<span aria-hidden="true">&middot;</span>
+                <span>{{ page.view_count }} read{{ page.view_count|pluralize }}</span>{% endif %}
+            </p>
         </header>
 
         <details class="blog-mobile-toc" data-mobile-toc hidden>
@@ -249,6 +245,14 @@
                 {% endif %}
             {% endfor %}
         </section>
+
+        {% if page.tags.all %}
+            <nav class="blog-tag-list blog-article-tags blog-article-tags--end" aria-label="Article tags">
+                {% for tag in page.tags.all %}
+                    <a href="{% url 'blog_tag' tag.slug %}" class="blog-tag-link">{{ tag.name }}</a>
+                {% endfor %}
+            </nav>
+        {% endif %}
 
         {% if site_profile %}
         <aside class="blog-author-bio reveal">
