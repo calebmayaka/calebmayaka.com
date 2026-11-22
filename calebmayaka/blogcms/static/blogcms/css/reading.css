@@ -208,7 +208,6 @@
 .blog-v3 .blog-author-bio { margin-top: 40px; padding: 24px 0; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; background: none; }
 .blog-v3 .blog-author-bio-avatar { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--fg); color: var(--bg); font: 500 14px/1 var(--font-mono); }
 .blog-v3 .blog-author-bio-name { font-weight: 600; }
-.blog-v3 .blog-author-bio-role { color: var(--mut); font: 400 11px/1.5 var(--font-mono); }
 .blog-v3 .blog-author-bio-summary { color: var(--mut); font-size: 14px; line-height: 1.6; }
 .blog-v3 .blog-author-bio-links a { color: var(--acc); font: 400 11px/1.5 var(--font-mono); }
 .blog-v3 .blog-post-nav { gap: 10px; margin-top: 28px; }

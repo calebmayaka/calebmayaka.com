@@ -1098,10 +1098,6 @@
     font-weight: 600;
     font-size: 1rem;
 }
-.blog-author-bio-role {
-    font-size: 0.8rem;
-    color: var(--muted);
-}
 .blog-author-bio-summary {
     font-size: 0.9rem;
     color: var(--muted-strong);
