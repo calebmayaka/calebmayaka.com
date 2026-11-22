@@ -400,13 +400,6 @@
     border-radius: 14px;
 }
 
-/* Phones get a taller 4:3 crop so the banner reads larger on narrow screens. */
-@media (max-width: 640px) {
-    .blog-hero img {
-        aspect-ratio: 4 / 3;
-    }
-}
-
 .blog-hero-placeholder {
     display: grid;
     place-items: center;

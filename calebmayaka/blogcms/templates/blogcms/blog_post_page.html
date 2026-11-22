@@ -117,8 +117,8 @@
         </details>
 
         {% if page.cover_image %}
-            {% image page.cover_image fill-480x360 format-webp as hero_mobile %}
-            {% image page.cover_image fill-720x540 format-webp as hero_mobile_2x %}
+            {% image page.cover_image fill-640x360 format-webp as hero_mobile %}
+            {% image page.cover_image fill-1280x720 format-webp as hero_mobile_2x %}
             {% image page.cover_image fill-760x417 format-webp as hero_small %}
             {% image page.cover_image fill-1240x680 format-webp as hero %}
             {% image page.cover_image fill-1600x878 format-webp as hero_large %}
@@ -128,7 +128,7 @@
                     <source
                         media="(max-width: 640px)"
                         type="image/webp"
-                        srcset="{{ hero_mobile.url }} 480w, {{ hero_mobile_2x.url }} 720w"
+                        srcset="{{ hero_mobile.url }} 640w, {{ hero_mobile_2x.url }} 1280w"
                         sizes="100vw">
                     <source
                         type="image/webp"
