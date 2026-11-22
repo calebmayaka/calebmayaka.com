@@ -157,3 +157,20 @@ class HomepageTests(TestCase):
         self.assertContains(response, 'class="site-nav"')
         self.assertContains(response, 'class="site-footer"')
         self.assertNotContains(response, 'portfolio/css/home.css')
+
+
+class GalleryTests(TestCase):
+    def test_gallery_shows_visible_photo_but_keeps_all_for_seo(self):
+        from portfolio import data
+
+        response = self.client.get(reverse('gallery'))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+        visible = [p for p in data.gallery_photos if p.get('visible')]
+        self.assertEqual(content.count('class="gallery-item'), len(visible))
+        for photo in data.gallery_photos:
+            self.assertIn(photo['slug'], content)  # structured data keeps every photo
+
+        sitemap = self.client.get(reverse('pages_sitemap')).content.decode()
+        for photo in data.gallery_photos:
+            self.assertIn(photo['slug'], sitemap)

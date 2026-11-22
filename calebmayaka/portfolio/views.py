@@ -705,6 +705,7 @@ def gallery(request):
         ),
         'canonical_url': f'{_site_url()}/gallery/',
         'gallery_photos': data.gallery_photos,
+        'visible_gallery_photos': [p for p in data.gallery_photos if p.get('visible')],
     }
     return render(request, 'portfolio/gallery.html', context)
 

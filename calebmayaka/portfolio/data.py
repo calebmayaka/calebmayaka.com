@@ -65,12 +65,43 @@ skills = [
 # Gallery photos — single source of truth for the /gallery/ page and the image
 # sitemap. Files live under portfolio/static/portfolio/img/gallery/ as
 # <slug>.webp / <slug>.jpg (+ <slug>-thumb.*). All are 1200x1600 portraits.
+# Every photo stays in the image sitemap and the gallery's structured data;
+# only those with 'visible': True are shown on the /gallery/ page.
 gallery_photos = [
     {
         'slug': 'caleb-mayaka-nairobi-01',
         'alt': 'Caleb Mayaka, software engineer, at a park in Nairobi, Kenya',
         'caption': 'Nairobi, Kenya.',
         'width': 1200, 'height': 1600,
+        'visible': True,
+    },
+    {
+        'slug': 'caleb-mayaka-data-center',
+        'alt': 'Caleb Mayaka, IT professional, working on a laptop in a data center beside a server rack',
+        'caption': 'In the data center — servers, networking, and virtualization.',
+        'width': 1200, 'height': 1600,
+        'visible': False,
+    },
+    {
+        'slug': 'caleb-mayaka-nairobi-02',
+        'alt': 'Caleb Mayaka, side-profile portrait at a park in Nairobi, Kenya',
+        'caption': 'Nairobi, Kenya.',
+        'width': 1200, 'height': 1600,
+        'visible': False,
+    },
+    {
+        'slug': 'caleb-mayaka-poolside',
+        'alt': 'Caleb Mayaka, portrait by a poolside in Kenya',
+        'caption': 'Poolside.',
+        'width': 1200, 'height': 1600,
+        'visible': False,
+    },
+    {
+        'slug': 'caleb-mayaka-outdoor-portrait',
+        'alt': 'Caleb Mayaka, casual outdoor portrait in rural Kenya',
+        'caption': 'Rural Kenya.',
+        'width': 1200, 'height': 1600,
+        'visible': False,
     },
 ]
 
