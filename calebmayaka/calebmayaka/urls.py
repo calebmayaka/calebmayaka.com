@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
 from django.views.static import serve as serve_static
@@ -27,7 +28,14 @@ from blogcms.feeds import LatestBlogPostsFeed
 from blogcms.views import blog_search_view, blog_tag_view
 from wagtail.contrib.sitemaps.views import sitemap
 
+
+def healthz(request):
+    """Liveness check for the deploy script and uptime monitor."""
+    return HttpResponse('ok', content_type='text/plain')
+
+
 urlpatterns = [
+    path('healthz', healthz, name='healthz'),
     path('', include('portfolio.urls')),
     path('admin/', admin.site.urls),
     path('cms/', include(wagtailadmin_urls)),

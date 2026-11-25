@@ -1,0 +1,17 @@
+# Keep secrets, data, source photos and local output out of the Docker image.
+.env
+.env.*
+db.sqlite3*
+media/
+staticfiles/
+logs/
+photos/
+design/
+designv2/
+websiteimages/
+*.log
+*.png
+**/__pycache__/
+*.py[cod]
+Dockerfile
+.dockerignore

@@ -1,0 +1,24 @@
+# calebmayaka.com on the VPS. Lives at /srv/apps/calebmayaka.com/compose.yml
+# (copied from deploy/vps/ in the repo; the repo itself is cloned to ./src).
+services:
+  app:
+    build:
+      context: ./src/calebmayaka
+    image: calebmayaka:latest
+    container_name: calebmayaka
+    restart: unless-stopped
+    env_file: .env                    # DB_HOST=postgres (shared container on the "db" network)
+    volumes:
+      - ./media:/app/media            # CMS uploads (served by Caddy at /media/)
+      - ./static:/app/staticfiles     # collected static files, served by Caddy
+    networks: [web, db]
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+networks:
+  web:
+    external: true
+  db:
+    external: true
